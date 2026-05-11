@@ -603,23 +603,6 @@ export const m = {
   Message_Center: '消息中心',
   No_Data: '暂无数据',
 
-  // /views/oj/message/UserMsg.vue
-  Msg_Total: '共',
-  Msg_Messages: '条',
-  DiscussMsg: '评论我的',
-  ReplyMsg: '回复我的',
-  LikeMsg: '收到的赞',
-  SysMsg: '系统通知',
-  MineMsg: '我的消息',
-  Clean_All: '清空全部',
-  Action_Like_Discuss: '赞了我的评论',
-  Action_Like_Post: '赞了我的讨论帖',
-  Action_Discuss: '评论了我的讨论帖',
-  Action_Reply: '回复了我的评论',
-  From_Discussion_Post: '来自讨论帖',
-  From_the_Contest: '来自比赛',
-  Delete_Msg_Tips: '你是否确定要删除或清空消息？',
-
   // /views/oj/training/TrainingList.vue
   Search_Training: '搜索训练',
   Training_Public: '公开训练',

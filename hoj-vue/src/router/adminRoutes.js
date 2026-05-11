@@ -5,7 +5,6 @@ const Home= ()=>import('@/views/admin/Home')
 const Dashboard= ()=>import('@/views/admin/Dashboard')
 const User= ()=>import('@/views/admin/general/User')
 const Announcement= ()=>import('@/views/admin/general/Announcement')
-const SysNotice= ()=>import('@/views/admin/general/SysNotice')
 const SystemConfig= ()=>import('@/views/admin/general/SystemConfig')
 const SysSwitch= ()=>import('@/views/admin/general/SysSwitch')
 const ProblemList= ()=>import('@/views/admin/problem/ProblemList')
@@ -54,12 +53,6 @@ const adminRoutes= [
           name: 'admin-announcement',
           component: Announcement,
           meta: { requireSuperAdmin: true,title:'Announcement Admin'},
-      },
-      {
-        path: 'notice',
-        name: 'admin-notice',
-        component: SysNotice,
-        meta: { requireSuperAdmin: true,title:'Notice Admin'},
       },
         {
           path: 'conf',

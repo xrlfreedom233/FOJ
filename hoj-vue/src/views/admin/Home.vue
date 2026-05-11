@@ -30,9 +30,6 @@
           <el-menu-item index="/admin/announcement">{{
             $t('m.Announcement_Admin')
           }}</el-menu-item>
-          <el-menu-item index="/admin/notice">{{
-            $t('m.SysNotice')
-          }}</el-menu-item>
           <el-menu-item index="/admin/conf">{{
             $t('m.System_Config')
           }}</el-menu-item>
@@ -244,16 +241,6 @@
               <mu-list-item-title>{{
                 $t('m.Announcement_Admin')
               }}</mu-list-item-title>
-            </mu-list-item>
-            <mu-list-item
-              button
-              :ripple="false"
-              slot="nested"
-              to="/admin/notice"
-              @click="opendrawer = !opendrawer"
-              active-class="mobile-menu-active"
-            >
-              <mu-list-item-title>{{ $t('m.SysNotice') }}</mu-list-item-title>
             </mu-list-item>
             <mu-list-item
               button

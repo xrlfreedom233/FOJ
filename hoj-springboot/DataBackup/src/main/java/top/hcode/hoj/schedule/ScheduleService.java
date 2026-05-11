@@ -13,9 +13,5 @@ public interface ScheduleService {
 
     void deleteUserSession();
 
-    void syncNoticeToRecentHalfYearUser();
-
     void check20MPendingSubmission();
-
-    void checkUnHandleGroupProblemApplyProgress();
 }

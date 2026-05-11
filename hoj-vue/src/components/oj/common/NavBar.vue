@@ -179,62 +179,6 @@
               :src="avatar"
               class="drop-avatar"
             ></avatar>
-            <el-dropdown
-              class="drop-msg"
-              @command="handleRoute"
-              placement="bottom"
-            >
-              <span class="el-dropdown-link">
-                <i class="el-icon-message-solid"></i>
-                <svg
-                  v-if="
-                    unreadMessage.comment > 0 ||
-                      unreadMessage.reply > 0 ||
-                      unreadMessage.like > 0 ||
-                      unreadMessage.sys > 0 ||
-                      unreadMessage.mine > 0
-                  "
-                  width="10"
-                  height="10"
-                  style="vertical-align: top;margin-left: -11px;margin-top: 3px;"
-                >
-                  <circle cx="5" cy="5" r="5" style="fill: red;"></circle>
-                </svg>
-              </span>
-
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="/message/discuss">
-                  <span>{{ $t('m.DiscussMsg') }}</span>
-                  <span class="drop-msg-count" v-if="unreadMessage.comment > 0">
-                    <MsgSvg :total="unreadMessage.comment"></MsgSvg>
-                  </span>
-                </el-dropdown-item>
-                <el-dropdown-item command="/message/reply">
-                  <span>{{ $t('m.ReplyMsg') }}</span>
-                  <span class="drop-msg-count" v-if="unreadMessage.reply > 0">
-                    <MsgSvg :total="unreadMessage.reply"></MsgSvg>
-                  </span>
-                </el-dropdown-item>
-                <el-dropdown-item command="/message/like">
-                  <span>{{ $t('m.LikeMsg') }}</span>
-                  <span class="drop-msg-count" v-if="unreadMessage.like > 0">
-                    <MsgSvg :total="unreadMessage.like"></MsgSvg>
-                  </span>
-                </el-dropdown-item>
-                <el-dropdown-item command="/message/sys">
-                  <span>{{ $t('m.SysMsg') }}</span>
-                  <span class="drop-msg-count" v-if="unreadMessage.sys > 0">
-                    <MsgSvg :total="unreadMessage.sys"></MsgSvg>
-                  </span>
-                </el-dropdown-item>
-                <el-dropdown-item command="/message/mine">
-                  <span>{{ $t('m.MineMsg') }}</span>
-                  <span class="drop-msg-count" v-if="unreadMessage.mine > 0">
-                    <MsgSvg :total="unreadMessage.mine"></MsgSvg>
-                  </span>
-                </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
           </template>
         </el-menu>
       </div>
@@ -272,83 +216,6 @@
           v-show="!isAuthenticated && websiteConfig.register"
           >{{ $t('m.NavBar_Register') }}</mu-button
         >
-
-        <mu-menu slot="right" v-show="isAuthenticated" :open.sync="openmsgmenu">
-          <mu-button flat>
-            <mu-icon value=":el-icon-message-solid" size="24"></mu-icon>
-            <svg
-              v-if="
-                unreadMessage.comment > 0 ||
-                  unreadMessage.reply > 0 ||
-                  unreadMessage.like > 0 ||
-                  unreadMessage.sys > 0 ||
-                  unreadMessage.mine > 0
-              "
-              width="10"
-              height="10"
-              style="margin-left: -11px;margin-top: -13px;"
-            >
-              <circle cx="5" cy="5" r="5" style="fill: red;"></circle>
-            </svg>
-          </mu-button>
-          <mu-list slot="content" @change="handleCommand">
-            <mu-list-item button value="/message/discuss">
-              <mu-list-item-content>
-                <mu-list-item-title>
-                  {{ $t('m.DiscussMsg') }}
-                  <span class="drop-msg-count" v-if="unreadMessage.comment > 0">
-                    <MsgSvg :total="unreadMessage.comment"></MsgSvg>
-                  </span>
-                </mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-divider></mu-divider>
-            <mu-list-item button value="/message/reply">
-              <mu-list-item-content>
-                <mu-list-item-title>
-                  {{ $t('m.ReplyMsg') }}
-                  <span class="drop-msg-count" v-if="unreadMessage.reply > 0">
-                    <MsgSvg :total="unreadMessage.reply"></MsgSvg>
-                  </span>
-                </mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-divider></mu-divider>
-            <mu-list-item button value="/message/like">
-              <mu-list-item-content>
-                <mu-list-item-title>
-                  {{ $t('m.LikeMsg') }}
-                  <span class="drop-msg-count" v-if="unreadMessage.like > 0">
-                    <MsgSvg :total="unreadMessage.like"></MsgSvg>
-                  </span>
-                </mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-divider></mu-divider>
-            <mu-list-item button value="/message/sys">
-              <mu-list-item-content>
-                <mu-list-item-title>
-                  {{ $t('m.SysMsg') }}
-                  <span class="drop-msg-count" v-if="unreadMessage.sys > 0">
-                    <MsgSvg :total="unreadMessage.sys"></MsgSvg>
-                  </span>
-                </mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-            <mu-divider></mu-divider>
-
-            <mu-list-item button value="/message/mine">
-              <mu-list-item-content>
-                <mu-list-item-title>
-                  {{ $t('m.MineMsg') }}
-                  <span class="drop-msg-count" v-if="unreadMessage.mine > 0">
-                    <MsgSvg :total="unreadMessage.mine"></MsgSvg>
-                  </span>
-                </mu-list-item-title>
-              </mu-list-item-content>
-            </mu-list-item>
-          </mu-list>
-        </mu-menu>
 
         <mu-menu
           slot="right"
@@ -618,7 +485,6 @@
 import Login from '@/components/oj/common/Login';
 import Register from '@/components/oj/common/Register';
 import ResetPwd from '@/components/oj/common/ResetPassword';
-import MsgSvg from '@/components/oj/msg/msgSvg';
 import { mapGetters, mapActions } from 'vuex';
 import Avatar from 'vue-avatar';
 import api from '@/common/api';
@@ -628,7 +494,6 @@ export default {
     Register,
     ResetPwd,
     Avatar,
-    MsgSvg,
   },
   created(){
     this.page_width();
@@ -640,15 +505,8 @@ export default {
   mounted() {
     this.switchMode();
     this.setHiddenHeaderHeight();
-    if (this.isAuthenticated) {
-      this.getUnreadMsgCount();
-      this.msgTimer = setInterval(() => {
-        this.getUnreadMsgCount();
-      }, 120 * 1000);
-    }
   },
   beforeDestroy() {
-    clearInterval(this.msgTimer);
   },
   data() {
     return {
@@ -657,7 +515,6 @@ export default {
       mobileNar: false,
       opendrawer: false,
       openusermenu: false,
-      openmsgmenu: false,
       openSideMenu: '',
       avatarStyle:
         'display: inline-flex;width: 30px;height: 30px;border-radius: 50%;align-items: center;justify-content: center;text-align: center;user-select: none;',
@@ -690,33 +547,11 @@ export default {
     handleCommand(route) {
       // 移动端导航栏路由跳转事件
       this.openusermenu = false;
-      this.openmsgmenu = false;
       if (route && route.split('/')[1] != 'admin') {
         this.$router.push(route);
       } else {
         window.open('/admin/');
       }
-    },
-    getUnreadMsgCount() {
-      api.getUnreadMsgCount().then((res) => {
-        let data = res.data.data;
-        this.$store.dispatch('updateUnreadMessageCount', data);
-        let sumMsg =
-          data.comment + data.reply + data.like + data.mine + data.sys;
-        if (sumMsg > 0) {
-          this.$notify.info({
-            title: '未读消息',
-            message:
-              '亲爱的【' +
-              this.userInfo.username +
-              '】，您有最新的' +
-              sumMsg +
-              '条未读消息，请注意查看！',
-            position: 'bottom-right',
-            duration: 5000,
-            });
-        }
-      });
     },
     setHiddenHeaderHeight(){
       if(!this.mobileNar){
@@ -760,7 +595,6 @@ export default {
       'isAdminRole',
       'token',
       'websiteConfig',
-      'unreadMessage',
     ]),
     avatar() {
       return this.$store.getters.userInfo.avatar;
@@ -797,19 +631,6 @@ export default {
     },
   },
   watch: {
-    isAuthenticated() {
-      if (this.isAuthenticated) {
-        if (this.msgTimer) {
-          clearInterval(this.msgTimer);
-        }
-        this.getUnreadMsgCount();
-        this.msgTimer = setInterval(() => {
-          this.getUnreadMsgCount();
-        }, 120 * 1000);
-      } else {
-        clearInterval(this.msgTimer);
-      }
-    },
     $route(){
       this.switchMode();
     }

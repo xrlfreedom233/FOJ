@@ -22,7 +22,6 @@ import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.dao.user.UserRecordEntityService;
 import top.hcode.hoj.dao.user.UserRoleEntityService;
 import top.hcode.hoj.manager.email.EmailManager;
-import top.hcode.hoj.manager.msg.NoticeManager;
 import top.hcode.hoj.pojo.bo.EmailRuleBO;
 import top.hcode.hoj.pojo.dto.ApplyResetPasswordDTO;
 import top.hcode.hoj.pojo.dto.LoginDTO;
@@ -72,9 +71,6 @@ public class PassportManager {
 
     @Resource
     private EmailManager emailManager;
-
-    @Resource
-    private NoticeManager noticeManager;
 
     public UserInfoVO login(LoginDTO loginDto, HttpServletResponse response, HttpServletRequest request) throws StatusFailException {
         // 去掉账号密码首尾的空格
@@ -244,7 +240,6 @@ public class PassportManager {
 
         if (addUser && addUserRole && addUserRecord) {
             redisUtils.del(registerDto.getEmail());
-            noticeManager.syncNoticeToNewRegisterUser(uuid);
         } else {
             throw new StatusFailException("注册失败，请稍后重新尝试！");
         }

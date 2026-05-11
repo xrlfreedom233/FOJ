@@ -18,7 +18,6 @@ import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.dao.user.UserRecordEntityService;
 import top.hcode.hoj.dao.user.UserRoleEntityService;
-import top.hcode.hoj.manager.msg.AdminNoticeManager;
 import top.hcode.hoj.pojo.dto.AdminEditUserDTO;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
 import top.hcode.hoj.pojo.entity.user.UserRecord;
@@ -39,9 +38,6 @@ public class AdminUserManager {
 
     @Autowired
     private UserInfoEntityService userInfoEntityService;
-
-    @Autowired
-    private AdminNoticeManager adminNoticeManager;
 
     @Autowired
     private UserRecordEntityService userRecordEntityService;
@@ -136,9 +132,6 @@ public class AdminUserManager {
         if (changeUserRole) {
             // 获取当前登录的用户
             AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-            String title = "权限变更通知(Authority Change Notice)";
-            String content = userRoleEntityService.getAuthChangeContent(oldType, type);
-            adminNoticeManager.addSingleNoticeToUser(userRolesVo.getUid(), uid, title, content, "Sys");
         }
 
     }
@@ -169,10 +162,7 @@ public class AdminUserManager {
                     failedUserNameSet.add(user.get(0));
                 }
             }
-            // 异步同步系统通知
-            if (successUidList.size() > 0) {
-                adminNoticeManager.syncNoticeToNewRegisterBatchUser(successUidList);
-            }
+            // 异步同步系统通知 - removed with notice module
             if (failedUserNameSet.size() > 0) {
                 int failedCount = failedUserNameSet.size();
                 int successCount = users.size() - failedCount;
@@ -272,9 +262,6 @@ public class AdminUserManager {
         if (result1 && result2 && result3) {
             String key = IdUtil.simpleUUID();
             redisUtils.hmset(key, userInfo, 1800); // 存储半小时
-            // 异步同步系统通知
-            List<String> uidList = userInfoList.stream().map(UserInfo::getUuid).collect(Collectors.toList());
-            adminNoticeManager.syncNoticeToNewRegisterBatchUser(uidList);
             return MapUtil.builder().put("key", key).map();
         } else {
             throw new StatusFailException("生成指定用户失败！注意查看组合生成的用户名是否已有存在的！");

@@ -25,9 +25,6 @@ import DiscussionList from "@/views/oj/discussion/discussionList.vue"
 import Discussion from "@/views/oj/discussion/discussion.vue"
 import Introduction from "@/views/oj/about/Introduction.vue"
 import Developer from "@/views/oj/about/Developer.vue"
-import Message from "@/views/oj/message/message.vue"
-import UserMsg from "@/views/oj/message/UserMsg.vue"
-import SysMsg from "@/views/oj/message/SysMsg.vue"
 import TrainingList from "@/views/oj/training/TrainingList.vue"
 import TrainingDetails from "@/views/oj/training/TrainingDetails.vue"
 import TrainingProblemList from "@/views/oj/training/TrainingProblemList.vue"
@@ -270,44 +267,6 @@ const ojRoutes = [
     path: '/developer',
     meta: {title: 'Developer'},
     component:Developer,
-  },
-  {
-    name:'Message',
-    path:'/message/',
-    component:Message,
-    meta: { requireAuth: true, title: 'Message' },
-    children: [
-      {
-        name: 'DiscussMsg',
-        path: 'discuss',
-        component: UserMsg,
-        meta: { requireAuth: true,title: 'Discuss Message' }
-      },
-      {
-        name: 'ReplyMsg',
-        path: 'reply',
-        component: UserMsg,
-        meta: { requireAuth: true,title: 'Reply Message' }
-      },
-      {
-        name: 'LikeMsg',
-        path: 'like',
-        component: UserMsg,
-        meta: { requireAuth: true,title: 'Like Message' }
-      },
-      {
-        name: 'SysMsg',
-        path: 'sys',
-        component: SysMsg,
-        meta: { requireAuth: true,title: 'System Message' }
-      },
-      {
-        name: 'MineMsg',
-        path: 'mine',
-        component: SysMsg,
-        meta: { requireAuth: true,title: 'Mine Message' }
-      },
-    ]
   },
   {
     path: '*',

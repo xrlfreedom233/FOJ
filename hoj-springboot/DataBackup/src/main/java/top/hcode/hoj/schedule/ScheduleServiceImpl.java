@@ -19,17 +19,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import top.hcode.hoj.dao.common.FileEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
-import top.hcode.hoj.dao.msg.AdminSysNoticeEntityService;
-import top.hcode.hoj.dao.msg.UserSysNoticeEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
 import top.hcode.hoj.dao.user.SessionEntityService;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.dao.user.UserRecordEntityService;
-import top.hcode.hoj.manager.msg.AdminNoticeManager;
 import top.hcode.hoj.pojo.entity.common.File;
 import top.hcode.hoj.pojo.entity.judge.Judge;
-import top.hcode.hoj.pojo.entity.msg.AdminSysNotice;
-import top.hcode.hoj.pojo.entity.msg.UserSysNotice;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.user.Session;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
@@ -88,12 +83,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     private SessionEntityService sessionEntityService;
 
     @Resource
-    private AdminSysNoticeEntityService adminSysNoticeEntityService;
-
-    @Resource
-    private UserSysNoticeEntityService userSysNoticeEntityService;
-
-    @Resource
     private JudgeEntityService judgeEntityService;
 
     @Resource
@@ -101,9 +90,6 @@ public class ScheduleServiceImpl implements ScheduleService {
 
     @Resource
     private ProblemEntityService problemEntityService;
-
-    @Resource
-    private AdminNoticeManager adminNoticeManager;
 
     @Resource
     private ApplicationContext applicationContext;
@@ -334,66 +320,6 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
 
-    /**
-     * @MethodName syncNoticeToUser
-     * @Description 每一小时拉取系统通知表admin_sys_notice到表user_sys_notice(只推送给半年内有登录过的用户)
-     * @Return
-     * @Since 2021/10/3
-     */
-    @Override
-    @Scheduled(cron = "0 0 0/1 * * *")
-    public void syncNoticeToRecentHalfYearUser() {
-        QueryWrapper<AdminSysNotice> adminSysNoticeQueryWrapper = new QueryWrapper<>();
-        adminSysNoticeQueryWrapper.eq("state", false);
-        List<AdminSysNotice> adminSysNotices = adminSysNoticeEntityService.list(adminSysNoticeQueryWrapper);
-        if (adminSysNotices.size() == 0) {
-            return;
-        }
-
-        QueryWrapper<Session> sessionQueryWrapper = new QueryWrapper<>();
-        sessionQueryWrapper.select("DISTINCT uid");
-        List<Session> sessionList = sessionEntityService.list(sessionQueryWrapper);
-        List<String> userIds = sessionList.stream().map(Session::getUid).collect(Collectors.toList());
-
-        for (AdminSysNotice adminSysNotice : adminSysNotices) {
-            switch (adminSysNotice.getType()) {
-                case "All":
-                    List<UserSysNotice> userSysNoticeList = new ArrayList<>();
-                    for (String uid : userIds) {
-                        UserSysNotice userSysNotice = new UserSysNotice();
-                        userSysNotice.setRecipientId(uid)
-                                .setType("Sys")
-                                .setSysNoticeId(adminSysNotice.getId());
-                        userSysNoticeList.add(userSysNotice);
-                    }
-                    boolean isOk1 = userSysNoticeEntityService.saveOrUpdateBatch(userSysNoticeList);
-                    if (isOk1) {
-                        adminSysNotice.setState(true);
-                    }
-                    break;
-                case "Single":
-                    UserSysNotice userSysNotice = new UserSysNotice();
-                    userSysNotice.setRecipientId(adminSysNotice.getRecipientId())
-                            .setType("Mine")
-                            .setSysNoticeId(adminSysNotice.getId());
-                    boolean isOk2 = userSysNoticeEntityService.saveOrUpdate(userSysNotice);
-                    if (isOk2) {
-                        adminSysNotice.setState(true);
-                    }
-                    break;
-                case "Admin":
-                    break;
-            }
-
-        }
-
-        boolean isUpdateNoticeOk = adminSysNoticeEntityService.saveOrUpdateBatch(adminSysNotices);
-        if (!isUpdateNoticeOk) {
-            log.error("=============推送系统通知更新状态失败===============");
-        }
-
-    }
-
     @Override
     @Scheduled(cron = "0 0/20 * * * ?")
     public void check20MPendingSubmission() {
@@ -411,37 +337,6 @@ public class ScheduleServiceImpl implements ScheduleService {
                 rejudgeService.rejudge(judge.getSubmitId());
             }
         }
-    }
-
-    /**
-     * 每天6点检查一次有没有处于正在申请中的团队题目申请公开的进度单子，发消息给超级管理和题目管理员
-     */
-    @Override
-    @Scheduled(cron = "0 0 6 * * *")
-//    @Scheduled(cron = "0/5 * * * * *")
-    public void checkUnHandleGroupProblemApplyProgress() {
-        QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-        problemQueryWrapper.eq("apply_public_progress", 1).isNotNull("gid");
-        int count = problemEntityService.count(problemQueryWrapper);
-        if (count > 0) {
-            String title = "团队题目审批通知(Group Problem Approval Notice)";
-            String content = getDissolutionGroupContent(count);
-            List<String> superAdminUidList = userInfoEntityService.getSuperAdminUidList();
-            List<String> problemAdminUidList = userInfoEntityService.getProblemAdminUidList();
-            if (!CollectionUtils.isEmpty(problemAdminUidList)) {
-                superAdminUidList.addAll(problemAdminUidList);
-            }
-            adminNoticeManager.addSingleNoticeToBatchUser(null, superAdminUidList, title, content, "Sys");
-        }
-    }
-
-    private String getDissolutionGroupContent(int count) {
-        return "您好，尊敬的管理员，目前有**" + count +
-                "**条团队题目正在申请公开的单子，请您尽快前往后台 [团队题目审批](/admin/group-problem/apply) 进行审批！"
-                + "\n\n" +
-                "Hello, dear administrator, there are currently **" + count
-                + "** problem problems applying for public list. " +
-                "Please go to the backstage [Group Problem Examine](/admin/group-problem/apply) for approval as soon as possible!";
     }
 
 }

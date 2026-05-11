@@ -818,68 +818,6 @@ const ojApi = {
 
   // 站内消息
 
-  getUnreadMsgCount() {
-    return ajax("/api/msg/unread", 'get')
-  },
-
-  getMsgList(routerName, searchParams) {
-    let params = {};
-    Object.keys(searchParams).forEach((element) => {
-      if (searchParams[element] !== '' && searchParams[element] !== null && searchParams[element] !== undefined) {
-        params[element] = searchParams[element]
-      }
-    })
-    switch (routerName) {
-      case "DiscussMsg":
-        return ajax("/api/msg/comment", 'get', {
-          params
-        });
-      case "ReplyMsg":
-        return ajax("/api/msg/reply", 'get', {
-          params
-        });
-      case "LikeMsg":
-        return ajax("/api/msg/like", 'get', {
-          params
-        });
-      case "SysMsg":
-        return ajax("/api/msg/sys", 'get', {
-          params
-        });
-      case "MineMsg":
-        return ajax("/api/msg/mine", 'get', {
-          params
-        });
-    }
-  },
-
-  cleanMsg(routerName, id) {
-    let params = {};
-    if (id) {
-      params.id = id;
-    }
-    switch (routerName) {
-      case "DiscussMsg":
-        params.type = 'Discuss';
-        break;
-      case "ReplyMsg":
-        params.type = 'Reply';
-        break;
-      case "LikeMsg":
-        params.type = 'Like';
-        break;
-      case "SysMsg":
-        params.type = 'Sys';
-        break;
-      case "MineMsg":
-        params.type = 'Mine';
-        break;
-    }
-    return ajax("/api/msg/clean", 'delete', {
-      params
-    });
-  }
-
 }
 
 // 处理admin后台管理的请求
@@ -977,37 +915,6 @@ const adminApi = {
     })
   },
 
-
-  // 获取公告列表
-  admin_getNoticeList(currentPage, limit, type) {
-    return ajax('/api/admin/msg/notice', 'get', {
-      params: {
-        currentPage,
-        limit,
-        type
-      }
-    })
-  },
-  // 删除公告
-  admin_deleteNotice(id) {
-    return ajax('/api/admin/msg/notice', 'delete', {
-      params: {
-        id
-      }
-    })
-  },
-  // 修改公告
-  admin_updateNotice(data) {
-    return ajax('/api/admin/msg/notice', 'put', {
-      data
-    })
-  },
-  // 添加公告
-  admin_createNotice(data) {
-    return ajax('/api/admin/msg/notice', 'post', {
-      data
-    })
-  },
 
   // 系统配置
   admin_getSMTPConfig() {
