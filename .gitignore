@@ -1,0 +1,6 @@
+.git.bak/
+.claude/
+
+# Docker 运行时数据（mysql/redis/log/testcase/file 挂载点）
+hoj-deploy/standAlone/hoj/
+hoj-deploy/distributed/*/hoj/

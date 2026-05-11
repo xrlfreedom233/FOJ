@@ -1,0 +1,13 @@
+package top.hcode.hoj.service.oj;
+
+import top.hcode.hoj.common.result.CommonResult;
+import top.hcode.hoj.pojo.vo.ContestScrollBoardInfoVO;
+import top.hcode.hoj.pojo.vo.ContestScrollBoardSubmissionVO;
+
+import java.util.List;
+public interface ContestScrollBoardService {
+
+    public CommonResult<ContestScrollBoardInfoVO> getContestScrollBoardInfo(Long cid);
+
+    public CommonResult<List<ContestScrollBoardSubmissionVO>> getContestScrollBoardSubmission(Long cid, Boolean removeStar);
+}
