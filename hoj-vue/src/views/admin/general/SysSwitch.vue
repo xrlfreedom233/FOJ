@@ -42,63 +42,7 @@
                     </el-form-item>
                     <el-form-item :label="$t('m.Non_Contest_Submission_Frequency')" label-width="320px">
                         <el-input-number
-                         v-model="switchConfig.defaultSubmitInterval" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                </el-form>
-                <el-button
-                  type="primary"
-                  :loading="loading"
-                  style="margin-top:15px"
-                  @click.native="saveSwitchConfig"
-                  size="small"
-                  ><i class="fa fa-save"> {{ $t('m.Save') }}</i></el-button
-                >
-            </el-card>
-        </el-col>
-        <el-col :xs="24" :md="12">
-            <el-card class="card-top">
-                <div slot="header">
-                    <span class="switch-item-title">{{ $t('m.Discussion_Config') }}</span>
-                </div>
-                <el-form
-                    :label-position="labelPosition"
-                    label-width="320px"
-                    ref="form"
-                    :model="switchConfig"
-                >
-                     <el-form-item :label="$t('m.Open_Public_Discussion')" label-width="320px">
-                        <el-switch
-                            v-model="switchConfig.openPublicDiscussion"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                        >
-                        </el-switch>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Open_Contest_Comment')" label-width="320px">
-                        <el-switch
-                            v-model="switchConfig.openContestComment"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                        >
-                        </el-switch>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Number_of_AC_required_for_ordinary_users_to_post')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateDiscussionACInitValue" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Number_of_posts_that_users_can_create_per_day')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateDiscussionDailyLimit" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Number_of_AC_required_for_Comment_of_ordinary_users')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateCommentACInitValue" 
+                         v-model="switchConfig.defaultSubmitInterval"
                          :min="0">
                          </el-input-number>
                     </el-form-item>

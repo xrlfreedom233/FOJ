@@ -15,18 +15,6 @@ public class AccessValidator {
     public void validateAccess(HOJAccessEnum hojAccessEnum) throws AccessException {
         SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
         switch (hojAccessEnum) {
-            case PUBLIC_DISCUSSION:
-                if (!switchConfig.getOpenPublicDiscussion()) {
-                    throw new AccessException("网站当前未开启公开讨论区的功能，不可访问！");
-                }
-                break;
-            case GROUP_DISCUSSION:
-                throw new AccessException("网站当前未开启团队讨论区的功能，不可访问！");
-            case CONTEST_COMMENT:
-                if (!switchConfig.getOpenContestComment()) {
-                    throw new AccessException("网站当前未开启比赛评论区的功能，不可访问！");
-                }
-                break;
             case PUBLIC_JUDGE:
                 if (!switchConfig.getOpenPublicJudge()) {
                     throw new AccessException("网站当前未开启题目评测的功能，禁止提交或调试！");

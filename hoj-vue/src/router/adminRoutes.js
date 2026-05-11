@@ -13,7 +13,6 @@ const Tag= ()=>import('@/views/admin/problem/Tag')
 const ProblemImportAndExport= ()=>import('@/views/admin/problem/ImportAndExport')
 const Contest= ()=>import('@/views/admin/contest/Contest')
 const ContestList= ()=>import('@/views/admin/contest/ContestList')
-const DiscussionList= ()=>import('@/views/admin/discussion/Discussion')
 const adminRoutes= [
     {
       path: '/admin/login',
@@ -133,12 +132,6 @@ const adminRoutes= [
           name: 'admin-edit-contest-problem',
           component: Problem,
           meta: { title:'Edit Problem'}
-        },
-        {
-          path: 'discussion',
-          name: 'admin-discussion-list',
-          component: DiscussionList,
-          meta: { title:'Discussion Admin'}
         },
       ]
     },

@@ -75,16 +75,6 @@
             $t('m.Create_Contest')
           }}</el-menu-item>
         </el-submenu>
-
-        <el-submenu index="discussion">
-          <template slot="title"
-            ><i class="fa fa-comments fa-size" aria-hidden="true"></i
-            >{{ $t('m.Discussion') }}</template
-          >
-          <el-menu-item index="/admin/discussion">{{
-            $t('m.Discussion_Admin')
-          }}</el-menu-item>
-        </el-submenu>
       </el-menu>
       <div id="header">
         <el-row>
@@ -369,38 +359,6 @@
             >
               <mu-list-item-title>{{
                 $t('m.Create_Contest')
-              }}</mu-list-item-title>
-            </mu-list-item>
-          </mu-list-item>
-
-          <mu-list-item
-            button
-            :ripple="false"
-            nested
-            :open="openSideMenu === 'discussion'"
-            @toggle-nested="openSideMenu = arguments[0] ? 'discussion' : ''"
-          >
-            <mu-list-item-action>
-              <mu-icon value=":fa fa-comments fa-size" size="24"></mu-icon>
-            </mu-list-item-action>
-            <mu-list-item-title>{{ $t('m.Discussion') }}</mu-list-item-title>
-            <mu-list-item-action>
-              <mu-icon
-                class="toggle-icon"
-                size="24"
-                value=":el-icon-arrow-down"
-              ></mu-icon>
-            </mu-list-item-action>
-            <mu-list-item
-              button
-              :ripple="false"
-              slot="nested"
-              to="/admin/discussion"
-              @click="opendrawer = !opendrawer"
-              active-class="mobile-menu-active"
-            >
-              <mu-list-item-title>{{
-                $t('m.Discussion_Admin')
               }}</mu-list-item-title>
             </mu-list-item>
           </mu-list-item>

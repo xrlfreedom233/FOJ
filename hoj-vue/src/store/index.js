@@ -16,8 +16,6 @@ const rootState = {
     shortName:'OJ',
     recordUrl:'#',
     projectUrl:'#',
-    openPublicDiscussion: true,
-    openContestComment: true
   },
   registerTimeOut: 60,
   resetTimeOut: 90,

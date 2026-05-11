@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import top.hcode.hoj.config.NacosSwitchConfig;
-import top.hcode.hoj.config.SwitchConfig;
 import top.hcode.hoj.config.WebConfig;
 import top.hcode.hoj.dao.common.AnnouncementEntityService;
 import top.hcode.hoj.dao.common.FileEntityService;
@@ -141,7 +140,6 @@ public class HomeManager {
      * @Since 2020/12/29
      */
     public Map<Object, Object> getWebConfig() {
-        SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
         WebConfig webConfig = nacosSwitchConfig.getWebConfig();
         return MapUtil.builder().put("baseUrl", UnicodeUtil.toString(webConfig.getBaseUrl()))
                 .put("name", UnicodeUtil.toString(webConfig.getName()))
@@ -153,9 +151,6 @@ public class HomeManager {
                 .put("email", UnicodeUtil.toString(webConfig.getEmailUsername()))
                 .put("projectName", UnicodeUtil.toString(webConfig.getProjectName()))
                 .put("projectUrl", UnicodeUtil.toString(webConfig.getProjectUrl()))
-                .put("openPublicDiscussion", switchConfig.getOpenPublicDiscussion())
-                .put("openGroupDiscussion", false)
-                .put("openContestComment", switchConfig.getOpenContestComment())
                 .map();
     }
 

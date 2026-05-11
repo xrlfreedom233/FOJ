@@ -19,7 +19,6 @@ import top.hcode.hoj.mapper.*;
 import top.hcode.hoj.pojo.entity.problem.Language;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.dao.common.impl.AnnouncementEntityServiceImpl;
-import top.hcode.hoj.dao.discussion.impl.DiscussionEntityServiceImpl;
 import top.hcode.hoj.dao.problem.impl.LanguageEntityServiceImpl;
 import top.hcode.hoj.dao.user.impl.UserInfoEntityServiceImpl;
 import top.hcode.hoj.dao.user.impl.UserRoleEntityServiceImpl;
@@ -55,9 +54,6 @@ public class DataBackupApplicationTests {
 
     @Autowired
     private AnnouncementEntityServiceImpl announcementService;
-
-    @Autowired
-    private DiscussionEntityServiceImpl discussionService;
 
     @Test
     public void Test1() {

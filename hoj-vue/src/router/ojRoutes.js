@@ -17,12 +17,9 @@ import ContestProblemList from "@/views/oj/contest/children/ContestProblemList.v
 import ContestRank from "@/views/oj/contest/children/ContestRank.vue"
 import ACMInfoAdmin from "@/views/oj/contest/children/ACMInfoAdmin.vue"
 import Announcements from "@/components/oj/common/Announcements.vue"
-import ContestComment from "@/views/oj/contest/children/ContestComment.vue"
 import ContestPrint from "@/views/oj/contest/children/ContestPrint.vue"
 import ContestAdminPrint from "@/views/oj/contest/children/ContestAdminPrint.vue"
 import ContestRejudgeAdmin from "@/views/oj/contest/children/ContestRejudgeAdmin.vue"
-import DiscussionList from "@/views/oj/discussion/discussionList.vue"
-import Discussion from "@/views/oj/discussion/discussion.vue"
 import Introduction from "@/views/oj/about/Introduction.vue"
 import Developer from "@/views/oj/about/Developer.vue"
 import NotFound from "@/views/404.vue"
@@ -131,12 +128,6 @@ const ojRoutes = [
         meta: { title: 'Contest Rejudge',requireSuperAdmin:true }
       },
       {
-        name: 'ContestComment',
-        path:'comment',
-        component: ContestComment,
-        meta: { title: 'Contest Comment', access:'contestComment'}
-      },
-      {
         name: 'ContestPrint',
         path:'print',
         component: ContestPrint,
@@ -197,24 +188,6 @@ const ojRoutes = [
     path: '/logout',
     component: Logout,
     meta: { requireAuth: true, title: 'Logout' }
-  },
-  {
-    path: '/discussion',
-    name: 'AllDiscussion',
-    meta: {title: 'Discussion', access:'discussion'},
-    component:DiscussionList
-  },
-  {
-    path: '/discussion/:problemID',
-    name: 'ProblemDiscussion',
-    meta: {title: 'Discussion', access:'discussion'},
-    component:DiscussionList
-  },
-  {
-    path: '/discussion-detail/:discussionID',
-    name:'DiscussionDetails',
-    meta: {title: 'Discussion Details', access:'discussion'},
-    component: Discussion
   },
   {
     path: '/introduction',

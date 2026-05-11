@@ -14,16 +14,6 @@ import lombok.experimental.Accessors;
 public class SwitchConfigDTO {
 
     /**
-     * 是否开启公开评论区
-     */
-    private Boolean openPublicDiscussion;
-
-    /**
-     * 是否开启比赛讨论区
-     */
-    private Boolean openContestComment;
-
-    /**
      * 是否开启公开评测
      */
     private Boolean openPublicJudge;
@@ -42,20 +32,5 @@ public class SwitchConfigDTO {
      * 非比赛的提交间隔秒数
      */
     private Integer defaultSubmitInterval;
-
-    /**
-     * 每天可以创建的帖子数量
-     */
-    private Integer defaultCreateDiscussionDailyLimit;
-
-    /**
-     * 创建讨论帖子的前提
-     */
-    private Integer defaultCreateDiscussionACInitValue;
-
-    /**
-     * 评论和回复的前提
-     */
-    private Integer defaultCreateCommentACInitValue;
 
 }

@@ -113,17 +113,6 @@
                   </div>
                   
                   <div class="problem-menu">
-                    <span v-if="isShowProblemDiscussion">
-                      <el-link
-                        type="primary"
-                        :underline="false"
-                        @click="goProblemDiscussion"
-                      ><i
-                          class="fa fa-comments"
-                          aria-hidden="true"
-                        ></i>
-                        {{ $t('m.Problem_Discussion') }}</el-link>
-                    </span>
                     <span>
                       <el-link
                         type="primary"
@@ -1406,19 +1395,6 @@ export default {
         });
       }
     },
-    goProblemDiscussion() {
-      if (this.groupID) {
-        this.$router.push({
-          name: "GroupProblemDiscussion",
-          params: { problemID: this.problemID, groupID: this.groupID },
-        });
-      } else {
-        this.$router.push({
-          name: "ProblemDiscussion",
-          params: { problemID: this.problemID },
-        });
-      }
-    },
 
     onChangeLang(newLang) {
       if (this.code == this.problemData.codeTemplate[this.language]) {
@@ -1766,14 +1742,6 @@ export default {
           params: { submitID: this.submissionId },
         });
       }
-    },
-    isShowProblemDiscussion() {
-      if (!this.contestID && !this.groupID) {
-        if (this.websiteConfig.openPublicDiscussion) {
-          return true;
-        }
-      }
-      return false;
     },
     problemType() {
       if (this.contestID) {

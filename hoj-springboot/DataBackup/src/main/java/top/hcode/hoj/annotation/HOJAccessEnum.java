@@ -1,19 +1,5 @@
 package top.hcode.hoj.annotation;
 public enum HOJAccessEnum {
-    /**
-     * 公共讨论区
-     */
-    PUBLIC_DISCUSSION,
-
-    /**
-     * 团队讨论区
-     */
-    GROUP_DISCUSSION,
-
-    /**
-     * 比赛评论
-     */
-    CONTEST_COMMENT,
 
     /**
      * 公共评测

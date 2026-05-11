@@ -329,12 +329,6 @@ public class ConfigManager {
 
         SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
 
-        if (config.getOpenPublicDiscussion() != null) {
-            switchConfig.setOpenPublicDiscussion(config.getOpenPublicDiscussion());
-        }
-        if (config.getOpenContestComment() != null) {
-            switchConfig.setOpenContestComment(config.getOpenContestComment());
-        }
         if (config.getOpenPublicJudge() != null) {
             switchConfig.setOpenPublicJudge(config.getOpenPublicJudge());
         }
@@ -344,18 +338,6 @@ public class ConfigManager {
 
         if (config.getHideNonContestSubmissionCode() != null) {
             switchConfig.setHideNonContestSubmissionCode(config.getHideNonContestSubmissionCode());
-        }
-
-        if (config.getDefaultCreateDiscussionACInitValue() != null) {
-            switchConfig.setDefaultCreateDiscussionACInitValue(config.getDefaultCreateDiscussionACInitValue());
-        }
-
-        if (config.getDefaultCreateDiscussionDailyLimit() != null) {
-            switchConfig.setDefaultCreateDiscussionDailyLimit(config.getDefaultCreateDiscussionDailyLimit());
-        }
-
-        if (config.getDefaultCreateCommentACInitValue() != null) {
-            switchConfig.setDefaultCreateCommentACInitValue(config.getDefaultCreateCommentACInitValue());
         }
 
         if (config.getDefaultSubmitInterval() != null) {

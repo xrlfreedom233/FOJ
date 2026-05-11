@@ -236,21 +236,6 @@
           </transition>
         </el-tab-pane>
 
-        <el-tab-pane 
-          name="ContestComment" 
-          lazy 
-          :disabled="contestMenuDisabled"
-          v-if="websiteConfig.openContestComment">
-          <span slot="label"
-            ><i class="fa fa-commenting" aria-hidden="true"></i>&nbsp;{{
-              $t('m.Comment')
-            }}</span
-          >
-          <transition name="el-zoom-in-bottom">
-            <router-view v-if="route_name === 'ContestComment'"></router-view>
-          </transition>
-        </el-tab-pane>
-
         <el-tab-pane
           name="ContestPrint"
           lazy

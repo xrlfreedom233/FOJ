@@ -102,30 +102,9 @@ router.beforeEach((to, from, next) => {
       mMessage.error(i18n.t('m.Please_login_first'))
     }
   } else { // 不需要登录认证的页面
-    if(to.meta.access){ // 单级路由有access控制
-      const webConfig = store.getters.websiteConfig;
-      switch(to.meta.access){
-        case 'discussion':
-          if(!webConfig.openPublicDiscussion){
-            next({
-              path: '/home' 
-            })
-            mMessage.error(i18n.t('m.No_Access_There_is_no_open_discussion_area_on_the_website'))
-          }
-          break;
-        case 'contestComment':
-          if(!webConfig.openContestComment){
-            next({
-              path: '/home' 
-            })
-            mMessage.error(i18n.t('m.No_Access_There_is_no_open_contest_comment_area_on_the_website'))
-          }
-          break;
-      }
-    }
     next()
   }
-  
+
 })
 
 router.afterEach((to, from, next) => {
