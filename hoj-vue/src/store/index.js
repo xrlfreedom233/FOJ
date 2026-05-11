@@ -3,11 +3,8 @@ import Vuex from 'vuex'
 import user from '@/store/user'
 import contest from "@/store/contest"
 import training from "@/store/training"
-import group from "@/store/group"
 import api from '@/common/api'
-import i18n from '@/i18n'
 import storage from '@/common/storage'
-import moment from 'moment'
 Vue.use(Vuex)
 const rootState = {
   modalStatus: {
@@ -21,12 +18,10 @@ const rootState = {
     recordUrl:'#',
     projectUrl:'#',
     openPublicDiscussion: true,
-    openGroupDiscussion: true,
     openContestComment: true
   },
   registerTimeOut: 60,
   resetTimeOut: 90,
-  language:storage.get('Web_Language') || 'zh-CN',
 }
 
 const rootGetters = {
@@ -41,9 +36,6 @@ const rootGetters = {
   },
   'websiteConfig' (state) {
     return state.websiteConfig
-  },
-  'webLanguage'(state){
-    return state.language
   }
 }
 
@@ -85,14 +77,6 @@ const rootMutations = {
   },
   changeWebsiteConfig(state, payload) {
     state.websiteConfig = payload.websiteConfig
-  },
-  changeWebLanguage (state, {language}) {
-    if (language) {
-      state.language = language
-      i18n.locale = language
-      moment.locale(language);
-    }
-    storage.set('Web_Language', language)
   }
 }
 const rootActions = {
@@ -129,8 +113,7 @@ export default new Vuex.Store({
   modules: {
     user,
     contest,
-    training,
-    group
+    training
   },
   state: rootState,
   getters: rootGetters,

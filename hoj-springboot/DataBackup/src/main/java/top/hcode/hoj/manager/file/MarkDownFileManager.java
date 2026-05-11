@@ -14,7 +14,6 @@ import top.hcode.hoj.common.exception.StatusSystemErrorException;
 import top.hcode.hoj.dao.common.FileEntityService;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
-import top.hcode.hoj.validator.GroupValidator;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -26,9 +25,6 @@ public class MarkDownFileManager {
     @Resource
     private FileEntityService fileEntityService;
 
-    @Autowired
-    private GroupValidator groupValidator;
-
     public Map<Object, Object> uploadMDImg(MultipartFile image, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
@@ -38,8 +34,7 @@ public class MarkDownFileManager {
 
         if (!isRoot
                 && !isProblemAdmin
-                && !isAdmin
-                && !(gid != null && groupValidator.isGroupAdmin(userRolesVo.getUid(), gid))) {
+                && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -99,12 +94,9 @@ public class MarkDownFileManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
         boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
 
-        Long gid = file.getGid();
-
         if (!file.getUid().equals(userRolesVo.getUid())
                 && !isRoot
-                && !isProblemAdmin
-                && !(gid != null && groupValidator.isGroupAdmin(userRolesVo.getUid(), gid))) {
+                && !isProblemAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -123,8 +115,7 @@ public class MarkDownFileManager {
         boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
         boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
-        if (!isRoot && !isProblemAdmin && !isAdmin
-                && !(gid != null && groupValidator.isGroupAdmin(userRolesVo.getUid(), gid))) {
+        if (!isRoot && !isProblemAdmin && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 

@@ -11,11 +11,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import top.hcode.hoj.common.exception.StatusFailException;
-import top.hcode.hoj.crawler.problem.ProblemStrategy;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
 import top.hcode.hoj.dao.training.TrainingEntityService;
 import top.hcode.hoj.dao.training.TrainingProblemEntityService;
-import top.hcode.hoj.manager.admin.problem.RemoteProblemManager;
 import top.hcode.hoj.pojo.dto.TrainingProblemDTO;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.training.Training;
@@ -42,9 +40,6 @@ public class AdminTrainingProblemManager {
 
     @Resource
     private AdminTrainingRecordManager adminTrainingRecordManager;
-
-    @Resource
-    private RemoteProblemManager remoteProblemManager;
 
     public HashMap<String, Object> getProblemList(Integer limit, Integer currentPage, String keyword, Boolean queryExisted, Long tid) {
         if (currentPage == null || currentPage < 1) currentPage = 1;
@@ -192,61 +187,4 @@ public class AdminTrainingProblemManager {
         }
     }
 
-    public void importTrainingRemoteOJProblem(String name, String problemId, Long tid) throws StatusFailException {
-        QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("problem_id", name.toUpperCase() + "-" + problemId);
-        Problem problem = problemEntityService.getOne(queryWrapper, false);
-
-        // 如果该题目不存在，需要先导入
-        if (problem == null) {
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-            try {
-                ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
-                if (otherOJProblemInfo != null) {
-                    problem = remoteProblemManager.adminAddOtherOJProblem(otherOJProblemInfo, name);
-                    if (problem == null) {
-                        throw new StatusFailException("导入新题目失败！请重新尝试！");
-                    }
-                } else {
-                    throw new StatusFailException("导入新题目失败！原因：可能是与该OJ链接超时或题号格式错误！");
-                }
-            } catch (Exception e) {
-                throw new StatusFailException(e.getMessage());
-            }
-        }
-
-        QueryWrapper<TrainingProblem> trainingProblemQueryWrapper = new QueryWrapper<>();
-        Problem finalProblem = problem;
-        trainingProblemQueryWrapper.eq("tid", tid)
-                .and(wrapper -> wrapper.eq("pid", finalProblem.getId())
-                        .or()
-                        .eq("display_id", finalProblem.getProblemId()));
-        TrainingProblem trainingProblem = trainingProblemEntityService.getOne(trainingProblemQueryWrapper, false);
-        if (trainingProblem != null) {
-            throw new StatusFailException("添加失败，该题目已添加或者题目的训练展示ID已存在！");
-        }
-
-        TrainingProblem newTProblem = new TrainingProblem();
-        boolean isOk = trainingProblemEntityService.saveOrUpdate(newTProblem
-                .setTid(tid).setPid(problem.getId()).setDisplayId(problem.getProblemId()));
-        if (isOk) { // 添加成功
-
-            // 更新训练最近更新时间
-            UpdateWrapper<Training> trainingUpdateWrapper = new UpdateWrapper<>();
-            trainingUpdateWrapper.set("gmt_modified", new Date())
-                    .eq("id", tid);
-            trainingEntityService.update(trainingUpdateWrapper);
-
-            // 获取当前登录的用户
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-            log.info("[{}],[{}],tid:[{}],pid:[{}],problemId:[{}],operatorUid:[{}],operatorUsername:[{}]",
-                    "Admin_Training", "Add_Remote_Problem", tid, problem.getId(), problem.getProblemId(),
-                    userRolesVo.getUid(), userRolesVo.getUsername());
-
-            // 异步地同步用户对该题目的提交数据
-            adminTrainingRecordManager.syncAlreadyRegisterUserRecord(tid, problem.getId(), newTProblem.getId());
-        } else {
-            throw new StatusFailException("添加失败！");
-        }
-    }
 }

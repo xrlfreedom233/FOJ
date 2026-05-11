@@ -49,7 +49,7 @@ public class JudgeValidator {
             accessValidator.validateAccess(HOJAccessEnum.PUBLIC_JUDGE);
         }
 
-        if (!submitJudgeDto.getIsRemote() && !HOJ_LANGUAGE_LIST.contains(submitJudgeDto.getLanguage())) {
+        if (!HOJ_LANGUAGE_LIST.contains(submitJudgeDto.getLanguage())) {
             throw new StatusFailException("提交的代码的语言错误！请使用" + HOJ_LANGUAGE_LIST + "中之一的语言！");
         }
 
@@ -89,29 +89,6 @@ public class JudgeValidator {
 
         if (StringUtils.isEmpty(testJudgeDto.getLanguage())) {
             throw new StatusFailException("在线调试的编程语言不可为空！");
-        }
-
-        // Remote Judge的编程语言需要转换成HOJ的编程语言才能进行自测
-        if (testJudgeDto.getIsRemoteJudge() != null && testJudgeDto.getIsRemoteJudge()) {
-            String language = MODE_MAP_LANGUAGE.get(testJudgeDto.getMode());
-            if (language != null) {
-                testJudgeDto.setLanguage(language);
-            } else {
-                String dtoLanguage = testJudgeDto.getLanguage();
-                if (dtoLanguage.contains("PyPy 3") || dtoLanguage.contains("PyPy3")) {
-                    testJudgeDto.setLanguage("PyPy3");
-                } else if (dtoLanguage.contains("PyPy")) {
-                    testJudgeDto.setLanguage("PyPy2");
-                } else if (dtoLanguage.contains("Python 3")) {
-                    testJudgeDto.setLanguage("Python3");
-                } else if (dtoLanguage.contains("Python")) {
-                    testJudgeDto.setLanguage("Python2");
-                }else if (dtoLanguage.contains("Node")){
-                    testJudgeDto.setLanguage("JavaScript Node");
-                }else if (dtoLanguage.contains("JavaScript")){
-                    testJudgeDto.setLanguage("JavaScript V8");
-                }
-            }
         }
 
         if (!HOJ_LANGUAGE_LIST.contains(testJudgeDto.getLanguage())) {

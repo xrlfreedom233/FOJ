@@ -595,10 +595,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    isRemoteJudge: {
-      type: Boolean,
-      default: false,
-    },
     openFocusMode: {
       type: Boolean,
       default: false,
@@ -781,7 +777,6 @@ export default {
         userInput: this.userInput,
         expectedOutput: this.expectedOutput,
         mode: this.mode[this.language],
-        isRemoteJudge: this.isRemoteJudge,
       };
       api.submitTestJudge(data).then(
         (res) => {

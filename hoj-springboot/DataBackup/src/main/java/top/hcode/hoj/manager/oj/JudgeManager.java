@@ -25,7 +25,6 @@ import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
 import top.hcode.hoj.dao.user.UserAcproblemEntityService;
 import top.hcode.hoj.exception.AccessException;
-import top.hcode.hoj.judge.remote.RemoteJudgeDispatcher;
 import top.hcode.hoj.judge.self.JudgeDispatcher;
 import top.hcode.hoj.pojo.dto.*;
 import top.hcode.hoj.pojo.entity.contest.Contest;
@@ -41,7 +40,6 @@ import top.hcode.hoj.utils.IpUtils;
 import top.hcode.hoj.utils.RedisUtils;
 import top.hcode.hoj.validator.AccessValidator;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 import top.hcode.hoj.validator.JudgeValidator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -71,9 +69,6 @@ public class JudgeManager {
     private JudgeDispatcher judgeDispatcher;
 
     @Autowired
-    private RemoteJudgeDispatcher remoteJudgeDispatcher;
-
-    @Autowired
     private RedisUtils redisUtils;
 
     @Autowired
@@ -86,7 +81,6 @@ public class JudgeManager {
     private BeforeDispatchInitManager beforeDispatchInitManager;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     @Autowired
     private AccessValidator accessValidator;
@@ -144,17 +138,9 @@ public class JudgeManager {
         }
 
         // 将提交加入任务队列
-        if (judgeDto.getIsRemote()) { // 如果是远程oj判题
-            remoteJudgeDispatcher.sendTask(judge.getSubmitId(),
-                    judge.getPid(),
-                    judge.getDisplayPid(),
-                    isContestSubmission,
-                    false);
-        } else {
-            judgeDispatcher.sendTask(judge.getSubmitId(),
-                    judge.getPid(),
-                    isContestSubmission);
-        }
+        judgeDispatcher.sendTask(judge.getSubmitId(),
+                judge.getPid(),
+                isContestSubmission);
 
         return judge;
     }
@@ -189,7 +175,7 @@ public class JudgeManager {
                 .setExpectedOutput(testJudgeDto.getExpectedOutput())
                 .setTestCaseInput(testJudgeDto.getUserInput())
                 .setProblemJudgeMode(problem.getJudgeMode())
-                .setIsRemoveEndBlank(problem.getIsRemoveEndBlank() || problem.getIsRemote())
+                .setIsRemoveEndBlank(problem.getIsRemoveEndBlank())
                 .setIsFileIO(problem.getIsFileIO())
                 .setIoReadFileName(problem.getIoReadFileName())
                 .setIoWriteFileName(problem.getIoWriteFileName());
@@ -261,24 +247,7 @@ public class JudgeManager {
                 userAcproblemEntityService.remove(userAcproblemQueryWrapper);
             }
         } else {
-            if (problem.getIsRemote()) {
-                // 将对应比赛记录设置成默认值
-                UpdateWrapper<ContestRecord> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq("submit_id", submitId).setSql("status=null,score=null");
-                contestRecordEntityService.update(updateWrapper);
-            } else {
-                throw new StatusNotFoundException("错误！非vJudge题目在比赛过程无权限重新提交");
-            }
-        }
-
-        boolean isHasSubmitIdRemoteRejudge = false;
-        if (Objects.nonNull(judge.getVjudgeSubmitId()) &&
-                (judge.getStatus().intValue() == Constants.Judge.STATUS_SUBMITTED_FAILED.getStatus()
-                        || judge.getStatus().intValue() == Constants.Judge.STATUS_PENDING.getStatus()
-                        || judge.getStatus().intValue() == Constants.Judge.STATUS_JUDGING.getStatus()
-                        || judge.getStatus().intValue() == Constants.Judge.STATUS_COMPILING.getStatus()
-                        || judge.getStatus().intValue() == Constants.Judge.STATUS_SYSTEM_ERROR.getStatus())) {
-            isHasSubmitIdRemoteRejudge = true;
+            throw new StatusNotFoundException("错误！非vJudge题目在比赛过程无权限重新提交");
         }
 
         // 重新进入等待队列
@@ -293,17 +262,9 @@ public class JudgeManager {
         judgeEntityService.updateById(judge);
 
         // 将提交加入任务队列
-        if (problem.getIsRemote()) { // 如果是远程oj判题
-            remoteJudgeDispatcher.sendTask(judge.getSubmitId(),
-                    judge.getPid(),
-                    problem.getProblemId(),
-                    judge.getCid() != 0,
-                    isHasSubmitIdRemoteRejudge);
-        } else {
-            judgeDispatcher.sendTask(judge.getSubmitId(),
-                    judge.getPid(),
-                    judge.getCid() != 0);
-        }
+        judgeDispatcher.sendTask(judge.getSubmitId(),
+                judge.getPid(),
+                judge.getCid() != 0);
         judge.setVjudgeUsername(null);
         judge.setVjudgePassword(null);
         judge.setVjudgeSubmitId(null);
@@ -344,8 +305,7 @@ public class JudgeManager {
                 throw new StatusAccessDeniedException("请先登录！");
             }
             Contest contest = contestEntityService.getById(judge.getCid());
-            if (!isRoot && !userRolesVo.getUid().equals(contest.getUid())
-                    && !(judge.getGid() != null && groupValidator.isGroupRoot(userRolesVo.getUid(), judge.getGid()))) {
+            if (!isRoot && !userRolesVo.getUid().equals(contest.getUid())) {
                 // 如果是比赛,那么还需要判断是否为封榜,比赛管理员和超级管理员可以有权限查看(ACM题目除外)
                 if (contest.getType().intValue() == Constants.Contest.TYPE_OI.getCode()
                         && contestValidator.isSealRank(userRolesVo.getUid(), contest, true, false)) {
@@ -380,9 +340,7 @@ public class JudgeManager {
             boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");// 是否为题目管理员
             if (!judge.getShare()
                     && !isRoot
-                    && !isProblemAdmin
-                    && !(judge.getGid() != null
-                    && groupValidator.isGroupRoot(userRolesVo.getUid(), judge.getGid()))) {
+                    && !isProblemAdmin) {
                 if (userRolesVo != null) { // 当前是登陆状态
                     // 需要判断是否为当前登陆用户自己的提交代码
                     if (!judge.getUid().equals(userRolesVo.getUid())) {
@@ -551,8 +509,7 @@ public class JudgeManager {
         Contest contest = contestEntityService.getById(submitIdListDto.getCid());
 
         boolean isContestAdmin = isRoot
-                || userRolesVo.getUid().equals(contest.getUid())
-                || (contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()));
+                || userRolesVo.getUid().equals(contest.getUid());
         // 如果是封榜时间且不是比赛管理员和超级管理员
         boolean isSealRank = contestValidator.isSealRank(userRolesVo.getUid(), contest, true, isRoot);
 
@@ -625,8 +582,7 @@ public class JudgeManager {
             if (!isRoot) {
                 Contest contest = contestEntityService.getById(judge.getCid());
                 // 如果不是比赛管理员 需要受到规则限制
-                if (!contest.getUid().equals(userRolesVo.getUid()) ||
-                        (contest.getIsGroup() && !groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+                if (!contest.getUid().equals(userRolesVo.getUid())) {
                     // ACM比赛期间强制禁止查看,比赛管理员除外（赛后恢复正常）
                     if (contest.getType().intValue() == Constants.Contest.TYPE_ACM.getCode()) {
                         if (contest.getStatus().intValue() == Constants.Contest.STATUS_RUNNING.getCode()) {
@@ -646,9 +602,7 @@ public class JudgeManager {
 
         wrapper.eq("submit_id", submitId);
 
-        if (!problem.getIsRemote()) {
-            wrapper.last("order by seq asc");
-        }
+        wrapper.last("order by seq asc");
         // 当前所有测试点只支持 空间 时间 状态码 IO得分 和错误信息提示查看而已
         List<JudgeCase> judgeCaseList = judgeCaseEntityService.list(wrapper);
         JudgeCaseVO judgeCaseVo = new JudgeCaseVO();

@@ -52,13 +52,4 @@ public class AdminTrainingProblemServiceImpl implements AdminTrainingProblemServ
         }
     }
 
-    @Override
-    public CommonResult<Void> importTrainingRemoteOJProblem(String name, String problemId, Long tid) {
-        try {
-            adminTrainingProblemManager.importTrainingRemoteOJProblem(name, problemId, tid);
-            return CommonResult.successResponse();
-        } catch (StatusFailException e) {
-            return CommonResult.errorResponse(e.getMessage());
-        }
-    }
 }

@@ -16,7 +16,6 @@ import org.springframework.util.StringUtils;
 import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.common.exception.StatusForbiddenException;
 import top.hcode.hoj.common.result.CommonResult;
-import top.hcode.hoj.crawler.problem.ProblemStrategy;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.ProblemCaseEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
@@ -55,9 +54,6 @@ public class AdminProblemManager {
     @Resource
     private ProblemValidator problemValidator;
 
-    @Autowired
-    private RemoteProblemManager remoteProblemManager;
-
     public IPage<Problem> getProblemList(Integer limit, Integer currentPage, String keyword, Integer auth, String oj) {
         if (currentPage == null || currentPage < 1) currentPage = 1;
         if (limit == null || limit < 1) limit = 10;
@@ -70,11 +66,7 @@ public class AdminProblemManager {
 
         // 根据oj筛选过滤
         if (oj != null && !"All".equals(oj)) {
-            if (!Constants.RemoteOJ.isRemoteOJ(oj)) {
-                queryWrapper.eq("is_remote", false);
-            } else {
-                queryWrapper.eq("is_remote", true).likeRight("problem_id", oj);
-            }
+            queryWrapper.eq("is_remote", false);
         }
 
         if (auth != null && auth != 0) {
@@ -214,31 +206,6 @@ public class AdminProblemManager {
 
         compileDTO.setToken(judgeToken);
         return dispatcher.dispatch(Constants.TaskType.COMPILE_INTERACTIVE, compileDTO);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public void importRemoteOJProblem(String name, String problemId) throws StatusFailException {
-        QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("problem_id", name.toUpperCase() + "-" + problemId);
-        Problem problem = problemEntityService.getOne(queryWrapper);
-        if (problem != null) {
-            throw new StatusFailException("该题目已添加，请勿重复添加！");
-        }
-
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        try {
-            ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
-            if (otherOJProblemInfo != null) {
-                Problem importProblem = remoteProblemManager.adminAddOtherOJProblem(otherOJProblemInfo, name);
-                if (importProblem == null) {
-                    throw new StatusFailException("导入新题目失败！请重新尝试！");
-                }
-            } else {
-                throw new StatusFailException("导入新题目失败！原因：可能是与该OJ链接超时或题号格式错误！");
-            }
-        } catch (Exception e) {
-            throw new StatusFailException(e.getMessage());
-        }
     }
 
     public void changeProblemAuth(Problem problem) throws StatusFailException, StatusForbiddenException {

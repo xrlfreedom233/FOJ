@@ -22,7 +22,6 @@ public class TrainingValidator {
     private TrainingRegisterEntityService trainingRegisterEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     @Resource
     private CommonValidator commonValidator;
@@ -47,9 +46,7 @@ public class TrainingValidator {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
 
         if (training.getIsGroup()) {
-            if (!groupValidator.isGroupMember(userRolesVo.getUid(), training.getGid()) && !isRoot) {
-                throw new StatusForbiddenException("对不起，您并非该团队内的成员，无权操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         if (Constants.Training.AUTH_PRIVATE.getValue().equals(training.getAuth())) {
@@ -60,7 +57,7 @@ public class TrainingValidator {
 
             boolean isAuthor = training.getAuthor().equals(userRolesVo.getUsername()); // 是否为该私有训练的创建者
 
-            if (isRoot || isAuthor || (training.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), training.getGid()))) {
+            if (isRoot || isAuthor) {
                 return;
             }
 
@@ -95,7 +92,7 @@ public class TrainingValidator {
 
             if (isRoot
                     || isAuthor
-                    || (training.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), training.getGid()))) {
+                   ) {
                 return true;
             }
 

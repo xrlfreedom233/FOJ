@@ -16,15 +16,6 @@
             </el-button>
           </span>
           <span>
-            <el-button
-              type="success"
-              size="small"
-              @click="AddRemoteOJProblemDialogVisible = true"
-              icon="el-icon-plus"
-              >{{ $t('m.Add_Rmote_OJ_Problem') }}
-            </el-button>
-          </span>
-          <span>
             <vxe-input
               v-model="keyword"
               :placeholder="$t('m.Enter_keyword')"
@@ -195,38 +186,6 @@
       ></AddPublicProblem>
     </el-dialog>
 
-    <el-dialog
-      :title="$t('m.Add_Rmote_OJ_Problem')"
-      width="350px"
-      :visible.sync="AddRemoteOJProblemDialogVisible"
-      :close-on-click-modal="false"
-    >
-      <el-form>
-        <el-form-item :label="$t('m.Remote_OJ')">
-          <el-select v-model="otherOJName" size="small">
-            <el-option
-              :label="remoteOj.name"
-              :value="remoteOj.key"
-              v-for="(remoteOj, index) in REMOTE_OJ"
-              :key="index"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('m.Problem_ID')" required>
-          <el-input v-model="otherOJProblemId" size="small"></el-input>
-        </el-form-item>
-
-        <el-form-item style="text-align:center">
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="addRemoteOJProblem"
-            :loading="addRemoteOJproblemLoading"
-            >{{ $t('m.Add') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
@@ -234,7 +193,6 @@
 import api from '@/common/api';
 import AddPublicProblem from '@/components/admin/AddPublicProblem.vue';
 import myMessage from '@/common/message';
-import { REMOTE_OJ } from '@/common/constants';
 import { mapGetters } from 'vuex';
 import utils from '@/common/utils';
 export default {
@@ -259,12 +217,6 @@ export default {
       currentProblemID: '',
       currentRow: {},
       addProblemDialogVisible: false,
-      AddRemoteOJProblemDialogVisible: false,
-      addRemoteOJproblemLoading: false,
-      otherOJName: 'HDU',
-      otherOJProblemId: '',
-      REMOTE_OJ: {},
-      displayId: '',
     };
   },
   mounted() {
@@ -278,7 +230,6 @@ export default {
       this.routeName = this.$route.name;
       this.trainingId = this.$route.params.trainingId;
       this.getProblemList(this.currentPage);
-      this.REMOTE_OJ = Object.assign({}, REMOTE_OJ);
     },
 
     goEdit(problemId) {
@@ -372,30 +323,6 @@ export default {
     },
     filterByKeyword() {
       this.currentChange(1);
-    },
-    addRemoteOJProblem() {
-      if (!this.otherOJProblemId) {
-        myMessage.error(this.$i18n.t('m.Problem_ID_is_required'));
-        return;
-      }
-      this.addRemoteOJproblemLoading = true;
-      api
-        .admin_addTrainingRemoteOJProblem(
-          this.otherOJName,
-          this.otherOJProblemId,
-          this.trainingId
-        )
-        .then(
-          (res) => {
-            this.addRemoteOJproblemLoading = false;
-            this.AddRemoteOJProblemDialogVisible = false;
-            myMessage.success(this.$i18n.t('m.Add_Successfully'));
-            this.currentChange(1);
-          },
-          (err) => {
-            this.addRemoteOJproblemLoading = false;
-          }
-        );
     },
   },
   watch: {

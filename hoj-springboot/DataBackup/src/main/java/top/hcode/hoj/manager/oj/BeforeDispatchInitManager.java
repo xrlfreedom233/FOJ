@@ -30,7 +30,6 @@ import top.hcode.hoj.pojo.entity.training.TrainingRecord;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 import top.hcode.hoj.validator.TrainingValidator;
 
 import javax.annotation.Resource;
@@ -71,9 +70,6 @@ public class BeforeDispatchInitManager {
     @Resource
     private TrainingManager trainingManager;
 
-    @Autowired
-    private GroupValidator groupValidator;
-
     public void initCommonSubmission(String problemId, Long gid, Judge judge) throws StatusForbiddenException {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
@@ -93,13 +89,7 @@ public class BeforeDispatchInitManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
         if (problem.getIsGroup()) {
-            if (gid == null){
-                throw new StatusForbiddenException("提交失败，该题目为团队所属，请你前往指定团队内提交！");
-            }
-            if (!isRoot && !groupValidator.isGroupMember(userRolesVo.getUid(), problem.getGid())) {
-                throw new StatusForbiddenException("对不起，您并非该题目所属的团队内成员，无权进行提交！");
-            }
-            judge.setGid(problem.getGid());
+            throw new StatusForbiddenException("团队功能已关闭，该题目不可提交！");
         }
 
         judge.setCpid(0L)
@@ -128,8 +118,7 @@ public class BeforeDispatchInitManager {
 
         // 是否为超级管理员或者该比赛的创建者，则为比赛管理者
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())) {
             if (contest.getStatus().intValue() == Constants.Contest.STATUS_SCHEDULED.getCode()) {
                 throw new StatusForbiddenException("比赛未开始，不可提交！");
             }

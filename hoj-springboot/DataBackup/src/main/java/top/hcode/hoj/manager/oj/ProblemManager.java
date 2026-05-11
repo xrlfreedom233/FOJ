@@ -27,7 +27,6 @@ import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.validator.AccessValidator;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -61,9 +60,6 @@ public class ProblemManager {
     private ContestValidator contestValidator;
 
     @Autowired
-    private GroupValidator groupValidator;
-
-    @Autowired
     private AccessValidator accessValidator;
 
     @Autowired
@@ -88,7 +84,7 @@ public class ProblemManager {
         if (!StringUtils.isEmpty(keyword)) {
             keyword = keyword.trim();
         }
-        if (oj != null && !Constants.RemoteOJ.isRemoteOJ(oj)) {
+        if (oj != null) {
             oj = "Mine";
         }
         return problemEntityService.getProblemList(limit, currentPage, null, keyword,
@@ -257,12 +253,7 @@ public class ProblemManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
         if (problem.getIsGroup() && !isRoot) {
-            if (gid == null) {
-                throw new StatusForbiddenException("题目为团队所属，此处不支持访问，请前往团队查看！");
-            }
-            if (!groupValidator.isGroupMember(userRolesVo.getUid(), problem.getGid())) {
-                throw new StatusForbiddenException("对不起，您并非该题目所属的团队内成员，无权查看题目！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭，该题目不可访问！");
         }
 
         QueryWrapper<ProblemTag> problemTagQueryWrapper = new QueryWrapper<>();

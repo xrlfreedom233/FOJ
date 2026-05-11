@@ -66,15 +66,6 @@
                 @click="filterByOJ('Mine')"
                 >{{ $t('m.My_OJ') }}</el-tag
               >
-              <el-tag
-                size="medium"
-                class="filter-item"
-                v-for="(remoteOj, index) in REMOTE_OJ"
-                :effect="query.oj == remoteOj.key ? 'dark' : 'plain'"
-                :key="index"
-                @click="filterByOJ(remoteOj.key)"
-                >{{ remoteOj.name }}</el-tag
-              >
             </div>
           </section>
 
@@ -337,7 +328,6 @@ import {
   PROBLEM_LEVEL,
   JUDGE_STATUS,
   JUDGE_STATUS_RESERVE,
-  REMOTE_OJ,
 } from '@/common/constants';
 import utils from '@/common/utils';
 import myMessage from '@/common/message';
@@ -353,7 +343,6 @@ export default {
       PROBLEM_LEVEL: {},
       JUDGE_STATUS: {},
       JUDGE_STATUS_RESERVE: {},
-      REMOTE_OJ: {},
       tagsAndClassificationList:[],
       tagVisible: false,
       currentProblemTitle: '',
@@ -397,7 +386,6 @@ export default {
     this.PROBLEM_LEVEL = Object.assign({}, PROBLEM_LEVEL);
     this.JUDGE_STATUS_RESERVE = Object.assign({}, JUDGE_STATUS_RESERVE);
     this.JUDGE_STATUS = Object.assign({}, JUDGE_STATUS);
-    this.REMOTE_OJ = Object.assign({}, REMOTE_OJ);
     this.currentProblemTitle = this.$i18n.t('m.Touch_Get_Status');
     // 初始化
     this.problemRecord = [

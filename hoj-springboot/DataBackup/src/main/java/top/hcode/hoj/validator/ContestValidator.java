@@ -24,7 +24,6 @@ public class ContestValidator {
     private ContestRegisterEntityService contestRegisterEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     @Resource
     private CommonValidator commonValidator;
@@ -59,7 +58,7 @@ public class ContestValidator {
         // 如果是管理员同时选择强制刷新榜单，则封榜无效
         Long gid = contest.getGid();
         boolean isContestAdmin = isRoot || contest.getUid().equals(uid);
-        if (forceRefresh && (isContestAdmin || (contest.getIsGroup() && groupValidator.isGroupRoot(uid, gid)))) {
+        if (forceRefresh && isContestAdmin) {
             return false;
         } else if (contest.getSealRank() && contest.getSealRankTime() != null) { // 该比赛开启封榜模式
             Date now = new Date();
@@ -91,7 +90,7 @@ public class ContestValidator {
         boolean isContestAdmin = isRoot || contest.getUid().equals(userRolesVo.getUid());
         Long gid = contest.getGid();
         // 若是比赛管理者
-        if (isContestAdmin || (contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+        if (isContestAdmin) {
             return;
         }
 
@@ -101,8 +100,8 @@ public class ContestValidator {
             throw new StatusForbiddenException("比赛还未开始，您无权访问该比赛！");
         } else {
 
-            if (contest.getIsGroup() && !groupValidator.isGroupMember(userRolesVo.getUid(), gid)) {
-                throw new StatusForbiddenException("对不起，您并非团队内的成员无法参加该团队内的比赛！");
+            if (contest.getIsGroup()) {
+                throw new StatusForbiddenException("团队功能已关闭！");
             }
 
             // 如果是处于比赛正在进行阶段，需要判断该场比赛是否为私有赛，私有赛需要判断该用户是否已注册

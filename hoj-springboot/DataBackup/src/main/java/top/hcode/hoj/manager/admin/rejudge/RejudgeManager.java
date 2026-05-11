@@ -10,14 +10,11 @@ import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.dao.contest.ContestRecordEntityService;
 import top.hcode.hoj.dao.judge.JudgeCaseEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
-import top.hcode.hoj.dao.problem.ProblemEntityService;
 import top.hcode.hoj.dao.user.UserAcproblemEntityService;
-import top.hcode.hoj.judge.remote.RemoteJudgeDispatcher;
 import top.hcode.hoj.judge.self.JudgeDispatcher;
 import top.hcode.hoj.pojo.entity.contest.ContestRecord;
 import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.pojo.entity.judge.JudgeCase;
-import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.user.UserAcproblem;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
@@ -45,9 +42,6 @@ public class RejudgeManager {
     @Resource
     private JudgeDispatcher judgeDispatcher;
 
-    @Resource
-    private RemoteJudgeDispatcher remoteJudgeDispatcher;
-
     private static List<Integer> penaltyStatus = Arrays.asList(
             Constants.Judge.STATUS_PRESENTATION_ERROR.getStatus(),
             Constants.Judge.STATUS_WRONG_ANSWER.getStatus(),
@@ -61,18 +55,9 @@ public class RejudgeManager {
 
         boolean isContestSubmission = judge.getCid() != 0;
 
-        boolean hasSubmitIdRemoteRejudge = checkAndUpdateJudge(isContestSubmission, judge, submitId);
+        checkAndUpdateJudge(isContestSubmission, judge, submitId);
         // 调用判题服务
-        QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-        problemQueryWrapper.select("id", "is_remote", "problem_id")
-                .eq("id", judge.getPid());
-        Problem problem = problemEntityService.getOne(problemQueryWrapper);
-        if (problem.getIsRemote()) { // 如果是远程oj判题
-            remoteJudgeDispatcher.sendTask(judge.getSubmitId(), judge.getPid(), problem.getProblemId(),
-                    isContestSubmission, hasSubmitIdRemoteRejudge);
-        } else {
-            judgeDispatcher.sendTask(judge.getSubmitId(), judge.getPid(), isContestSubmission);
-        }
+        judgeDispatcher.sendTask(judge.getSubmitId(), judge.getPid(), isContestSubmission);
         return judge;
     }
 
@@ -88,31 +73,16 @@ public class RejudgeManager {
         HashMap<Long, Integer> idMapStatus = new HashMap<>();
         // 全部设置默认值
         checkAndUpdateJudgeBatch(rejudgeList, idMapStatus);
-        QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-        problemQueryWrapper.select("id", "is_remote", "problem_id")
-                .eq("id", pid);
-        Problem problem = problemEntityService.getOne(problemQueryWrapper);
         // 调用重判服务
-        if (problem.getIsRemote()) { // 如果是远程oj判题
-            for (Judge judge : rejudgeList) {
-                // 进入重判队列，等待调用判题服务
-                remoteJudgeDispatcher.sendTask(judge.getSubmitId(),
-                        pid,
-                        problem.getProblemId(),
-                        judge.getCid() != 0,
-                        isHasSubmitIdRemoteRejudge(judge.getVjudgeSubmitId(), idMapStatus.get(judge.getSubmitId())));
-            }
-        } else {
-            for (Judge judge : rejudgeList) {
-                // 进入重判队列，等待调用判题服务
-                judgeDispatcher.sendTask(judge.getSubmitId(), judge.getPid(), judge.getCid() != 0);
-            }
+        for (Judge judge : rejudgeList) {
+            // 进入重判队列，等待调用判题服务
+            judgeDispatcher.sendTask(judge.getSubmitId(), judge.getPid(), judge.getCid() != 0);
         }
 
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean checkAndUpdateJudge(Boolean isContestSubmission, Judge judge, Long submitId) throws StatusFailException {
+    public void checkAndUpdateJudge(Boolean isContestSubmission, Judge judge, Long submitId) throws StatusFailException {
         // 如果是非比赛题目
         boolean resetContestRecordResult = true;
         if (!isContestSubmission) {
@@ -135,8 +105,6 @@ public class RejudgeManager {
         judgeCaseQueryWrapper.eq("submit_id", submitId);
         judgeCaseEntityService.remove(judgeCaseQueryWrapper);
 
-        boolean hasSubmitIdRemoteRejudge = isHasSubmitIdRemoteRejudge(judge.getVjudgeSubmitId(), judge.getStatus());
-
         // 设置默认值
         judge.setStatus(Constants.Judge.STATUS_PENDING.getStatus()); // 开始进入判题队列
         judge.setVersion(judge.getVersion() + 1);
@@ -152,7 +120,6 @@ public class RejudgeManager {
         if (!resetContestRecordResult || !isUpdateJudgeOk) {
             throw new StatusFailException("重判失败！请重新尝试！");
         }
-        return hasSubmitIdRemoteRejudge;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -185,19 +152,6 @@ public class RejudgeManager {
         if (!resetContestRecordResult || !resetJudgeResult) {
             throw new StatusFailException("重判失败！请重新尝试！");
         }
-    }
-
-    private boolean isHasSubmitIdRemoteRejudge(Long vjudgeSubmitId, int status) {
-        boolean isHasSubmitIdRemoteRejudge = false;
-        if (vjudgeSubmitId != null &&
-                (status == Constants.Judge.STATUS_SUBMITTED_FAILED.getStatus()
-                        || status == Constants.Judge.STATUS_COMPILING.getStatus()
-                        || status == Constants.Judge.STATUS_PENDING.getStatus()
-                        || status == Constants.Judge.STATUS_JUDGING.getStatus()
-                        || status == Constants.Judge.STATUS_SYSTEM_ERROR.getStatus())) {
-            isHasSubmitIdRemoteRejudge = true;
-        }
-        return isHasSubmitIdRemoteRejudge;
     }
 
     @Transactional(rollbackFor = Exception.class)

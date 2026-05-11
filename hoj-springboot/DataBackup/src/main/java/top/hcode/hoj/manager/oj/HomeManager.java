@@ -154,7 +154,7 @@ public class HomeManager {
                 .put("projectName", UnicodeUtil.toString(webConfig.getProjectName()))
                 .put("projectUrl", UnicodeUtil.toString(webConfig.getProjectUrl()))
                 .put("openPublicDiscussion", switchConfig.getOpenPublicDiscussion())
-                .put("openGroupDiscussion", switchConfig.getOpenGroupDiscussion())
+                .put("openGroupDiscussion", false)
                 .put("openContestComment", switchConfig.getOpenContestComment())
                 .map();
     }

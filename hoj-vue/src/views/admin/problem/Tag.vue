@@ -30,12 +30,6 @@
               style="width: 150px;margin-top: 10px;"
             >
               <el-option :label="$t('m.My_OJ')" :value="'ME'"></el-option>
-              <el-option
-                :label="remoteOj.name"
-                :key="index"
-                :value="remoteOj.key"
-                v-for="(remoteOj, index) in REMOTE_OJ"
-              ></el-option>
             </el-select>
           </span>
         </div>
@@ -116,12 +110,6 @@
         <el-form-item :label="$t('m.Tag_Attribution')" required="">
           <el-select v-model="tag.oj" size="small" style="width: 150px;">
             <el-option :label="$t('m.My_OJ')" :value="'ME'"></el-option>
-            <el-option
-              :label="remoteOj.name"
-              :key="index"
-              :value="remoteOj.key"
-              v-for="(remoteOj, index) in REMOTE_OJ"
-            ></el-option>
           </el-select>
         </el-form-item>
 
@@ -161,12 +149,6 @@
         <el-form-item :label="$t('m.Tag_Classification_Attribution')" required="">
           <el-select v-model="tagClassification.oj" size="small" style="width: 150px;" :disabled="true">
             <el-option :label="$t('m.My_OJ')" :value="'ME'"></el-option>
-            <el-option
-              :label="remoteOj.name"
-              :key="index"
-              :value="remoteOj.key"
-              v-for="(remoteOj, index) in REMOTE_OJ"
-            ></el-option>
           </el-select>
         </el-form-item>
 
@@ -193,12 +175,10 @@
 <script>
 import myMessage from '@/common/message';
 import api from '@/common/api';
-import { REMOTE_OJ } from '@/common/constants';
 export default {
   data() {
     return {
       tagOj: 'ME',
-      REMOTE_OJ: {},
       getTagListLoading: false,
       tagsAndClassificationList: [],
       tagClassificationList :[],
@@ -227,7 +207,6 @@ export default {
     };
   },
   mounted() {
-    this.REMOTE_OJ = Object.assign({}, REMOTE_OJ);
     this.init();
   },
   methods: {

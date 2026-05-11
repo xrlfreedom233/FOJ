@@ -27,6 +27,4 @@ public class SubmitJudgeDTO {
 
     private Long gid;
 
-    private Boolean isRemote;
-
 }

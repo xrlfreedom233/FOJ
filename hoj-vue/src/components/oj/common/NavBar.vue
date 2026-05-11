@@ -15,12 +15,7 @@
               placement="bottom"
               effect="dark"
             >
-              <el-image
-                style="width: 139px; height: 50px"
-                :src="imgUrl"
-                fit="scale-down"
-                @click="changeWebLanguage"
-              ></el-image>
+              <span class="navbar-logo-text">FOJ</span>
             </el-tooltip>
           </div>
           <template v-if="mode == 'defalut'">
@@ -257,7 +252,7 @@
             placement="bottom"
             effect="dark"
           >
-          <span @click="changeWebLanguage">
+          <span>
           {{
             websiteConfig.shortName ? websiteConfig.shortName : 'OJ'
           }}
@@ -664,7 +659,6 @@ export default {
       openusermenu: false,
       openmsgmenu: false,
       openSideMenu: '',
-      imgUrl: require('@/assets/logo.png'),
       avatarStyle:
         'display: inline-flex;width: 30px;height: 30px;border-radius: 50%;align-items: center;justify-content: center;text-align: center;user-select: none;',
     };
@@ -710,36 +704,19 @@ export default {
         let sumMsg =
           data.comment + data.reply + data.like + data.mine + data.sys;
         if (sumMsg > 0) {
-          if (this.webLanguage == 'zh-CN') {
-            this.$notify.info({
-              title: '未读消息',
-              message:
-                '亲爱的【' +
-                this.userInfo.username +
-                '】，您有最新的' +
-                sumMsg +
-                '条未读消息，请注意查看！',
-              position: 'bottom-right',
-              duration: 5000,
+          this.$notify.info({
+            title: '未读消息',
+            message:
+              '亲爱的【' +
+              this.userInfo.username +
+              '】，您有最新的' +
+              sumMsg +
+              '条未读消息，请注意查看！',
+            position: 'bottom-right',
+            duration: 5000,
             });
-          } else {
-            this.$notify.info({
-              title: 'Unread Message',
-              message:
-                'Dear【' +
-                this.userInfo.username +
-                '】, you have the latest ' +
-                sumMsg +
-                ' unread messages. Please check them!',
-              position: 'bottom-right',
-              duration: 5000,
-            });
-          }
         }
       });
-    },
-    changeWebLanguage() {
-      this.$store.commit('changeWebLanguage', { language: this.webLanguage == 'zh-CN' ? 'en-US' : 'zh-CN' });
     },
     setHiddenHeaderHeight(){
       if(!this.mobileNar){
@@ -784,7 +761,6 @@ export default {
       'token',
       'websiteConfig',
       'unreadMessage',
-      'webLanguage',
     ]),
     avatar() {
       return this.$store.getters.userInfo.avatar;
@@ -879,6 +855,18 @@ export default {
   width: 139px;
   height: 42px;
   margin-top: 5px;
+}
+.navbar-logo-text {
+  display: inline-block;
+  width: 139px;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  font-size: 30px;
+  font-weight: bold;
+  color: #2196f3;
+  letter-spacing: 3px;
+  user-select: none;
 }
 .el-dropdown-link {
   cursor: pointer;

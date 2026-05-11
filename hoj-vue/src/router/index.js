@@ -113,14 +113,6 @@ router.beforeEach((to, from, next) => {
             mMessage.error(i18n.t('m.No_Access_There_is_no_open_discussion_area_on_the_website'))
           }
           break;
-        case 'groupDiscussion':
-          if(!webConfig.openGroupDiscussion){
-            next({
-              path: '/home' 
-            })
-            mMessage.error(i18n.t('m.No_Access_There_is_no_open_group_discussion_area_on_the_website'))
-          }
-          break;
         case 'contestComment':
           if(!webConfig.openContestComment){
             next({

@@ -35,7 +35,6 @@ import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.validator.AccessValidator;
 import top.hcode.hoj.validator.CommonValidator;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -64,9 +63,6 @@ public class CommentManager {
     private ContestEntityService contestEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
-
-    @Autowired
     private ContestValidator contestValidator;
 
     @Autowired
@@ -92,10 +88,7 @@ public class CommentManager {
             discussionQueryWrapper.select("id", "gid").eq("id", did);
             Discussion discussion = discussionEntityService.getOne(discussionQueryWrapper);
             if (discussion != null && discussion.getGid() != null) {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!isRoot && !groupValidator.isGroupMember(userRolesVo.getUid(), discussion.getGid())) {
-                    throw new StatusForbiddenException("对不起，您无权限操作！");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             } else {
                 accessValidator.validateAccess(HOJAccessEnum.PUBLIC_DISCUSSION);
             }
@@ -162,10 +155,7 @@ public class CommentManager {
             }
             Long gid = discussion.getGid();
             if (gid != null) {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!isRoot && !groupValidator.isGroupMember(userRolesVo.getUid(), gid)) {
-                    throw new StatusForbiddenException("对不起，您无权限操作！");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             } else {
                 accessValidator.validateAccess(HOJAccessEnum.PUBLIC_DISCUSSION);
             }
@@ -270,21 +260,14 @@ public class CommentManager {
                     throw new StatusForbiddenException("无权删除该评论");
                 }
             } else {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!groupValidator.isGroupAdmin(userRolesVo.getUid(), gid)
-                        && !comment.getFromUid().equals(userRolesVo.getUid())
-                        && !isRoot) {
-                    throw new StatusForbiddenException("无权删除该评论");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             }
         } else {
             accessValidator.validateAccess(HOJAccessEnum.CONTEST_COMMENT);
             Contest contest = contestEntityService.getById(cid);
-            Long gid = contest.getGid();
             if (!comment.getFromUid().equals(userRolesVo.getUid())
                     && !isRoot
-                    && !contest.getUid().equals(userRolesVo.getUid())
-                    && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+                    && !contest.getUid().equals(userRolesVo.getUid())) {
                 throw new StatusForbiddenException("无权删除该评论");
             }
         }
@@ -368,10 +351,7 @@ public class CommentManager {
             Discussion discussion = discussionEntityService.getOne(discussionQueryWrapper);
             Long gid = discussion.getGid();
             if (gid != null) {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!isRoot && !groupValidator.isGroupMember(userRolesVo.getUid(), gid)) {
-                    throw new StatusForbiddenException("对不起，您无权限操作！");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             } else {
                 accessValidator.validateAccess(HOJAccessEnum.PUBLIC_DISCUSSION);
             }
@@ -420,10 +400,7 @@ public class CommentManager {
 
             Long gid = discussion.getGid();
             if (gid != null) {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!groupValidator.isGroupMember(userRolesVo.getUid(), gid) && !isRoot) {
-                    throw new StatusForbiddenException("对不起，您无权限回复！");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             } else {
                 accessValidator.validateAccess(HOJAccessEnum.PUBLIC_DISCUSSION);
             }
@@ -441,11 +418,9 @@ public class CommentManager {
         } else {
             accessValidator.validateAccess(HOJAccessEnum.CONTEST_COMMENT);
             Contest contest = contestEntityService.getById(cid);
-            Long gid = contest.getGid();
             if (!comment.getFromUid().equals(userRolesVo.getUid())
                     && !isRoot
-                    && !contest.getUid().equals(userRolesVo.getUid())
-                    && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+                    && !contest.getUid().equals(userRolesVo.getUid())) {
                 throw new StatusForbiddenException("对不起，您无权限回复！");
             }
         }
@@ -531,20 +506,14 @@ public class CommentManager {
                     throw new StatusForbiddenException("无权删除该回复");
                 }
             } else {
-                accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-                if (!reply.getFromUid().equals(userRolesVo.getUid())
-                        && !isRoot
-                        && !groupValidator.isGroupAdmin(userRolesVo.getUid(), gid)) {
-                    throw new StatusForbiddenException("无权删除该回复");
-                }
+                throw new StatusForbiddenException("团队功能已关闭！");
             }
         } else {
             accessValidator.validateAccess(HOJAccessEnum.CONTEST_COMMENT);
             Contest contest = contestEntityService.getById(cid);
             if (!reply.getFromUid().equals(userRolesVo.getUid())
                     && !isRoot
-                    && !contest.getUid().equals(userRolesVo.getUid())
-                    && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+                    && !contest.getUid().equals(userRolesVo.getUid())) {
                 throw new StatusForbiddenException("无权删除该回复");
             }
         }

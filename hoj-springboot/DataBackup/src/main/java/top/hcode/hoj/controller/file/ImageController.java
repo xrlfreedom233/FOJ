@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import top.hcode.hoj.common.result.CommonResult;
-import top.hcode.hoj.pojo.entity.group.Group;
 import top.hcode.hoj.service.file.ImageService;
 
 import java.util.Map;
@@ -28,14 +27,6 @@ public class ImageController {
     @ResponseBody
     public CommonResult<Map<Object, Object>> uploadAvatar(@RequestParam("image") MultipartFile image) {
         return imageService.uploadAvatar(image);
-    }
-
-    @RequestMapping(value = "/upload-group-avatar", method = RequestMethod.POST)
-    @RequiresAuthentication
-    @ResponseBody
-    public CommonResult<Group> uploadGroupAvatar(@RequestParam(value = "image", required = true) MultipartFile image,
-                                                 @RequestParam(value = "gid", required = true) Long gid) {
-        return imageService.uploadGroupAvatar(image, gid);
     }
 
     @RequestMapping(value = "/upload-carouse-img", method = RequestMethod.POST)

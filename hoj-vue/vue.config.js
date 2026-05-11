@@ -94,10 +94,21 @@ module.exports={
     proxy: {
       '/api': {                                //   以'/api'开头的请求会被代理进行转发
         target: 'http://localhost:6688',       //   要发向的后台服务器地址  如果后台服务跑在后台开发人员的机器上，就写成 `http://ip:port` 如 `http:192.168.12.213:8081`   ip为后台服务器的ip
-        changeOrigin: true 
+        changeOrigin: true
       }
     },
     allowedHosts: 'all',
+    client: {
+      overlay: {
+        runtimeErrors: (error) => {
+          const ignored = [
+            'ResizeObserver loop completed with undelivered notifications.',
+            'ResizeObserver loop limit exceeded',
+          ];
+          return !ignored.includes(error?.message);
+        },
+      },
+    },
   },
   //去除生产环境的productionSourceMap
   productionSourceMap: false,
@@ -119,11 +130,9 @@ module.exports={
     const plugins = [];
     if (isProduction || devNeedCdn){
       config.externals = cdn.externals
-      config.mode = 'production';
-      config["performance"] = {//打包文件大小配置
-        "maxEntrypointSize": 10000000,
-        "maxAssetSize": 30000000
-      }
+      config["performance"] = isProduction
+        ? { maxEntrypointSize: 10000000, maxAssetSize: 30000000 }
+        : { hints: false }
        // 服务器也要相应开启gzip
        config.plugins.push(
         new CompressionWebpackPlugin({

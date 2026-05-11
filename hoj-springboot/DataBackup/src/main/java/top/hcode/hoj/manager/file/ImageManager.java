@@ -14,16 +14,13 @@ import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.common.exception.StatusForbiddenException;
 import top.hcode.hoj.common.exception.StatusSystemErrorException;
 import top.hcode.hoj.dao.common.FileEntityService;
-import top.hcode.hoj.dao.group.GroupEntityService;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.dao.user.UserRoleEntityService;
-import top.hcode.hoj.pojo.entity.group.Group;
 import top.hcode.hoj.pojo.entity.user.Role;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
-import top.hcode.hoj.validator.GroupValidator;
 
 import java.io.File;
 import java.util.Map;
@@ -36,12 +33,6 @@ public class ImageManager {
 
     @Autowired
     private UserInfoEntityService userInfoEntityService;
-
-    @Autowired
-    private GroupEntityService groupEntityService;
-
-    @Autowired
-    private GroupValidator groupValidator;
 
     @Autowired
     private UserRoleEntityService userRoleEntityService;
@@ -112,57 +103,6 @@ public class ImageManager {
                 .put("cfUsername", userRolesVo.getCfUsername())
                 .put("roleList", userRolesVo.getRoles().stream().map(Role::getRole))
                 .map();
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Group uploadGroupAvatar(MultipartFile image, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        if (!isRoot && !groupValidator.isGroupRoot(userRolesVo.getUid(), gid)) {
-            throw new StatusForbiddenException("对不起，您无权限操作！");
-        }
-
-        if (image == null) {
-            throw new StatusFailException("上传的头像图片文件不能为空！");
-        }
-        if (image.getSize() > 1024 * 1024 * 2) {
-            throw new StatusFailException("上传的头像图片文件大小不能大于2M！");
-        }
-
-        String suffix = image.getOriginalFilename().substring(image.getOriginalFilename().lastIndexOf(".") + 1);
-        if (!"jpg,jpeg,gif,png,webp".toUpperCase().contains(suffix.toUpperCase())) {
-            throw new StatusFailException("请选择jpg,jpeg,gif,png,webp格式的头像图片！");
-        }
-
-        FileUtil.mkdir(Constants.File.GROUP_AVATAR_FOLDER.getPath());
-
-        String filename = IdUtil.simpleUUID() + "." + suffix;
-        try {
-            image.transferTo(FileUtil.file(Constants.File.GROUP_AVATAR_FOLDER.getPath() + File.separator + filename));
-        } catch (Exception e) {
-            log.error("头像文件上传异常-------------->", e);
-            throw new StatusSystemErrorException("服务器异常：头像上传失败！");
-        }
-
-        fileEntityService.updateFileToDeleteByGidAndType(gid, "avatar");
-
-        UpdateWrapper<Group> GroupUpdateWrapper = new UpdateWrapper<>();
-        GroupUpdateWrapper.set("avatar", Constants.File.IMG_API.getPath() + filename)
-                .eq("id", gid);
-        groupEntityService.update(GroupUpdateWrapper);
-
-        top.hcode.hoj.pojo.entity.common.File imgFile = new top.hcode.hoj.pojo.entity.common.File();
-        imgFile.setName(filename).setFolderPath(Constants.File.GROUP_AVATAR_FOLDER.getPath())
-                .setFilePath(Constants.File.GROUP_AVATAR_FOLDER.getPath() + File.separator + filename)
-                .setSuffix(suffix)
-                .setType("avatar")
-                .setGid(gid);
-        fileEntityService.saveOrUpdate(imgFile);
-
-        Group group = groupEntityService.getById(gid);
-
-        return group;
     }
 
     @Transactional(rollbackFor = Exception.class)

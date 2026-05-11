@@ -14,12 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.common.exception.StatusForbiddenException;
-import top.hcode.hoj.crawler.problem.ProblemStrategy;
 import top.hcode.hoj.dao.contest.ContestEntityService;
 import top.hcode.hoj.dao.contest.ContestProblemEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
-import top.hcode.hoj.manager.admin.problem.RemoteProblemManager;
 import top.hcode.hoj.pojo.dto.ContestProblemDTO;
 import top.hcode.hoj.pojo.dto.ProblemDTO;
 import top.hcode.hoj.pojo.entity.contest.Contest;
@@ -27,7 +25,6 @@ import top.hcode.hoj.pojo.entity.contest.ContestProblem;
 import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.shiro.AccountProfile;
-import top.hcode.hoj.utils.Constants;
 
 import java.io.File;
 import java.util.*;
@@ -44,9 +41,6 @@ public class AdminContestProblemManager {
 
     @Autowired
     private JudgeEntityService judgeEntityService;
-
-    @Autowired
-    private RemoteProblemManager remoteProblemManager;
 
     @Autowired
     private ContestEntityService contestEntityService;
@@ -74,9 +68,7 @@ public class AdminContestProblemManager {
 
         if (problemType != null) { // 必备条件 隐藏的不可取来做比赛题目
             problemQueryWrapper.eq("is_group", false)
-                    // vj题目不限制赛制
-                    .and(wrapper -> wrapper.eq("type", problemType)
-                            .or().eq("is_remote", true))
+                    .eq("type", problemType)
                     .ne("auth", 2); // 同时需要与比赛相同类型的题目，权限需要是公开的（隐藏的不可加入！）
             Contest contest = contestEntityService.getById(cid);
             if (contest.getGid() != null) { //团队比赛不能查看公共题库的隐藏题目
@@ -93,11 +85,7 @@ public class AdminContestProblemManager {
 
         // 根据oj筛选过滤
         if (oj != null && !"All".equals(oj)) {
-            if (!Constants.RemoteOJ.isRemoteOJ(oj)) {
-                problemQueryWrapper.eq("is_remote", false);
-            } else {
-                problemQueryWrapper.eq("is_remote", true).likeRight("problem_id", oj);
-            }
+            problemQueryWrapper.eq("is_remote", false);
         }
 
         if (!StringUtils.isEmpty(keyword)) {
@@ -296,61 +284,6 @@ public class AdminContestProblemManager {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
         log.info("[{}],[{}],cid:[{}],pid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Contest", "Add_Public_Problem", cid, pid, userRolesVo.getUid(), userRolesVo.getUsername());
-    }
-
-    public void importContestRemoteOJProblem(String name, String problemId, Long cid, String displayId) throws StatusFailException {
-        QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("problem_id", name.toUpperCase() + "-" + problemId);
-        Problem problem = problemEntityService.getOne(queryWrapper, false);
-
-        // 如果该题目不存在，需要先导入
-        if (problem == null) {
-            AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-            try {
-                ProblemStrategy.RemoteProblemInfo otherOJProblemInfo = remoteProblemManager.getOtherOJProblemInfo(name.toUpperCase(), problemId, userRolesVo.getUsername());
-                if (otherOJProblemInfo != null) {
-                    problem = remoteProblemManager.adminAddOtherOJProblem(otherOJProblemInfo, name);
-                    if (problem == null) {
-                        throw new StatusFailException("导入新题目失败！请重新尝试！");
-                    }
-                } else {
-                    throw new StatusFailException("导入新题目失败！原因：可能是与该OJ链接超时或题号格式错误！");
-                }
-            } catch (Exception e) {
-                throw new StatusFailException(e.getMessage());
-            }
-        }
-
-        QueryWrapper<ContestProblem> contestProblemQueryWrapper = new QueryWrapper<>();
-        Problem finalProblem = problem;
-        contestProblemQueryWrapper.eq("cid", cid)
-                .and(wrapper -> wrapper.eq("pid", finalProblem.getId())
-                        .or()
-                        .eq("display_id", displayId));
-        ContestProblem contestProblem = contestProblemEntityService.getOne(contestProblemQueryWrapper, false);
-        if (contestProblem != null) {
-            throw new StatusFailException("添加失败，该题目已添加或者题目的比赛展示ID已存在！");
-        }
-
-
-        // 比赛中题目显示默认为原标题
-        String displayName = problem.getTitle();
-
-        // 修改成比赛题目
-        boolean updateProblem = problemEntityService.saveOrUpdate(problem.setAuth(3));
-
-        boolean isOk = contestProblemEntityService.saveOrUpdate(new ContestProblem()
-                .setCid(cid).setPid(problem.getId()).setDisplayTitle(displayName).setDisplayId(displayId));
-
-        if (!isOk || !updateProblem) {
-            throw new StatusFailException("添加失败");
-        }
-
-        // 获取当前登录的用户
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        log.info("[{}],[{}],cid:[{}],pid:[{}],problemId:[{}],operatorUid:[{}],operatorUsername:[{}]",
-                "Admin_Contest", "Add_Remote_Problem", cid, problem.getId(), problem.getProblemId(),
-                userRolesVo.getUid(), userRolesVo.getUsername());
     }
 
 }

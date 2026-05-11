@@ -24,7 +24,6 @@ import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.problem.ProblemCase;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
-import top.hcode.hoj.validator.GroupValidator;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -41,9 +40,6 @@ public class TestCaseManager {
     @Autowired
     private ProblemEntityService problemEntityService;
 
-    @Autowired
-    private GroupValidator groupValidator;
-
     public Map<Object, Object> uploadTestcaseZip(MultipartFile file, Long gid, String mode) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
@@ -51,8 +47,7 @@ public class TestCaseManager {
         boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
         boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
-        if (!isRoot && !isProblemAdmin && !isAdmin
-                && !(gid != null && groupValidator.isGroupAdmin(userRolesVo.getUid(), gid))) {
+        if (!isRoot && !isProblemAdmin && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -166,17 +161,8 @@ public class TestCaseManager {
 
         Problem problem = problemEntityService.getById(pid);
 
-        Long gid = problem.getGid();
-
-        if (gid != null) {
-            if (!isRoot && !problem.getAuthor().equals(userRolesVo.getUsername())
-                    && !groupValidator.isGroupMember(userRolesVo.getUid(), gid)) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
-        } else {
-            if (!isRoot && !isProblemAdmin && !problem.getAuthor().equals(userRolesVo.getUsername())) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+        if (!isRoot && !isProblemAdmin && !problem.getAuthor().equals(userRolesVo.getUsername())) {
+            throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
         String workDir = Constants.File.TESTCASE_BASE_FOLDER.getPath() + File.separator + "problem_" + pid;

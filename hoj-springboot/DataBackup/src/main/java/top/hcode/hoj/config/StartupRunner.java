@@ -10,23 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-import top.hcode.hoj.crawler.language.LanguageContext;
-import top.hcode.hoj.dao.judge.RemoteJudgeAccountEntityService;
 import top.hcode.hoj.dao.problem.LanguageEntityService;
-import top.hcode.hoj.dao.problem.ProblemEntityService;
-import top.hcode.hoj.dao.problem.ProblemLanguageEntityService;
 import top.hcode.hoj.manager.admin.system.ConfigManager;
-import top.hcode.hoj.pojo.entity.judge.RemoteJudgeAccount;
 import top.hcode.hoj.pojo.entity.problem.Language;
-import top.hcode.hoj.pojo.entity.problem.Problem;
-import top.hcode.hoj.pojo.entity.problem.ProblemLanguage;
 import top.hcode.hoj.pojo.vo.ConfigVO;
-import top.hcode.hoj.utils.Constants;
 
 import javax.annotation.Resource;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @Description:项目启动后，初始化运行该run方法
@@ -45,19 +35,7 @@ public class StartupRunner implements CommandLineRunner {
     private NacosSwitchConfig nacosSwitchConfig;
 
     @Autowired
-    private RemoteJudgeAccountEntityService remoteJudgeAccountEntityService;
-
-    @Autowired
     private LanguageEntityService languageEntityService;
-
-    @Autowired
-    private ProblemEntityService problemEntityService;
-
-    @Autowired
-    private ProblemLanguageEntityService problemLanguageEntityService;
-
-    @Value("${open-remote-judge}")
-    private String openRemoteJudge;
 
     // jwt配置
     @Value("${jwt-token-secret}")
@@ -117,45 +95,6 @@ public class StartupRunner implements CommandLineRunner {
     @Value("${email-port}")
     private Integer emailPort;
 
-    @Value("${hdu-username-list}")
-    private List<String> hduUsernameList;
-
-    @Value("${hdu-password-list}")
-    private List<String> hduPasswordList;
-
-    @Value("${cf-username-list}")
-    private List<String> cfUsernameList;
-
-    @Value("${cf-password-list}")
-    private List<String> cfPasswordList;
-
-    @Value("${poj-username-list}")
-    private List<String> pojUsernameList;
-
-    @Value("${poj-password-list}")
-    private List<String> pojPasswordList;
-
-    @Value("${atcoder-username-list}")
-    private List<String> atcoderUsernameList;
-
-    @Value("${atcoder-password-list}")
-    private List<String> atcoderPasswordList;
-
-    @Value("${spoj-username-list}")
-    private List<String> spojUsernameList;
-
-    @Value("${spoj-password-list}")
-    private List<String> spojPasswordList;
-
-    @Value("${libreoj-username-list}")
-    private List<String> libreojUsernameList;
-
-    @Value("${libreoj-password-list}")
-    private List<String> libreojPasswordList;
-
-    @Value("${forced-update-remote-judge-account}")
-    private Boolean forcedUpdateRemoteJudgeAccount;
-
     @Resource
     private CheckLanguageConfig checkLanguageConfig;
 
@@ -174,8 +113,6 @@ public class StartupRunner implements CommandLineRunner {
 //      checkAllLanguageUpdate();
 
         checkLanguageUpdate();
-
-        upsertHOJLanguageV3();
 
     }
 
@@ -245,168 +182,10 @@ public class StartupRunner implements CommandLineRunner {
     }
 
     private void initSwitchConfig() {
-
-        SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
-
-        boolean isChanged = false;
-        if ((CollectionUtils.isEmpty(switchConfig.getHduUsernameList())
-                && !CollectionUtils.isEmpty(hduUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setHduUsernameList(hduUsernameList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getHduPasswordList())
-                && !CollectionUtils.isEmpty(hduPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setHduPasswordList(hduPasswordList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getCfUsernameList())
-                && !CollectionUtils.isEmpty(cfUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setCfUsernameList(cfUsernameList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getCfPasswordList())
-                && !CollectionUtils.isEmpty(cfPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setCfPasswordList(cfPasswordList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getPojUsernameList())
-                && !CollectionUtils.isEmpty(pojUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setPojUsernameList(pojUsernameList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getPojPasswordList())
-                && !CollectionUtils.isEmpty(pojPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setPojPasswordList(pojPasswordList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getAtcoderUsernameList())
-                && !CollectionUtils.isEmpty(atcoderUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setAtcoderUsernameList(atcoderUsernameList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getAtcoderPasswordList())
-                && !CollectionUtils.isEmpty(atcoderPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setAtcoderPasswordList(atcoderPasswordList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getSpojUsernameList())
-                && !CollectionUtils.isEmpty(spojUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setSpojUsernameList(spojUsernameList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getSpojPasswordList())
-                && !CollectionUtils.isEmpty(spojPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setSpojPasswordList(spojPasswordList);
-            isChanged = true;
-        }
-
-        if ((CollectionUtils.isEmpty(switchConfig.getLibreojUsernameList())
-                && !CollectionUtils.isEmpty(libreojUsernameList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setLibreojUsernameList(libreojUsernameList);
-            isChanged = true;
-        }
-
-
-        if ((CollectionUtils.isEmpty(switchConfig.getLibreojPasswordList())
-                && !CollectionUtils.isEmpty(libreojPasswordList))
-                || forcedUpdateRemoteJudgeAccount) {
-            switchConfig.setLibreojPasswordList(libreojPasswordList);
-            isChanged = true;
-        }
-
-        if (isChanged) {
-            nacosSwitchConfig.publishWebConfig();
-        }
-
-        if (openRemoteJudge.equals("true")) {
-            // 初始化清空表
-            remoteJudgeAccountEntityService.remove(new QueryWrapper<>());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.HDU.getName(),
-                    switchConfig.getHduUsernameList(),
-                    switchConfig.getHduPasswordList());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.POJ.getName(),
-                    switchConfig.getPojUsernameList(),
-                    switchConfig.getPojPasswordList());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.CODEFORCES.getName(),
-                    switchConfig.getCfUsernameList(),
-                    switchConfig.getCfPasswordList());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.SPOJ.getName(),
-                    switchConfig.getSpojUsernameList(),
-                    switchConfig.getSpojPasswordList());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.ATCODER.getName(),
-                    switchConfig.getAtcoderUsernameList(),
-                    switchConfig.getAtcoderPasswordList());
-            addRemoteJudgeAccountToMySQL(Constants.RemoteOJ.LIBRE.getName(),
-                    switchConfig.getLibreojUsernameList(),
-                    switchConfig.getLibreojPasswordList());
-            checkRemoteOJLanguage(Constants.RemoteOJ.SPOJ, Constants.RemoteOJ.ATCODER);
-        }
+        // No remote judge configuration needed
     }
-
-
-    /**
-     * @param oj
-     * @param usernameList
-     * @param passwordList
-     * @MethodName addRemoteJudgeAccountToRedis
-     * @Description 将传入的对应oj账号写入到mysql
-     * @Return
-     * @Since 2021/5/18
-     */
-    private void addRemoteJudgeAccountToMySQL(String oj, List<String> usernameList, List<String> passwordList) {
-
-
-        if (CollectionUtils.isEmpty(usernameList) || CollectionUtils.isEmpty(passwordList) || usernameList.size() != passwordList.size()) {
-            log.error("[Init System Config] [{}]: There is no account or password configured for remote judge, " +
-                            "username list:{}, password list:{}", oj, Arrays.toString(usernameList.toArray()),
-                    Arrays.toString(passwordList.toArray()));
-        }
-
-        List<RemoteJudgeAccount> remoteAccountList = new LinkedList<>();
-        for (int i = 0; i < usernameList.size(); i++) {
-
-            remoteAccountList.add(new RemoteJudgeAccount()
-                    .setUsername(usernameList.get(i))
-                    .setPassword(passwordList.get(i))
-                    .setStatus(true)
-                    .setVersion(0L)
-                    .setOj(oj));
-
-        }
-
-        if (remoteAccountList.size() > 0) {
-            boolean addOk = remoteJudgeAccountEntityService.saveOrUpdateBatch(remoteAccountList);
-            if (!addOk) {
-                log.error("[Init System Config] Remote judge initialization failed. Failed to add account for: [{}]. Please check the configuration file and restart!", oj);
-            }
-        }
-    }
-
 
     private void upsertHOJLanguageV2() {
-        /**
-         * 2023.06.27 新增ruby、rust语言
-         */
         QueryWrapper<Language> rubyLanguageQueryWrapper = new QueryWrapper<>();
         rubyLanguageQueryWrapper.eq("oj", "ME")
                 .eq("name", "Ruby");
@@ -531,52 +310,6 @@ public class StartupRunner implements CommandLineRunner {
         }
     }
 
-    private void checkRemoteOJLanguage(Constants.RemoteOJ... remoteOJList) {
-        for (Constants.RemoteOJ remoteOJ : remoteOJList) {
-            QueryWrapper<Language> languageQueryWrapper = new QueryWrapper<>();
-            languageQueryWrapper.eq("oj", remoteOJ.getName());
-            if (Objects.equals(remoteOJ, Constants.RemoteOJ.ATCODER)) {
-                // 2023.09.24 由于atcoder官网废弃之前全部的语言，所以根据新语言来判断是否需要重新清空，添加最新的语言
-                languageQueryWrapper.eq("name", "なでしこ (cnako3 3.4.20)");
-            }
-            int count = languageEntityService.count(languageQueryWrapper);
-            if (count == 0) {
-                if (Objects.equals(remoteOJ, Constants.RemoteOJ.ATCODER)) {
-                    // 2023.09.24 由于atcoder官网废弃之前全部的语言，所以根据新语言来判断是否需要重新清空，添加最新的语言
-                    UpdateWrapper<Language> languageUpdateWrapper = new UpdateWrapper<>();
-                    languageUpdateWrapper.eq("oj", remoteOJ.getName());
-                    languageEntityService.remove(languageUpdateWrapper);
-                }
-                List<Language> languageList = new LanguageContext(remoteOJ).buildLanguageList();
-                boolean isOk = languageEntityService.saveBatch(languageList);
-                if (!isOk) {
-                    log.error("[Init System Config] [{}] Failed to initialize language list! Please check whether the language table corresponding to the database has the OJ language!", remoteOJ.getName());
-                }
-                if (Objects.equals(remoteOJ, Constants.RemoteOJ.ATCODER)) {
-                    // 2023.09.24 同时需要把所有atcoder的题目都重新关联上新language的id
-                    QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-                    problemQueryWrapper.select("id");
-                    problemQueryWrapper.eq("is_remote", true);
-                    problemQueryWrapper.like("problem_id", "AC-");
-                    List<Problem> problemList = problemEntityService.list(problemQueryWrapper);
-                    if (!CollectionUtils.isEmpty(problemList)) {
-                        List<Long> problemIdList = problemList.stream().map(Problem::getId).collect(Collectors.toList());
-                        List<ProblemLanguage> problemLanguageList = new LinkedList<>();
-                        QueryWrapper<Language> newLanguageQueryWrapper = new QueryWrapper<>();
-                        newLanguageQueryWrapper.eq("oj", remoteOJ.getName());
-                        List<Language> newLanguageList = languageEntityService.list(newLanguageQueryWrapper);
-                        for (Long id : problemIdList) {
-                            for (Language language : newLanguageList) {
-                                problemLanguageList.add(new ProblemLanguage().setPid(id).setLid(language.getId()));
-                            }
-                        }
-                        problemLanguageEntityService.saveOrUpdateBatch(problemLanguageList);
-                    }
-                }
-            }
-        }
-    }
-
     private Language buildHOJLanguage(String lang) {
         Language language = new Language();
         switch (lang) {
@@ -683,32 +416,6 @@ public class StartupRunner implements CommandLineRunner {
                 languageEntityService.update(updateWrapper);
             }
         }
-    }
-
-    private void upsertHOJLanguageV3() {
-        /**
-         * 2024.02.23 新增loj语言支持
-         */
-
-        int count = languageEntityService.count(new QueryWrapper<Language>()
-                .eq("oj", Constants.RemoteOJ.LIBRE.getName())
-        );
-        if (count == 0) {
-            List<String> languageList = Arrays.asList("text/x-c++src","C++ 11 (G++)","C++ 11 (G++)","text/x-c++src","C++ 17 (G++)","C++ 17 (G++)","text/x-c++src","C++ 11 (Clang++) ","C++ 11 (Clang++) ","text/x-c++src","C++ 17 (Clang++)","C++ 17 (Clang++)","text/x-c++src","C++ 11 O2(G++)","C++ 11 O2(G++)","text/x-c++src","C++ 17 O2(G++)","C++ 17 O2(G++)","text/x-c++src","C++ 11 O2(Clang++) ","C++ 11 O2(Clang++)","text/x-c++src","C++ 17 O2(Clang++)","C++ 17 O2(Clang++)","text/x-csrc","C 11 (GCC)","C 11 (GCC)","text/x-csrc","C 17 (GCC)","C 17 (GCC)","text/x-csrc","C 11 (Clang)","C 11 (Clang)","text/x-csrc","C 17 (Clang)","C 17 (Clang)","text/x-java","Java","Java","text/x-java","Kotlin 1.8 (JVM)","Kotlin 1.8 (JVM)","text/x-pascal","Pascal","Pascal","text/x-python","Python 3.10","Python 3.10","text/x-python","Python 3.9","Python 3.9","text/x-python","Python 2.7","Python 2.7","text/x-rustsrc","Rust 2021","Rust 2021","text/x-rustsrc","Rust 2018","Rust 2018","text/x-rustsrc","Rust 2015","Rust 2015","go","Go 1.x","Go 1.x","text/x-csharp","C# 9","C# 9","text/x-csharp","C# 7.3","C# 7.3");
-            List<Language> languages = new ArrayList<>();
-            for (int i = 0; i <= languageList.size() - 3; i += 3) {
-                languages.add(new Language()
-                        .setContentType(languageList.get(i))
-                        .setDescription(languageList.get(i + 1))
-                        .setName(languageList.get(i + 2))
-                        .setOj(Constants.RemoteOJ.LIBRE.getName())
-                        .setSeq(0)
-                        .setIsSpj(false)
-                );
-            }
-            languageEntityService.saveBatch(languages);
-        }
-
     }
 
 }

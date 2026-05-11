@@ -20,7 +20,6 @@ import Announcements from "@/components/oj/common/Announcements.vue"
 import ContestComment from "@/views/oj/contest/children/ContestComment.vue"
 import ContestPrint from "@/views/oj/contest/children/ContestPrint.vue"
 import ContestAdminPrint from "@/views/oj/contest/children/ContestAdminPrint.vue"
-import ScrollBoard from "@/views/oj/contest/children/ScrollBoard.vue"
 import ContestRejudgeAdmin from "@/views/oj/contest/children/ContestRejudgeAdmin.vue"
 import DiscussionList from "@/views/oj/discussion/discussionList.vue"
 import Discussion from "@/views/oj/discussion/discussion.vue"
@@ -33,16 +32,6 @@ import TrainingList from "@/views/oj/training/TrainingList.vue"
 import TrainingDetails from "@/views/oj/training/TrainingDetails.vue"
 import TrainingProblemList from "@/views/oj/training/TrainingProblemList.vue"
 import TrainingRank from "@/views/oj/training/TrainingRank.vue"
-import GroupList from '@/views/oj/group/GroupList.vue'
-import GroupDetails from '@/views/oj/group/GroupDetails.vue'
-import GroupAnnouncementList from '@/views/oj/group/children/GroupAnnouncementList.vue'
-import GroupProblemList from '@/views/oj/group/children/GroupProblemList.vue'
-import GroupTrainingList from '@/views/oj/group/children/GroupTrainingList.vue'
-import GroupContestList from '@/views/oj/group/children/GroupContestList.vue'
-import GroupDiscussionList from '@/views/oj/group/children/GroupDiscussionList.vue'
-import GroupMemberList from '@/views/oj/group/children/GroupMemberList.vue'
-import GroupSetting from '@/views/oj/group/children/GroupSetting.vue'
-import GroupRank from '@/views/oj/group/children/GroupRank.vue'
 import NotFound from "@/views/404.vue"
 
 const ojRoutes = [
@@ -81,18 +70,6 @@ const ojRoutes = [
     path: '/contest/:contestID/problem/:problemID/full-screen',
     component: Problem,
     meta: { title: 'Contest Problem Details', fullScreenSource: 'contest'}
-  },
-  {
-    name: 'GroupFullProblemDetails',
-    path: '/group/:groupID/problem/:problemID/full-screen',
-    component: Problem,
-    meta: { title: 'Group Problem Details', fullScreenSource: 'group' }
-  },
-  {
-    name: 'GroupTrainingFullProblemDetails',
-    path: '/group/:groupID/training/:trainingID/problem/:problemID/full-screen',
-    component: Problem,
-    meta: { title: 'Group Training Problem Details', fullScreenSource: 'training'}
   },
   {
     path: '/training',
@@ -215,12 +192,6 @@ const ojRoutes = [
         path:'admin-print',
         component: ContestAdminPrint,
         meta: { title: 'Contest Admin Print'}
-      },
-      {
-        name: 'ScrollBoard',
-        path:'scroll-board',
-        component: ScrollBoard,
-        meta: { title: 'Contest Scroll Board'}
       }
     ]
   },
@@ -289,124 +260,6 @@ const ojRoutes = [
     name:'DiscussionDetails',
     meta: {title: 'Discussion Details', access:'discussion'},
     component: Discussion
-  },
-  {
-    path: '/group',
-    name: 'GroupList',
-    component: GroupList,
-    meta: {title: 'Group'}
-  },
-  {
-    path: '/group/:groupID',
-    name: 'GroupDetails',
-    component: GroupDetails,
-    meta: {title: 'Group Details', requireAuth: true},
-    children: [
-      {
-        path: 'announcement',
-        name: 'GroupAnnouncementList',
-        component: GroupAnnouncementList,
-        meta: { title: 'Group Announcement' },
-      },
-      {
-        path: 'problem',
-        name: 'GroupProblemList',
-        component: GroupProblemList,
-        meta: { title: 'Group Problem' },
-      },
-      {
-        name: 'GroupProblemDetails',
-        path: 'problem/:problemID/',
-        component: Problem,
-        meta: { title: 'Group Problem Details' }
-      },
-      {
-        path: 'training',
-        name: 'GroupTrainingList',
-        component: GroupTrainingList,
-        meta: { title: 'Group Training' }
-      },
-      {
-        name: 'GroupTrainingDetails',
-        path: 'training/:trainingID/',
-        component:TrainingDetails,
-        meta: {title: 'Group Training Details'},
-        children: [
-          {
-            name: 'GroupTrainingProblemList',
-            path: 'problems',
-            component: TrainingProblemList,
-            meta: { title: 'Group Training Problem' }
-          },
-          {
-            name: 'GroupTrainingProblemDetails',
-            path: 'problem/:problemID/',
-            component: Problem,
-            meta: { title: 'Group Training Problem Details' }
-          },
-          {
-            name: 'GroupTrainingRank',
-            path: 'rank',
-            component: TrainingRank,
-            meta: { title: 'Group Training Rank' }
-          }
-        ]
-      },
-      {
-        path: 'contest',
-        name: 'GroupContestList',
-        component: GroupContestList,
-        meta: { title: 'Group Contest' }
-      },
-      {
-        path: 'status',
-        name: 'GroupSubmissionList',
-        component: SubmissionList,
-        meta: { title: 'Group Status' }
-      },
-      {
-        path: 'submission-detail/:submitID',
-        name: 'GroupSubmissionDetails',
-        component: SubmissionDetails,
-        meta: {title: 'Group Submission Details' }
-      },
-      {
-        path: 'discussion',
-        name: 'GroupDiscussionList',
-        component: GroupDiscussionList,
-        meta: { title: 'Group Discussion', access:'groupDiscussion' }
-      },
-      {
-        path: 'discussion/:problemID',
-        name: 'GroupProblemDiscussion',
-        meta: {title: 'Group Discussion', access:'groupDiscussion'},
-        component:GroupDiscussionList
-      },
-      {
-        path: 'discussion-detail/:discussionID',
-        name:'GroupDiscussionDetails',
-        meta: {title: 'Group Discussion Details', access:'groupDiscussion'},
-        component: Discussion
-      },
-      {
-        path: 'member',
-        name: 'GroupMemberList',
-        component: GroupMemberList,
-        meta: { title: 'Group Member' }
-      },
-      {
-        path: 'setting',
-        name: 'GroupSetting',
-        component: GroupSetting,
-        meta: { title: 'Group Setting' }
-      },
-      {
-        path: 'rank',
-        name: 'GroupRank',
-        component: GroupRank,
-        meta: { title: 'Group Rank' }
-      },
-    ]
   },
   {
     path: '/introduction',

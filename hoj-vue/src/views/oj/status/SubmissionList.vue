@@ -215,11 +215,6 @@
                       row.status == JUDGE_STATUS_RESERVE['Judging']
                   "
                     ></i>
-                    <i
-                      class="el-icon-refresh"
-                      v-if="row.status == JUDGE_STATUS_RESERVE['sf'] && row.uid == userInfo.uid"
-                      @click="reSubmit(row)"
-                    ></i>
                     {{ JUDGE_STATUS[row.status].name }}
                   </span>
                 </el-popover>
@@ -617,32 +612,6 @@ export default {
 
     submissionLengthFormat(length) {
       return utils.submissionLengthFormat(length);
-    },
-    reSubmit(row) {
-      api.reSubmitRemoteJudge(row.submitId).then((res) => {
-        let xTable = this.$refs.xTable;
-        // 重新提交开始，需要将该提交的部分参数初始化
-        row.status = res.data.data.status;
-        row.time = res.data.data.time;
-        row.memory = res.data.data.memory;
-        row.errorMessage = res.data.data.errorMessage;
-        row.judger = res.data.data.judger;
-        row.isManual = false;
-        // 重新加载该行数据到view
-        xTable.reloadRow(row, null, null);
-
-        this.submissions[row.index] = res.data.data;
-        myMessage.success(this.$i18n.t("m.Resubmitted_Successfully"));
-
-        // 加入待重判列表
-        this.needCheckSubmitIds[row.submitId] = row.index;
-
-        this.checkStatusNum = 0;
-        if (!this.autoCheckOpen) {
-          // 如果当前未开启自动检查提交状态的定时任务，则开启
-          this.checkSubmissionsStatus();
-        }
-      });
     },
     getSubmissions() {
       let params = this.buildQuery();

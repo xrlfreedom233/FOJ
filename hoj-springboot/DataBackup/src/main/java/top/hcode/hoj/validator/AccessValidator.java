@@ -21,10 +21,7 @@ public class AccessValidator {
                 }
                 break;
             case GROUP_DISCUSSION:
-                if (!switchConfig.getOpenGroupDiscussion()) {
-                    throw new AccessException("网站当前未开启团队讨论区的功能，不可访问！");
-                }
-                break;
+                throw new AccessException("网站当前未开启团队讨论区的功能，不可访问！");
             case CONTEST_COMMENT:
                 if (!switchConfig.getOpenContestComment()) {
                     throw new AccessException("网站当前未开启比赛评论区的功能，不可访问！");
@@ -36,10 +33,7 @@ public class AccessValidator {
                 }
                 break;
             case GROUP_JUDGE:
-                if (!switchConfig.getOpenGroupJudge()) {
-                    throw new AccessException("网站当前未开启团队内题目评测的功能，禁止提交或调试！");
-                }
-                break;
+                throw new AccessException("网站当前未开启团队内题目评测的功能，禁止提交或调试！");
             case CONTEST_JUDGE:
                 if (!switchConfig.getOpenContestJudge()) {
                     throw new AccessException("网站当前未开启比赛题目评测的功能，禁止提交或调试！");

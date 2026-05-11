@@ -12,7 +12,6 @@ import top.hcode.hoj.common.exception.StatusForbiddenException;
 import top.hcode.hoj.common.exception.StatusNotFoundException;
 import top.hcode.hoj.dao.common.AnnouncementEntityService;
 import top.hcode.hoj.dao.contest.*;
-import top.hcode.hoj.dao.group.GroupMemberEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.*;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
@@ -30,7 +29,6 @@ import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.RedisUtils;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,10 +90,8 @@ public class ContestManager {
     private ContestRankManager contestRankManager;
 
     @Autowired
-    private GroupMemberEntityService groupMemberEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     public IPage<ContestVO> getContestList(Integer limit, Integer currentPage, Integer status, Integer type, String keyword) {
         // 页数，每页题数若为空，设置默认值
@@ -118,9 +114,7 @@ public class ContestManager {
         Contest contest = contestEntityService.getById(cid);
 
         if (contest.getIsGroup()) {
-            if (!groupValidator.isGroupMember(userRolesVo.getUid(), contest.getGid()) && !isRoot) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         // 设置当前服务器系统时间
@@ -150,9 +144,7 @@ public class ContestManager {
         }
 
         if (contest.getIsGroup()) {
-            if (!groupValidator.isGroupMember(userRolesVo.getUid(), contest.getGid()) && !isRoot) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         if (!contest.getPwd().equals(password)) { // 密码不对
@@ -218,8 +210,8 @@ public class ContestManager {
         Contest contest = contestEntityService.getById(cid);
 
         List<String> groupRootUidList = null;
-        if (contest.getIsGroup() && contest.getGid() != null) {
-            groupRootUidList = groupMemberEntityService.getGroupRootUidList(contest.getGid());
+        if (contest.getIsGroup()) {
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         isContainsContestEndJudge = Objects.equals(contest.getAllowEndSubmit(), true) && isContainsContestEndJudge;
@@ -252,8 +244,7 @@ public class ContestManager {
 
         List<ContestProblemVO> contestProblemList;
         boolean isAdmin = isRoot
-                || contest.getAuthor().equals(userRolesVo.getUsername())
-                || (contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()));
+                || contest.getAuthor().equals(userRolesVo.getUsername());
 
 
         // 如果比赛开启封榜

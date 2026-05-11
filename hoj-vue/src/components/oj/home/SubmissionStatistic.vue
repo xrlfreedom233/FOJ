@@ -130,16 +130,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isSuperAdmin','webLanguage'])
-  },
-  watch:{
-    webLanguage(newVal, oldVal){
-        this.options.legend.data = [this.$i18n.t("m.AC"), this.$i18n.t("m.Total")];
-        if(this.options.series != null && this.options.series.length == 2){
-            this.options.series[0].name = this.$i18n.t("m.AC");
-            this.options.series[1].name = this.$i18n.t("m.Total");
-        }
-    }
+    ...mapGetters(['isSuperAdmin'])
   }
 };
 </script>

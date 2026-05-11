@@ -24,12 +24,6 @@ public class StartupRunner implements CommandLineRunner {
     @Value("${hoj-judge-server.max-task-num}")
     private Integer maxTaskNum;
 
-    @Value("${hoj-judge-server.remote-judge.max-task-num}")
-    private Integer maxRemoteTaskNum;
-
-    @Value("${hoj-judge-server.remote-judge.open}")
-    private Boolean openRemoteJudge;
-
     @Value("${hoj-judge-server.name}")
     private String name;
 
@@ -68,22 +62,8 @@ public class StartupRunner implements CommandLineRunner {
                 .setMaxTaskNumber(maxTaskNum)
                 .setIsRemote(false)
                 .setName(name));
-        boolean isOk2 = true;
-        if (openRemoteJudge) {
-            if (maxRemoteTaskNum == -1) {
-                maxRemoteTaskNum = cpuNum * 2 + 1;
-            }
-            isOk2 = judgeServerEntityService.save(new JudgeServer()
-                    .setCpuCore(cpuNum)
-                    .setIp(ip)
-                    .setPort(port)
-                    .setUrl(ip + ":" + port)
-                    .setMaxTaskNumber(maxRemoteTaskNum)
-                    .setIsRemote(true)
-                    .setName(name));
-        }
 
-        if (!isOk1 || !isOk2) {
+        if (!isOk1) {
             log.error("初始化判题机信息到数据库失败，请重新启动试试！");
         } else {
             HashMap<String, Object> judgeServerInfo = judgeServerEntityService.getJudgeServerInfo();

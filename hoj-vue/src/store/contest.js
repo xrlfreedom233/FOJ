@@ -22,7 +22,6 @@ const state = {
     chart: true,
   },
   disPlayIdMapColor:{}, // 展示id对应的气球颜色
-  groupContestAuth: 0,
 }
 
 const getters = {
@@ -34,7 +33,7 @@ const getters = {
   },
   isContestAdmin: (state, getters, _, rootGetters) => {
     return rootGetters.isAuthenticated &&
-      (state.contest.author === rootGetters.userInfo.username || rootGetters.isSuperAdmin || state.groupContestAuth == 5)
+      (state.contest.author === rootGetters.userInfo.username || rootGetters.isSuperAdmin)
   },
   isContainsAfterContestJudge: (state, getters) => {
     return state.isContainsAfterContestJudge;
@@ -188,9 +187,6 @@ const mutations = {
   contestIntoAccess(state, payload) {
     state.intoAccess = payload.intoAccess
   },
-  changeGroupContestAuth(state, payload) {
-    state.groupContestAuth = payload.groupContestAuth
-  },
   contestSubmitAccess(state, payload) {
     state.submitAccess = payload.submitAccess
   },
@@ -206,7 +202,6 @@ const mutations = {
     }
     state.forceUpdate = false
     state.removeStar = false
-    state.groupContestAuth = 0
     state.isContainsAfterContestJudge = false
   },
   now(state, payload) {
@@ -224,9 +219,6 @@ const actions = {
         resolve(res)
         let contest = res.data.data
         commit('changeContest', {contest: contest})
-        if (contest.gid) {
-          dispatch('getGroupContestAuth', {gid: contest.gid})
-        }
         commit('now', {now: moment(contest.now)})
         if (contest.auth == CONTEST_TYPE.PRIVATE) {
           dispatch('getContestAccess',{auth:CONTEST_TYPE.PRIVATE})
@@ -274,14 +266,6 @@ const actions = {
       }).catch()
     })
   },
-  getGroupContestAuth ({commit, rootState}, gid) {
-    return new Promise((resolve, reject) => {
-      api.getGroupAuth(gid.gid).then(res => {
-        commit('changeGroupContestAuth', {groupContestAuth: res.data.data})
-        resolve(res)
-      }).catch()
-    })
-  }
 }
 
 export default {

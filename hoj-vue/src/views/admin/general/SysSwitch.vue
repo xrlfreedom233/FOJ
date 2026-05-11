@@ -24,14 +24,6 @@
                         >
                         </el-switch>
                     </el-form-item>
-                    <el-form-item :label="$t('m.Open_Group_Judge')" label-width="320px">
-                        <el-switch
-                            v-model="switchConfig.openGroupJudge"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                        >
-                        </el-switch>
-                    </el-form-item>
                     <el-form-item :label="$t('m.Open_Contest_Judge')" label-width="320px">
                         <el-switch
                             v-model="switchConfig.openContestJudge"
@@ -84,14 +76,6 @@
                         >
                         </el-switch>
                     </el-form-item>
-                    <el-form-item :label="$t('m.Open_Group_Discussion')" label-width="320px">
-                        <el-switch
-                            v-model="switchConfig.openGroupDiscussion"
-                            active-color="#13ce66"
-                            inactive-color="#ff4949"
-                        >
-                        </el-switch>
-                    </el-form-item>
                     <el-form-item :label="$t('m.Open_Contest_Comment')" label-width="320px">
                         <el-switch
                             v-model="switchConfig.openContestComment"
@@ -115,46 +99,6 @@
                     <el-form-item :label="$t('m.Number_of_AC_required_for_Comment_of_ordinary_users')" label-width="320px">
                         <el-input-number
                          v-model="switchConfig.defaultCreateCommentACInitValue" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                </el-form>
-                <el-button
-                  type="primary"
-                  :loading="loading"
-                  style="margin-top:15px"
-                  @click.native="saveSwitchConfig"
-                  size="small"
-                  ><i class="fa fa-save"> {{ $t('m.Save') }}</i></el-button
-                >
-            </el-card>
-        </el-col>
-        <el-col :xs="24" :md="12">
-            <el-card class="card-top">
-                <div slot="header">
-                    <span class="switch-item-title">{{ $t('m.Group_Config') }}</span>
-                </div>
-                <el-form
-                    :label-position="labelPosition"
-                    label-width="320px"
-                    ref="form"
-                    :model="switchConfig"
-                >
-                    <el-form-item :label="$t('m.Number_of_Groups_that_users_can_create_per_day')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateGroupDailyLimit" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Total_number_of_groups_that_ordinary_users_can_create')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateGroupLimit" 
-                         :min="0">
-                         </el-input-number>
-                    </el-form-item>
-                    <el-form-item :label="$t('m.Number_of_AC_required_for_ordinary_users_to_create_group')" label-width="320px">
-                        <el-input-number
-                         v-model="switchConfig.defaultCreateGroupACInitValue" 
                          :min="0">
                          </el-input-number>
                     </el-form-item>

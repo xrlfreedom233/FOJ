@@ -84,14 +84,6 @@ public class AdminProblemController {
         return adminProblemService.compileInteractive(compileDTO);
     }
 
-    @GetMapping("/import-remote-oj-problem")
-    @RequiresAuthentication
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
-    public CommonResult<Void> importRemoteOJProblem(@RequestParam("name") String name,
-                                                    @RequestParam("problemId") String problemId) {
-        return adminProblemService.importRemoteOJProblem(name, problemId);
-    }
-
     @PutMapping("/change-problem-auth")
     @RequiresAuthentication
     @RequiresRoles(value = {"root", "problem_admin", "admin"}, logical = Logical.OR)

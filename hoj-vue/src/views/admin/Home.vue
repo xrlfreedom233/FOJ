@@ -11,8 +11,8 @@
             placement="bottom"
             effect="dark"
           >
-          <div class="logo" @click="changeWebLanguage(webLanguage == 'zh-CN' ? 'en-US' : 'zh-CN')">
-            <img :src="imgUrl" alt="Online Judge Admin" />
+          <div class="logo">
+            <span class="admin-logo-text">FOJ</span>
           </div>
         </el-tooltip>
         <el-menu-item index="/admin/">
@@ -511,22 +511,6 @@
           target="_blank"
           >{{ websiteConfig.projectName }}</a
         >
-        <span style="margin-left:10px">
-          <el-dropdown @command="changeWebLanguage" placement="top">
-            <span class="el-dropdown-link" style="font-size:14px">
-              <i class="fa fa-globe" aria-hidden="true">
-                {{ getLanguageLabelByValue(this.webLanguage) }}</i
-              ><i class="el-icon-arrow-up el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item 
-                  v-for="(lang, index) in languages"
-                  :key="index"
-                  :command="lang.value">{{ lang.label }}
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </span>
       </div>
     </div>
 
@@ -542,11 +526,9 @@ const KatexEditor = () => import('@/components/admin/KatexEditor.vue');
 import api from '@/common/api';
 import mMessage from '@/common/message';
 import Avatar from 'vue-avatar';
-import { languages, getLangLabelByValue } from '@/i18n';
 export default {
   name: 'app',
   mounted() {
-    this.languages = languages;
     this.currentPath = this.$route.path;
     this.getBreadcrumb();
     window.onresize = () => {
@@ -563,8 +545,6 @@ export default {
       mobileNar: false,
       currentPath: '',
       routeList: [],
-      imgUrl: require('@/assets/backstage.png'),
-      languages:[]
     };
   },
   components: {
@@ -592,12 +572,6 @@ export default {
     getBreadcrumb() {
       let matched = this.$route.matched.filter((item) => item.meta.title); //获取路由信息，并过滤保留路由标题信息存入数组
       this.routeList = matched;
-    },
-    changeWebLanguage(language) {
-      this.$store.commit('changeWebLanguage', { language: language });
-    },
-    getLanguageLabelByValue(value){
-      return getLangLabelByValue(value);
     }
   },
   computed: {
@@ -607,7 +581,6 @@ export default {
       'isProblemAdmin',
       'isAuthenticated',
       'websiteConfig',
-      'webLanguage',
     ]),
     'window.screen.width'(newVal, oldVal) {
       if (newVal < 992) {
@@ -646,6 +619,14 @@ export default {
   border: 3px solid #fff;
   width: 110px;
   height: 110px;
+}
+.vertical_menu .admin-logo-text {
+  display: inline-block;
+  font-size: 40px;
+  font-weight: bold;
+  color: #2196f3;
+  letter-spacing: 4px;
+  user-select: none;
 }
 .fa-size {
   text-align: center;

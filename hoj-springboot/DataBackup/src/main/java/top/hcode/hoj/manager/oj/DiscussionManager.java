@@ -35,7 +35,6 @@ import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.RedisUtils;
 import top.hcode.hoj.validator.AccessValidator;
 import top.hcode.hoj.validator.CommonValidator;
-import top.hcode.hoj.validator.GroupValidator;
 
 import java.util.List;
 import java.util.UUID;
@@ -64,7 +63,6 @@ public class DiscussionManager {
     private ProblemEntityService problemEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     @Autowired
     private AccessValidator accessValidator;
@@ -165,11 +163,7 @@ public class DiscussionManager {
         }
 
         if (discussionVo.getGid() != null) {
-            accessValidator.validateAccess(HOJAccessEnum.GROUP_DISCUSSION);
-            if (!isRoot && !discussionVo.getUid().equals(uid)
-                    && !groupValidator.isGroupMember(uid, discussionVo.getGid())) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         } else {
             accessValidator.validateAccess(HOJAccessEnum.PUBLIC_DISCUSSION);
         }
@@ -208,11 +202,7 @@ public class DiscussionManager {
         }
 
         if (discussion.getGid() != null) {
-            if (!isRoot
-                    && !discussion.getUid().equals(userRolesVo.getUid())
-                    && !groupValidator.isGroupMember(userRolesVo.getUid(), discussion.getGid())) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         // 除管理员外 其它用户需要AC20道题目以上才可发帖，同时限制一天只能发帖5次
@@ -282,9 +272,7 @@ public class DiscussionManager {
         boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
         if (!isRoot
-                && !oriDiscussion.getUid().equals(userRolesVo.getUid())
-                && !(oriDiscussion.getGid() != null
-                && groupValidator.isGroupAdmin(userRolesVo.getUid(), oriDiscussion.getGid()))) {
+                && !oriDiscussion.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
         UpdateWrapper<Discussion> discussionUpdateWrapper = new UpdateWrapper<>();
@@ -318,9 +306,7 @@ public class DiscussionManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
         if (!isRoot
-                && !discussion.getUid().equals(userRolesVo.getUid())
-                && !(discussion.getGid() != null
-                && groupValidator.isGroupAdmin(userRolesVo.getUid(), discussion.getGid()))) {
+                && !discussion.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -350,11 +336,7 @@ public class DiscussionManager {
         }
 
         if (discussion.getGid() != null) {
-            boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-            if (!isRoot && !discussion.getUid().equals(userRolesVo.getUid())
-                    && !groupValidator.isGroupMember(userRolesVo.getUid(), discussion.getGid())) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         String key = "lock:discussion:like:" + userRolesVo.getUid() + "_" + did;

@@ -1,9 +1,7 @@
 package top.hcode.hoj.dao.discussion.impl;
 
 import top.hcode.hoj.dao.discussion.DiscussionEntityService;
-import top.hcode.hoj.dao.group.GroupMemberEntityService;
 import top.hcode.hoj.pojo.entity.discussion.Discussion;
-import top.hcode.hoj.pojo.entity.group.GroupMember;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -50,9 +48,6 @@ public class CommentEntityServiceImpl extends ServiceImpl<CommentMapper, Comment
     @Resource
     private MsgRemindEntityService msgRemindEntityService;
 
-    @Autowired
-    private GroupMemberEntityService groupMemberEntityService;
-
     @Override
     public IPage<CommentVO> getCommentList(int limit, int currentPage, Long cid, Integer did, Boolean isRoot, String uid) {
         //新建分页
@@ -68,16 +63,6 @@ public class CommentEntityServiceImpl extends ServiceImpl<CommentMapper, Comment
                 List<String> myAndAdminUidList = userInfoEntityService.getSuperAdminUidList();
                 myAndAdminUidList.add(uid);
                 myAndAdminUidList.add(contest.getUid());
-                Long gid = contest.getGid();
-                if (gid != null) {
-                    QueryWrapper<GroupMember> groupMemberQueryWrapper = new QueryWrapper<>();
-                    groupMemberQueryWrapper.eq("gid", gid).eq("auth", 5);
-                    List<GroupMember> groupAdminUidList = groupMemberEntityService.list(groupMemberQueryWrapper);
-
-                    for (GroupMember groupMember : groupAdminUidList) {
-                        myAndAdminUidList.add(groupMember.getUid());
-                    }
-                }
                 return commentMapper.getCommentList(page, cid, did, true, myAndAdminUidList);
             }
 

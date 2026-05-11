@@ -89,16 +89,6 @@ public class AdminProblemServiceImpl implements AdminProblemService {
     }
 
     @Override
-    public CommonResult<Void> importRemoteOJProblem(String name, String problemId) {
-        try {
-            adminProblemManager.importRemoteOJProblem(name, problemId);
-            return CommonResult.successResponse("导入新题目成功");
-        } catch (StatusFailException e) {
-            return CommonResult.errorResponse(e.getMessage());
-        }
-    }
-
-    @Override
     public CommonResult<Void> changeProblemAuth(Problem problem) {
         try {
             adminProblemManager.changeProblemAuth(problem);

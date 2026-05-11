@@ -8,7 +8,6 @@ import top.hcode.hoj.common.exception.StatusSystemErrorException;
 import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.ImageManager;
-import top.hcode.hoj.pojo.entity.group.Group;
 import top.hcode.hoj.service.file.ImageService;
 
 import javax.annotation.Resource;
@@ -27,19 +26,6 @@ public class ImageServiceImpl implements ImageService {
             return CommonResult.errorResponse(e.getMessage());
         } catch (StatusSystemErrorException e) {
             return CommonResult.errorResponse(e.getMessage(), ResultStatus.SYSTEM_ERROR);
-        }
-    }
-
-    @Override
-    public CommonResult<Group> uploadGroupAvatar(MultipartFile image, Long gid) {
-        try {
-            return CommonResult.successResponse(imageManager.uploadGroupAvatar(image, gid));
-        } catch (StatusFailException e) {
-            return CommonResult.errorResponse(e.getMessage());
-        } catch (StatusSystemErrorException e) {
-            return CommonResult.errorResponse(e.getMessage(), ResultStatus.SYSTEM_ERROR);
-        } catch (StatusForbiddenException e) {
-            return CommonResult.errorResponse(e.getMessage(), ResultStatus.FORBIDDEN);
         }
     }
 

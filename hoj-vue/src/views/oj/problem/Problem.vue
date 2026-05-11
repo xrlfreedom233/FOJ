@@ -148,28 +148,16 @@
                     </span>
                   </div>
                   <div class="question-intr">
-                    <template v-if="!isCFProblem">
-                      <span>{{ $t('m.Time_Limit') }}：C/C++
-                        {{ problemData.problem.timeLimit }}MS，{{
-                          $t('m.Other')
-                        }}
-                        {{ problemData.problem.timeLimit * 2 }}MS</span><br />
-                      <span>{{ $t('m.Memory_Limit') }}：C/C++
-                        {{ problemData.problem.memoryLimit }}MB，{{
-                          $t('m.Other')
-                        }}
-                        {{ problemData.problem.memoryLimit * 2 }}MB</span><br />
-                    </template>
-
-                    <template v-else>
-                      <span>{{ $t('m.Time_Limit') }}：{{
-                          problemData.problem.timeLimit
-                        }}MS</span>
-                      <br />
-                      <span>{{ $t('m.Memory_Limit') }}：{{
-                          problemData.problem.memoryLimit
-                        }}MB</span><br />
-                    </template>
+                    <span>{{ $t('m.Time_Limit') }}：C/C++
+                      {{ problemData.problem.timeLimit }}MS，{{
+                        $t('m.Other')
+                      }}
+                      {{ problemData.problem.timeLimit * 2 }}MS</span><br />
+                    <span>{{ $t('m.Memory_Limit') }}：C/C++
+                      {{ problemData.problem.memoryLimit }}MB，{{
+                        $t('m.Other')
+                      }}
+                      {{ problemData.problem.memoryLimit * 2 }}MB</span><br />
                     <template v-if="problemData.problem.difficulty != null">
                       <span>{{ $t('m.Level') }}：<span
                           class="el-tag el-tag--small"
@@ -574,7 +562,6 @@
               :pid="problemData.problem.id"
               :type="problemType"
               :isAuthenticated="isAuthenticated"
-              :isRemoteJudge="problemData.problem.isRemote"
               :submitDisabled="submitDisabled"
             ></CodeMirror>
             <div id="js-right-bottom">
@@ -602,7 +589,6 @@
                       <el-tag
                         effect="dark"
                         :color="submissionStatus.color"
-                        @click.native="reSubmit(submissionId)"
                       >
                         <i class="el-icon-refresh"></i>
                         {{ submissionStatus.text }}
@@ -880,7 +866,6 @@ export default {
       submitting: false,
       code: "",
       language: "",
-      isRemote: false,
       theme: "solarized",
       fontSize: "14px",
       tabSize: 4,
@@ -1318,7 +1303,6 @@ export default {
               });
           }
 
-          this.isRemote = result.problem.isRemote;
           this.changePie(result.problemCount);
 
           // 在beforeRouteEnter中修改了, 说明本地有code，无需加载template
@@ -1597,7 +1581,6 @@ export default {
         cid: this.contestID,
         tid: this.trainingID,
         gid: this.groupID,
-        isRemote: this.isRemote,
       };
       if (this.captchaRequired) {
         data.captcha = this.captchaCode;
@@ -1668,22 +1651,6 @@ export default {
       } else {
         submitFunc(data, true);
       }
-    },
-
-    reSubmit(submitId) {
-      this.result = { status: 9 };
-      this.submitting = true;
-      api.reSubmitRemoteJudge(submitId).then(
-        (res) => {
-          myMessage.success(this.$i18n.t("m.Resubmitted_Successfully"));
-          this.submitted = true;
-          this.checkSubmissionStatus();
-        },
-        (err) => {
-          this.submitting = false;
-          this.statusVisible = false;
-        }
-      );
     },
 
     showExtraFileContent(name, content) {
@@ -1800,26 +1767,10 @@ export default {
         });
       }
     },
-    isCFProblem() {
-      if (
-        this.problemID.indexOf("CF-") == 0 ||
-        this.problemID.indexOf("GYM-") == 0
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    },
     isShowProblemDiscussion() {
-      if (!this.contestID) {
-        if (this.groupID) {
-          if (this.websiteConfig.openGroupDiscussion) {
-            return true;
-          }
-        } else {
-          if (this.websiteConfig.openPublicDiscussion) {
-            return true;
-          }
+      if (!this.contestID && !this.groupID) {
+        if (this.websiteConfig.openPublicDiscussion) {
+          return true;
         }
       }
       return false;

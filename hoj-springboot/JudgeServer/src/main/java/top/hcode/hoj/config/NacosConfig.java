@@ -17,12 +17,6 @@ public class NacosConfig {
     @Value("${hoj-judge-server.max-task-num}")
     private Integer maxTaskNum;
 
-    @Value("${hoj-judge-server.remote-judge.max-task-num}")
-    private Integer maxRemoteTaskNum;
-
-    @Value("${hoj-judge-server.remote-judge.open}")
-    private Boolean openRemoteJudge;
-
     @Value("${hoj-judge-server.ip}")
     private String ip;
 
@@ -48,13 +42,6 @@ public class NacosConfig {
             max = maxTaskNum;
         }
         meta.put("maxTaskNum", String.valueOf(max));
-        if (openRemoteJudge) {
-            max = (cpuNum * 2 + 1) * 2;
-            if (maxRemoteTaskNum != -1) {
-                max = maxRemoteTaskNum;
-            }
-            meta.put("maxRemoteTaskNum", String.valueOf(max));
-        }
         meta.put("judgeName", name);
         nacosDiscoveryProperties.setMetadata(meta);
         if (!ip.equals("-1")) {

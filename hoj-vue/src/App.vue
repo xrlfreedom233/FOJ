@@ -86,27 +86,6 @@
             style="color:#1E9FFF"
             target="_blank"
           >{{ websiteConfig.projectName }}</a>
-          <span style="margin-left:10px">
-            <el-dropdown
-              @command="changeWebLanguage"
-              placement="top"
-            >
-              <span class="el-dropdown-link">
-                <i
-                  class="fa fa-globe"
-                  aria-hidden="true"
-                >
-                  {{ getLanguageLabelByValue(this.webLanguage) }}</i><i class="el-icon-arrow-up el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item 
-                  v-for="(lang, index) in languages"
-                  :key="index"
-                  :command="lang.value">{{ lang.label }}
-              </el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </span>
         </div>
       </footer>
     </div>
@@ -126,7 +105,6 @@ import { mapActions, mapState, mapGetters } from "vuex";
 import { LOGO, MOTTO } from "@/common/logo";
 import storage from "@/common/storage";
 import utils from "@/common/utils";
-import { languages, getLangLabelByValue } from '@/i18n';
 export default {
   name: "app-content",
   components: {
@@ -136,7 +114,6 @@ export default {
     return {
       isAdminView: false,
       showFooter: true,
-      languages:[],
     };
   },
   methods: {
@@ -146,42 +123,7 @@ export default {
         path: path,
       });
     },
-    changeWebLanguage(language) {
-      this.$store.commit("changeWebLanguage", { language: language });
-    },
-    autoChangeLanguge() {
-      /**
-       * 语言自动转换优先级：路径参数 > 本地存储 > 浏览器自动识别
-       */
-      let lang = this.$route.query.l;
-      if (lang) {
-        lang = lang.toLowerCase();
-        if (lang == "zh-cn") {
-          this.$store.commit("changeWebLanguage", { language: "zh-CN" });
-        } else if (lang == 'zh-tw'){
-          this.$store.commit("changeWebLanguage", { language: "zh-TW" });
-        } else if (lang == 'ja-jp' || lang == 'ja'){
-          this.$store.commit("changeWebLanguage", { language: "ja-JP" });
-        } else if (lang == 'ko-kr' || lang == 'ko'){
-          this.$store.commit("changeWebLanguage", { language: "ko-KR" });
-        } else {
-          this.$store.commit("changeWebLanguage", { language: "en-US" });
-        }
-        return;
-      }
-
-      lang = storage.get("Web_Language");
-      if (lang) {
-        return;
-      }
-
-      lang = navigator.userLanguage || window.navigator.language;
-      lang = lang.toLowerCase();
-      if (lang == "zh-cn") {
-        this.$store.commit("changeWebLanguage", { language: "zh-CN" });
-      } else {
-        this.$store.commit("changeWebLanguage", { language: "en-US" });
-      }
+    autoRefreshUserInfo() {
     },
     autoRefreshUserInfo() {
       this.$store.dispatch("setUserInfo", storage.get("userInfo"));
@@ -214,9 +156,6 @@ export default {
           }
         }
       }
-    },
-    getLanguageLabelByValue(value){
-      return getLangLabelByValue(value);
     }
   },
   watch: {
@@ -239,7 +178,7 @@ export default {
   },
   computed: {
     ...mapState(["websiteConfig"]),
-    ...mapGetters(["webLanguage", "token", "isAuthenticated"]),
+    ...mapGetters(["token", "isAuthenticated"]),
   },
   created: function () {
     this.$nextTick(function () {
@@ -262,10 +201,8 @@ export default {
     window.addEventListener("visibilitychange", this.autoRefreshUserInfo);
   },
   mounted() {
-    this.languages = languages;
     console.log(LOGO);
     console.log(MOTTO);
-    this.autoChangeLanguge();
     this.getWebsiteConfig();
   },
 };

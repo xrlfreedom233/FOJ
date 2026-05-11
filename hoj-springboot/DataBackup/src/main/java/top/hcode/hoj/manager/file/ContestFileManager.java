@@ -31,7 +31,6 @@ import top.hcode.hoj.pojo.vo.OIContestRankVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.validator.ContestValidator;
-import top.hcode.hoj.validator.GroupValidator;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -70,9 +69,6 @@ public class ContestFileManager {
     @Autowired
     private ContestValidator contestValidator;
 
-    @Autowired
-    private GroupValidator groupValidator;
-
     public void downloadContestRank(Long cid, Boolean forceRefresh, Boolean removeStar, Boolean isContainsAfterContestJudge,
                                     HttpServletResponse response) throws IOException, StatusFailException, StatusForbiddenException {
         // 获取当前登录的用户
@@ -88,11 +84,8 @@ public class ContestFileManager {
         // 是否为超级管理员
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
-        Long gid = contest.getGid();
-
         if (!isRoot
-                && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+                && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("错误：您并非该比赛的管理员，无权下载榜单！");
         }
 
@@ -154,10 +147,8 @@ public class ContestFileManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
         // 除非是root 其它管理员只能下载自己的比赛ac记录
 
-        Long gid = contest.getGid();
         if (!isRoot
-                && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+                && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("错误：您并非该比赛的管理员，无权下载AC记录！");
         }
 
@@ -334,10 +325,7 @@ public class ContestFileManager {
 
         Contest contest = contestEntityService.getById(cid);
 
-        Long gid = contest.getGid();
-
-        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), gid))) {
+        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("错误：您并非该比赛的管理员，无权下载打印代码！");
         }
 

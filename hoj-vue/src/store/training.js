@@ -4,21 +4,19 @@ const state = {
   intoAccess: true, // 训练进入权限
   training: {
     auth: TRAINING_TYPE.Public.name,
-    rankShowName:'username',
-    gid:null
+    rankShowName:'username'
   },
   trainingProblemList: [],
   itemVisible: {
     table: true,
     chart: true,
   },
-  groupTrainingAuth: 0,
 }
 
 const getters = {
   isTrainingAdmin: (state, getters, _, rootGetters) => {
     return rootGetters.isAuthenticated &&
-      (state.training.author === rootGetters.userInfo.username || rootGetters.isSuperAdmin || state.groupTrainingAuth == 5)
+      (state.training.author === rootGetters.userInfo.username || rootGetters.isSuperAdmin)
   },
   trainingMenuDisabled: (state, getters) => {
     // 训练创建者和超级管理员可以直接查看
@@ -53,9 +51,6 @@ const mutations = {
   trainingIntoAccess(state, payload) {
     state.intoAccess = payload.intoAccess
   },
-  changeGroupTrainingAuth(state, payload) {
-    state.groupTrainingAuth = payload.groupTrainingAuth
-  },
   clearTraining (state) {
     state.training = {}
     state.trainingProblemList = []
@@ -65,7 +60,6 @@ const mutations = {
       chart: true,
       realName: false
     }
-    state.groupTrainingAuth = 0
   }
 }
 
@@ -76,9 +70,6 @@ const actions = {
         resolve(res)
         let training = res.data.data
         commit('changeTraining', {training: training})
-        if (training.gid) {
-          dispatch('getGroupTrainingAuth', {gid: training.gid})
-        }
         if (training.auth ==  TRAINING_TYPE.Private.name) {
           dispatch('getTrainingAccess',{auth:TRAINING_TYPE.Private.name})
         }
@@ -108,14 +99,6 @@ const actions = {
       }).catch()
     })
   },
-  getGroupTrainingAuth ({commit, rootState}, gid) {
-    return new Promise((resolve, reject) => {
-      api.getGroupAuth(gid.gid).then(res => {
-        commit('changeGroupTrainingAuth', {groupTrainingAuth: res.data.data})
-        resolve(res)
-      }).catch()
-    })
-  }
 }
 
 export default {

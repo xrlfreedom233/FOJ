@@ -34,9 +34,6 @@ public class JudgeController {
     @Value("${hoj.judge.token:no_judge_token}")
     private String judgeToken;
 
-    @Value("${hoj-judge-server.remote-judge.open}")
-    private Boolean openRemoteJudge;
-
     @Autowired
     private JudgeServerEntityService judgeServerEntityService;
 
@@ -114,24 +111,4 @@ public class JudgeController {
         }
     }
 
-    @PostMapping(value = "/remote-judge")
-    public CommonResult<Void> remoteJudge(@RequestBody ToJudgeDTO toJudgeDTO) {
-
-        if (!openRemoteJudge) {
-            return CommonResult.errorResponse("对不起！该判题服务器未开启远程虚拟判题功能！", ResultStatus.ACCESS_DENIED);
-        }
-
-        if (!Objects.equals(toJudgeDTO.getToken(), judgeToken)) {
-            return CommonResult.errorResponse("对不起！您使用的判题服务调用凭证不正确！访问受限！", ResultStatus.ACCESS_DENIED);
-        }
-
-
-        if (toJudgeDTO.getJudge() == null) {
-            return CommonResult.errorResponse("请求参数不能为空！");
-        }
-
-        judgeService.remoteJudge(toJudgeDTO);
-
-        return CommonResult.successResponse("提交成功");
-    }
 }

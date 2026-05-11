@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 import top.hcode.hoj.common.exception.StatusFailException;
@@ -24,14 +23,11 @@ import top.hcode.hoj.config.NacosSwitchConfig;
 import top.hcode.hoj.config.SwitchConfig;
 import top.hcode.hoj.config.WebConfig;
 import top.hcode.hoj.dao.common.FileEntityService;
-import top.hcode.hoj.dao.judge.RemoteJudgeAccountEntityService;
 import top.hcode.hoj.manager.email.EmailManager;
 import top.hcode.hoj.pojo.dto.*;
 import top.hcode.hoj.pojo.entity.common.File;
-import top.hcode.hoj.pojo.entity.judge.RemoteJudgeAccount;
 import top.hcode.hoj.pojo.vo.ConfigVO;
 import top.hcode.hoj.utils.ConfigUtils;
-import top.hcode.hoj.utils.Constants;
 
 import java.util.*;
 
@@ -50,9 +46,6 @@ public class ConfigManager {
 
     @Autowired
     private FileEntityService fileEntityService;
-
-    @Autowired
-    private RemoteJudgeAccountEntityService remoteJudgeAccountEntityService;
 
     @Autowired
     private ConfigUtils configUtils;
@@ -339,17 +332,11 @@ public class ConfigManager {
         if (config.getOpenPublicDiscussion() != null) {
             switchConfig.setOpenPublicDiscussion(config.getOpenPublicDiscussion());
         }
-        if (config.getOpenGroupDiscussion() != null) {
-            switchConfig.setOpenGroupDiscussion(config.getOpenGroupDiscussion());
-        }
         if (config.getOpenContestComment() != null) {
             switchConfig.setOpenContestComment(config.getOpenContestComment());
         }
         if (config.getOpenPublicJudge() != null) {
             switchConfig.setOpenPublicJudge(config.getOpenPublicJudge());
-        }
-        if (config.getOpenGroupJudge() != null) {
-            switchConfig.setOpenGroupJudge(config.getOpenGroupJudge());
         }
         if (config.getOpenContestJudge() != null) {
             switchConfig.setOpenContestJudge(config.getOpenContestJudge());
@@ -379,118 +366,11 @@ public class ConfigManager {
             }
         }
 
-        if (config.getDefaultCreateGroupACInitValue() != null) {
-            switchConfig.setDefaultCreateGroupACInitValue(config.getDefaultCreateGroupACInitValue());
-        }
-
-        if (config.getDefaultCreateGroupDailyLimit() != null) {
-            switchConfig.setDefaultCreateGroupDailyLimit(config.getDefaultCreateGroupDailyLimit());
-        }
-
-        if (config.getDefaultCreateGroupLimit() != null) {
-            switchConfig.setDefaultCreateGroupLimit(config.getDefaultCreateGroupLimit());
-        }
-
-        if (checkListDiff(config.getCfUsernameList(), switchConfig.getCfUsernameList()) ||
-                checkListDiff(config.getCfPasswordList(), switchConfig.getCfPasswordList())) {
-            switchConfig.setCfUsernameList(config.getCfUsernameList());
-            switchConfig.setCfPasswordList(config.getCfPasswordList());
-            changeRemoteJudgeAccount(config.getCfUsernameList(),
-                    config.getCfPasswordList(),
-                    Constants.RemoteOJ.CODEFORCES.getName());
-        }
-
-        if (checkListDiff(config.getHduUsernameList(), switchConfig.getHduUsernameList()) ||
-                checkListDiff(config.getHduPasswordList(), switchConfig.getHduPasswordList())) {
-            switchConfig.setHduUsernameList(config.getHduUsernameList());
-            switchConfig.setHduPasswordList(config.getHduPasswordList());
-            changeRemoteJudgeAccount(config.getHduUsernameList(),
-                    config.getHduPasswordList(),
-                    Constants.RemoteOJ.HDU.getName());
-        }
-
-        if (checkListDiff(config.getPojUsernameList(), switchConfig.getPojUsernameList()) ||
-                checkListDiff(config.getPojPasswordList(), switchConfig.getPojPasswordList())) {
-            switchConfig.setPojUsernameList(config.getPojUsernameList());
-            switchConfig.setPojPasswordList(config.getPojPasswordList());
-            changeRemoteJudgeAccount(config.getPojUsernameList(),
-                    config.getPojPasswordList(),
-                    Constants.RemoteOJ.POJ.getName());
-        }
-
-        if (checkListDiff(config.getSpojUsernameList(), switchConfig.getSpojUsernameList()) ||
-                checkListDiff(config.getSpojPasswordList(), switchConfig.getSpojPasswordList())) {
-            switchConfig.setSpojUsernameList(config.getSpojUsernameList());
-            switchConfig.setSpojPasswordList(config.getSpojPasswordList());
-            changeRemoteJudgeAccount(config.getSpojUsernameList(),
-                    config.getSpojPasswordList(),
-                    Constants.RemoteOJ.SPOJ.getName());
-        }
-
-        if (checkListDiff(config.getAtcoderUsernameList(), switchConfig.getAtcoderUsernameList()) ||
-                checkListDiff(config.getAtcoderPasswordList(), switchConfig.getAtcoderPasswordList())) {
-            switchConfig.setAtcoderUsernameList(config.getAtcoderUsernameList());
-            switchConfig.setAtcoderPasswordList(config.getAtcoderPasswordList());
-            changeRemoteJudgeAccount(config.getAtcoderUsernameList(),
-                    config.getAtcoderPasswordList(),
-                    Constants.RemoteOJ.ATCODER.getName());
-        }
-
-        if (checkListDiff(config.getLibreojUsernameList(), switchConfig.getLibreojUsernameList()) ||
-                checkListDiff(config.getLibreojPasswordList(), switchConfig.getLibreojPasswordList())) {
-            switchConfig.setLibreojUsernameList(config.getLibreojUsernameList());
-            switchConfig.setLibreojPasswordList(config.getLibreojPasswordList());
-            changeRemoteJudgeAccount(config.getLibreojUsernameList(),
-                    config.getLibreojPasswordList(),
-                    Constants.RemoteOJ.LIBRE.getName());
-        }
-
         boolean isOk = nacosSwitchConfig.publishSwitchConfig();
         if (!isOk) {
             throw new StatusFailException("修改失败");
         }
     }
-
-    private boolean checkListDiff(List<String> list1, List<String> list2) {
-        if (list1.size() != list2.size()) {
-            return true;
-        }
-        return !list1.toString().equals(list2.toString());
-    }
-
-    private void changeRemoteJudgeAccount(List<String> usernameList,
-                                          List<String> passwordList,
-                                          String oj) {
-
-        if (CollectionUtils.isEmpty(usernameList) || CollectionUtils.isEmpty(passwordList) || usernameList.size() != passwordList.size()) {
-            log.error("[Change by Switch] [{}]: There is no account or password configured for remote judge, " +
-                            "username list:{}, password list:{}", oj, Arrays.toString(usernameList.toArray()),
-                    Arrays.toString(passwordList.toArray()));
-        }
-
-        QueryWrapper<RemoteJudgeAccount> remoteJudgeAccountQueryWrapper = new QueryWrapper<>();
-        remoteJudgeAccountQueryWrapper.eq("oj", oj);
-        remoteJudgeAccountEntityService.remove(remoteJudgeAccountQueryWrapper);
-
-        List<RemoteJudgeAccount> newRemoteJudgeAccountList = new ArrayList<>();
-
-        for (int i = 0; i < usernameList.size(); i++) {
-            newRemoteJudgeAccountList.add(new RemoteJudgeAccount()
-                    .setUsername(usernameList.get(i))
-                    .setPassword(passwordList.get(i))
-                    .setStatus(true)
-                    .setVersion(0L)
-                    .setOj(oj));
-        }
-
-        if (newRemoteJudgeAccountList.size() > 0) {
-            boolean addOk = remoteJudgeAccountEntityService.saveOrUpdateBatch(newRemoteJudgeAccountList);
-            if (!addOk) {
-                log.error("Remote judge initialization failed. Failed to add account for: [{}]. Please check the configuration file and restart!", oj);
-            }
-        }
-    }
-
 
     public boolean sendNewConfigToNacos() {
 

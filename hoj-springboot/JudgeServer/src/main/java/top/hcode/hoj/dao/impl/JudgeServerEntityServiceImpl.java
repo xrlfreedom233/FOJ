@@ -24,12 +24,6 @@ public class JudgeServerEntityServiceImpl extends ServiceImpl<JudgeServerMapper,
     @Value("${hoj-judge-server.max-task-num}")
     private Integer maxTaskNum;
 
-    @Value("${hoj-judge-server.remote-judge.open}")
-    private Boolean isOpenRemoteJudge;
-
-    @Value("${hoj-judge-server.remote-judge.max-task-num}")
-    private Integer RemoteJudgeMaxTaskNum;
-
     @Value("${hoj-judge-server.name}")
     private String name;
 
@@ -51,14 +45,6 @@ public class JudgeServerEntityServiceImpl extends ServiceImpl<JudgeServerMapper,
             res.put("maxTaskNum", Runtime.getRuntime().availableProcessors() + 1);
         } else {
             res.put("maxTaskNum", maxTaskNum);
-        }
-        if (isOpenRemoteJudge) {
-            res.put("isOpenRemoteJudge", true);
-            if (RemoteJudgeMaxTaskNum == -1) {
-                res.put("remoteJudgeMaxTaskNum", Runtime.getRuntime().availableProcessors() * 2 + 1);
-            } else {
-                res.put("remoteJudgeMaxTaskNum", RemoteJudgeMaxTaskNum);
-            }
         }
 
         String versionResp = "";

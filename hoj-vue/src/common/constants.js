@@ -139,67 +139,19 @@ export const JUDGE_STATUS_RESERVE={
 
 export const PROBLEM_LEVEL={
   '0':{
-    name:{
-      'zh-CN':'简单',
-      'en-US':'Easy',
-      'zh-TW':'簡單',
-      'ja-JP':'簡単',
-      'ko-KR':'간단한'
-    },
+    name:'简单',
     color:'#19be6b'
   },
   '1':{
-    name:{
-      'zh-CN':'中等',
-      'en-US':'Mid',
-      'zh-TW':'中等',
-      'ja-JP':'中等',
-      'ko-KR':'중간'
-    },
+    name:'中等',
     color:'#2d8cf0'
   },
   '2':{
-    name:{
-      'zh-CN':'困难',
-      'en-US':'Hard',
-      'zh-TW':'困難​​',
-      'ja-JP':'困難',
-      'ko-KR':'곤란'
-    },
+    name:'困难',
     color:'#ed3f14'
   }
 }
 
-
-export const REMOTE_OJ = [
-  {
-    name:'HDU',
-    key:"HDU"
-  },
-  {
-    name:"Codeforces",
-    key:"CF"
-  },
-  {
-    name:"POJ",
-    key:"POJ"
-  },
-  {
-    name:"GYM",
-    key:"GYM"
-  },
-  {
-    name:"AtCoder",
-    key:"AC"
-  },
-  {
-    name:"SPOJ",
-    key:"SPOJ"
-  },{
-    name:"LIBREOJ",
-    key: "LIBRE"
-  }
-]
 
 export const CONTEST_STATUS = {
   'SCHEDULED': -1,
@@ -230,30 +182,6 @@ export const TRAINING_TYPE = {
   'Private':{
     color:'danger',
     name:'Private'
-  }
-}
-
-export const GROUP_TYPE = {
-  PUBLIC: 1,
-  PROTECTED: 2,
-  PRIVATE: 3
-}
-
-export const GROUP_TYPE_REVERSE = {
-  '1':{
-    name: 'Public',
-    color: 'success',
-    tips: 'Group_Public_Tips',
-  },
-  '2':{
-    name: 'Protected',
-    color: 'warning',
-    tips: 'Group_Protected_Tips',
-  },
-  '3':{
-    name: 'Private',
-    color: 'danger',
-    tips: 'Group_Private_Tips',
   }
 }
 
@@ -308,19 +236,17 @@ export const JUDGE_CASE_MODE = {
 
 export const FOCUS_MODE_ROUTE_NAME = {
   'TrainingFullProblemDetails': 'TrainingProblemDetails',
-  'ContestFullProblemDetails': 'ContestProblemDetails',
-  'GroupFullProblemDetails':'GroupProblemDetails',
-  'GroupTrainingFullProblemDetails': 'GroupTrainingProblemDetails'
+  'ContestFullProblemDetails': 'ContestProblemDetails'
 }
 
 
 export const STORAGE_KEY = {
   AUTHED: 'authed',
-  PROBLEM_CODE_AND_SETTING: 'hojProblemCodeAndSetting',
+  PROBLEM_CODE_AND_SETTING: 'fojProblemCodeAndSetting',
   languages: 'languages',
-  CONTEST_ANNOUNCE:'hojContestAnnounce',
-  individualLanguageAndSetting:'hojIndividualLanguageAndSetting',
-  CONTEST_RANK_CONCERNED:'hojContestRankConcerned'
+  CONTEST_ANNOUNCE:'fojContestAnnounce',
+  individualLanguageAndSetting:'fojIndividualLanguageAndSetting',
+  CONTEST_RANK_CONCERNED:'fojContestRankConcerned'
 }
 
 export function buildIndividualLanguageAndSettingKey () {

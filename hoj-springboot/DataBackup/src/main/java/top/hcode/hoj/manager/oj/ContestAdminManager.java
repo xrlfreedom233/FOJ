@@ -18,7 +18,6 @@ import top.hcode.hoj.pojo.entity.contest.ContestPrint;
 import top.hcode.hoj.pojo.entity.contest.ContestRecord;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
-import top.hcode.hoj.validator.GroupValidator;
 @Component
 public class ContestAdminManager {
 
@@ -31,9 +30,6 @@ public class ContestAdminManager {
     @Autowired
     private ContestPrintEntityService contestPrintEntityService;
 
-    @Autowired
-    private GroupValidator groupValidator;
-
     public IPage<ContestRecord> getContestACInfo(Long cid, Integer currentPage, Integer limit) throws StatusForbiddenException {
 
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
@@ -45,8 +41,7 @@ public class ContestAdminManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
         if (!isRoot
-                && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+                && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -76,8 +71,7 @@ public class ContestAdminManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
         if (!isRoot
-                && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+                && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -100,8 +94,7 @@ public class ContestAdminManager {
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
         if (!isRoot
-                && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+                && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -131,8 +124,7 @@ public class ContestAdminManager {
         // 超级管理员或者该比赛的创建者，则为比赛管理者
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
 
-        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())
-                && !(contest.getIsGroup() && groupValidator.isGroupRoot(userRolesVo.getUid(), contest.getGid()))) {
+        if (!isRoot && !contest.getUid().equals(userRolesVo.getUid())) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 

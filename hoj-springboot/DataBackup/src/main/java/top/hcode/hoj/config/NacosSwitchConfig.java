@@ -99,7 +99,6 @@ public class NacosSwitchConfig {
             try {
                 Yaml yaml = new Yaml();
                 switchConfig = yaml.loadAs(config, SwitchConfig.class);
-                switchConfig.convertUnicodeRemoteAccount2Str();
             } catch (Exception e) {
                 log.error("[Nacos Config] refresh switch config error:{}, config:{}", e, config);
             }
@@ -133,7 +132,6 @@ public class NacosSwitchConfig {
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
         Yaml yaml = new Yaml(options);
         SwitchConfig switchConfig = BeanUtil.copyProperties(getSwitchConfig(), SwitchConfig.class);
-        switchConfig.formatStrRemoteAccount2Unicode();
         String content = yaml.dumpAsMap(switchConfig);
         try {
             return configService.publishConfig(switchConfigFileName, group, content, ConfigType.YAML.getType());

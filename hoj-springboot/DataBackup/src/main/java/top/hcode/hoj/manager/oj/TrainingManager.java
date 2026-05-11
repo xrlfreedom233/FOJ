@@ -14,7 +14,6 @@ import org.springframework.util.StringUtils;
 import top.hcode.hoj.common.exception.StatusAccessDeniedException;
 import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.common.exception.StatusForbiddenException;
-import top.hcode.hoj.dao.group.GroupMemberEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.training.*;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
@@ -26,7 +25,6 @@ import top.hcode.hoj.pojo.entity.training.*;
 import top.hcode.hoj.pojo.vo.*;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
-import top.hcode.hoj.validator.GroupValidator;
 import top.hcode.hoj.validator.TrainingValidator;
 
 import javax.annotation.Resource;
@@ -57,13 +55,11 @@ public class TrainingManager {
     private AdminTrainingRecordManager adminTrainingRecordManager;
 
     @Resource
-    private GroupMemberEntityService groupMemberEntityService;
 
     @Resource
     private JudgeEntityService judgeEntityService;
 
     @Autowired
-    private GroupValidator groupValidator;
 
     @Resource
     private TrainingValidator trainingValidator;
@@ -119,9 +115,7 @@ public class TrainingManager {
 
         Long gid = training.getGid();
         if (training.getIsGroup()) {
-            if (!isRoot && !groupValidator.isGroupMember(userRolesVo.getUid(), training.getGid())) {
-                throw new StatusForbiddenException("对不起，您无权限操作！");
-            }
+            throw new StatusForbiddenException("团队功能已关闭！");
         } else {
             gid = null;
         }
@@ -280,8 +274,7 @@ public class TrainingManager {
 
         List<String> superAdminUidList = userInfoEntityService.getSuperAdminUidList();
         if (gid != null) {
-            List<String> groupRootUidList = groupMemberEntityService.getGroupRootUidList(gid);
-            superAdminUidList.addAll(groupRootUidList);
+            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         List<TrainingRankVO> result = new ArrayList<>();

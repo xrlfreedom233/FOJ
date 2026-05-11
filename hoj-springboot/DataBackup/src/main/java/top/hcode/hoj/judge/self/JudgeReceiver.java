@@ -80,8 +80,7 @@ public class JudgeReceiver extends AbstractReceiver {
                     // 调用判题服务
                     dispatcher.dispatch(Constants.TaskType.JUDGE, new ToJudgeDTO()
                             .setJudge(judge)
-                            .setToken(token)
-                            .setRemoteJudgeProblem(null));
+                            .setToken(token));
                 }
             }
 

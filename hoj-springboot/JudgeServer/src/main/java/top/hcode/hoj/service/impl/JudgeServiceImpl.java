@@ -12,10 +12,8 @@ import top.hcode.hoj.dao.ProblemEntityService;
 import top.hcode.hoj.judge.JudgeContext;
 import top.hcode.hoj.pojo.dto.TestJudgeReq;
 import top.hcode.hoj.pojo.dto.TestJudgeRes;
-import top.hcode.hoj.pojo.dto.ToJudgeDTO;
 import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.pojo.entity.problem.Problem;
-import top.hcode.hoj.remoteJudge.RemoteJudgeContext;
 import top.hcode.hoj.service.JudgeService;
 import top.hcode.hoj.util.Constants;
 
@@ -37,9 +35,6 @@ public class JudgeServiceImpl implements JudgeService {
 
     @Resource
     private JudgeContext judgeContext;
-
-    @Autowired
-    private RemoteJudgeContext remoteJudgeContext;
 
     @Override
     public void judge(Judge judge) {
@@ -111,30 +106,6 @@ public class JudgeServiceImpl implements JudgeService {
         return judgeContext.testJudge(testJudgeReq);
     }
 
-
-    @Override
-    public void remoteJudge(ToJudgeDTO toJudgeDTO) {
-        Judge judge = toJudgeDTO.getJudge();
-        UpdateWrapper<Judge> judgeUpdateWrapper = new UpdateWrapper<>();
-        judgeUpdateWrapper.set("status", Constants.Judge.STATUS_PENDING.getStatus())
-                .set("judger", name)
-                .eq("submit_id", judge.getSubmitId())
-                .ne("status", Constants.Judge.STATUS_CANCELLED.getStatus());
-        boolean isUpdatedOk = judgeEntityService.update(judgeUpdateWrapper);
-        // 没更新成功，则可能表示该评测被取消 或者 judge记录被删除了，则结束评测
-        if (!isUpdatedOk){
-            judgeContext.updateOtherTable(judge.getSubmitId(),
-                    Constants.Judge.STATUS_CANCELLED.getStatus(),
-                    judge.getCid(),
-                    judge.getUid(),
-                    judge.getPid(),
-                    judge.getGid(),
-                    null,
-                    null);
-            return;
-        }
-        remoteJudgeContext.judge(toJudgeDTO);
-    }
 
     @Override
     public Boolean compileSpj(String code, Long pid, String spjLanguage, HashMap<String, String> extraFiles) throws SystemError {

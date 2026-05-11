@@ -25,15 +25,6 @@
             </el-button>
           </span>
           <span>
-            <el-button
-              type="success"
-              size="small"
-              @click="AddRemoteOJProblemDialogVisible = true"
-              icon="el-icon-plus"
-              >{{ $t('m.Add_Rmote_OJ_Problem') }}
-            </el-button>
-          </span>
-          <span>
             <vxe-input
               v-model="query.keyword"
               :placeholder="$t('m.Enter_keyword')"
@@ -56,12 +47,6 @@
                 :value="'All'"
               ></el-option>
               <el-option :label="$t('m.My_OJ')" :value="'Mine'"></el-option>
-              <el-option
-                :label="remoteOj.name"
-                :key="index"
-                :value="remoteOj.key"
-                v-for="(remoteOj, index) in REMOTE_OJ"
-              ></el-option>
             </el-select>
           </span>
 
@@ -306,46 +291,6 @@
       ></AddPublicProblem>
     </el-dialog>
 
-    <el-dialog
-      :title="$t('m.Add_Rmote_OJ_Problem')"
-      width="350px"
-      :visible.sync="AddRemoteOJProblemDialogVisible"
-      :close-on-click-modal="false"
-    >
-      <el-form>
-        <el-form-item :label="$t('m.Remote_OJ')">
-          <el-select v-model="otherOJName" size="small">
-            <el-option
-              :label="remoteOj.name"
-              :value="remoteOj.key"
-              v-for="(remoteOj, index) in REMOTE_OJ"
-              :key="index"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item :label="$t('m.Problem_ID')" required>
-          <el-input v-model="otherOJProblemId" size="small"></el-input>
-        </el-form-item>
-
-        <el-form-item
-          v-if="query.contestId"
-          :label="$t('m.Enter_The_Problem_Display_ID_in_the_Contest')"
-          required
-        >
-          <el-input v-model="displayId" size="small"></el-input>
-        </el-form-item>
-
-        <el-form-item style="text-align:center">
-          <el-button
-            type="primary"
-            icon="el-icon-plus"
-            @click="addRemoteOJProblem"
-            :loading="addRemoteOJproblemLoading"
-            >{{ $t('m.Add') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
-    </el-dialog>
   </div>
 </template>
 
@@ -354,7 +299,6 @@ import api from '@/common/api';
 import utils from '@/common/utils';
 import AddPublicProblem from '@/components/admin/AddPublicProblem.vue';
 import myMessage from '@/common/message';
-import { REMOTE_OJ } from '@/common/constants';
 import { mapGetters } from 'vuex';
 export default {
   name: 'ProblemList',
@@ -380,13 +324,6 @@ export default {
       currentProblemID: '',
       currentRow: {},
       addProblemDialogVisible: false,
-      AddRemoteOJProblemDialogVisible: false,
-      addRemoteOJproblemLoading: false,
-      otherOJName: 'HDU',
-      otherOJProblemId: '',
-      REMOTE_OJ: {},
-      displayId: '',
-
       showPagination: false,
 
       predefineColors: [
@@ -423,7 +360,6 @@ export default {
       this.query.contestId = this.$route.params.contestId;
       this.contestProblemMap = {};
       this.getProblemList();
-      this.REMOTE_OJ = Object.assign({}, REMOTE_OJ);
     },
 
     goEdit(problemId) {
@@ -598,43 +534,6 @@ export default {
     filterByKeyword() {
       this.query.currentPage = 1;
       this.pushRouter();
-    },
-    addRemoteOJProblem() {
-      if (!this.otherOJProblemId) {
-        myMessage.error(this.$i18n.t('m.Problem_ID_is_required'));
-        return;
-      }
-
-      if (!this.displayId && this.query.contestId) {
-        myMessage.error(
-          this.$i18n.t('m.The_Problem_Display_ID_in_the_Contest_is_required')
-        );
-        return;
-      }
-
-      this.addRemoteOJproblemLoading = true;
-      let funcName = '';
-      if (this.query.contestId) {
-        funcName = 'admin_addContestRemoteOJProblem';
-      } else {
-        funcName = 'admin_addRemoteOJProblem';
-      }
-      api[funcName](
-        this.otherOJName,
-        this.otherOJProblemId,
-        this.query.contestId,
-        this.displayId
-      ).then(
-        (res) => {
-          this.addRemoteOJproblemLoading = false;
-          this.AddRemoteOJProblemDialogVisible = false;
-          myMessage.success(this.$i18n.t('m.Add_Successfully'));
-          this.currentChange(1);
-        },
-        (err) => {
-          this.addRemoteOJproblemLoading = false;
-        }
-      );
     },
     changeContestProblemColor(id, color) {
       let data = {

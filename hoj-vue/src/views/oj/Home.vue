@@ -309,50 +309,6 @@
             </vxe-table-column>
           </vxe-table>
         </el-card>
-        <el-card class="card-top">
-          <div
-            slot="header"
-            class="clearfix title"
-          >
-            <span class="home-title panel-title">
-              <i class="el-icon-monitor"></i> {{ $t('m.Supported_Remote_Online_Judge') }}
-            </span>
-          </div>
-          <el-row :gutter="20">
-            <el-col
-              :md="8"
-              :sm="24"
-              v-for="(oj, index) in remoteJudgeList"
-              :key="index"
-            >
-              <a
-                :href="oj.url"
-                target="_blank"
-              >
-                <el-tooltip
-                  :content="oj.name"
-                  placement="top"
-                >
-                  <el-image
-                    :src="oj.logo"
-                    fit="fill"
-                    class="oj-logo"
-                    :class="
-                      oj.status ? 'oj-normal ' + oj.name : 'oj-error ' + oj.name
-                    "
-                  >
-                    <div
-                      slot="error"
-                      class="image-slot"
-                    >
-                      <i class="el-icon-picture-outline"></i>
-                    </div>
-                  </el-image>
-                </el-tooltip>
-              </a>
-            </el-col>
-          </el-row>
-        </el-card>
       </el-col>
     </el-row>
   </div>
@@ -397,50 +353,6 @@ export default {
         },
       ],
       srcHight: "440px",
-      remoteJudgeList: [
-        {
-          url: "http://acm.hdu.edu.cn",
-          name: "HDU",
-          logo: require("@/assets/hdu-logo.png"),
-          status: true,
-        },
-        {
-          url: "http://poj.org",
-          name: "POJ",
-          logo: require("@/assets/poj-logo.png"),
-          status: true,
-        },
-        {
-          url: "https://codeforces.com",
-          name: "Codeforces",
-          logo: require("@/assets/codeforces-logo.png"),
-          status: true,
-        },
-        {
-          url: "https://codeforces.com/gyms",
-          name: "GYM",
-          logo: require("@/assets/gym-logo.png"),
-          status: true,
-        },
-        {
-          url: "https://atcoder.jp",
-          name: "AtCoder",
-          logo: require("@/assets/atcoder-logo.png"),
-          status: true,
-        },
-        {
-          url: "https://www.spoj.com",
-          name: "SPOJ",
-          logo: require("@/assets/spoj-logo.png"),
-          status: true,
-        },
-        {
-          url: "https://loj.ac/",
-          name: "LibreOJ",
-          logo: require("@/assets/libre-logo.png"),
-          status: true,
-        },
-      ],
     };
   },
   mounted() {

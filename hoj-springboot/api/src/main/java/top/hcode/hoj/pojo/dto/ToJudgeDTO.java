@@ -23,41 +23,4 @@ public class ToJudgeDTO implements Serializable {
      */
     private String token;
 
-    /**
-     *  远程判题不为空，hoj判题为null，例如HDU-1000
-     */
-    private String remoteJudgeProblem;
-
-    /**
-     *  是否为远程判题重判，仅限于已有远程OJ的提交id的重判
-     */
-    private Boolean isHasSubmitIdRemoteReJudge;
-
-    /**
-     *  远程判题所用账号
-     */
-    private String username;
-
-    /**
-     *  远程判题所用密码
-     */
-    private String password;
-
-    /**
-     *  调用判题机的ip
-     */
-    private String judgeServerIp;
-
-    /**
-     *  调用判题机的port
-     */
-    private Integer judgeServerPort;
-
-    /**
-     * VJ判題辅助选择判题机序号使用
-     */
-    private Integer index;
-
-    private Integer size;
-
 }

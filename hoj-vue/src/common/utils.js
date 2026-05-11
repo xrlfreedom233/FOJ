@@ -164,7 +164,7 @@ function getLevelName(difficulty) {
     difficulty != null &&
     PROBLEM_LEVEL[difficulty]
   ) {
-    return PROBLEM_LEVEL[difficulty]['name'][store.getters.webLanguage];
+    return PROBLEM_LEVEL[difficulty].name;
   } else {
     return 'unknown [' + difficulty + ']';
   }

@@ -10,10 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import top.hcode.hoj.dao.contest.ContestRecordEntityService;
-import top.hcode.hoj.dao.group.GroupMemberEntityService;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.pojo.entity.contest.Contest;
-import top.hcode.hoj.pojo.entity.group.GroupMember;
 import top.hcode.hoj.pojo.vo.ACMContestRankVO;
 import top.hcode.hoj.pojo.vo.ContestAwardConfigVO;
 import top.hcode.hoj.pojo.vo.ContestRecordVO;
@@ -35,9 +33,6 @@ public class ContestCalculateRankManager {
 
     @Resource
     private ContestRecordEntityService contestRecordEntityService;
-
-    @Autowired
-    private GroupMemberEntityService groupMemberEntityService;
 
     public List<ACMContestRankVO> calcACMRank(boolean isOpenSealRank,
                                               boolean removeStar,
@@ -642,14 +637,7 @@ public class ContestCalculateRankManager {
         List<String> superAdminUidList = userInfoEntityService.getSuperAdminUidList();
 
         if (gid != null) {
-            QueryWrapper<GroupMember> groupMemberQueryWrapper = new QueryWrapper<>();
-            groupMemberQueryWrapper.eq("gid", gid).eq("auth", 5);
-
-            List<GroupMember> groupRootList = groupMemberEntityService.list(groupMemberQueryWrapper);
-
-            for (GroupMember groupMember : groupRootList) {
-                superAdminUidList.add(groupMember.getUid());
-            }
+            // 团队功能已关闭
         }
         return superAdminUidList;
     }
