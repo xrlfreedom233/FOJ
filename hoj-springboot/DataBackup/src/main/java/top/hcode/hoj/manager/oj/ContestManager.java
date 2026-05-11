@@ -89,10 +89,6 @@ public class ContestManager {
     @Autowired
     private ContestRankManager contestRankManager;
 
-    @Autowired
-
-    @Autowired
-
     public IPage<ContestVO> getContestList(Integer limit, Integer currentPage, Integer status, Integer type, String keyword) {
         // 页数，每页题数若为空，设置默认值
         if (currentPage == null || currentPage < 1) currentPage = 1;

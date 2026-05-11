@@ -81,8 +81,6 @@ public class JudgeManager {
     private BeforeDispatchInitManager beforeDispatchInitManager;
 
     @Autowired
-
-    @Autowired
     private AccessValidator accessValidator;
 
     @Autowired
