@@ -330,7 +330,7 @@ export const m = {
   Exclude_admin_submissions: '排除管理员的提交',
   SplitType_User: '以用户名分割文件夹',
   SplitType_Problem: '以题目ID分割文件夹',
-  Delete_Contest_Tips: '此操作将删除该比赛以及比赛的提交、讨论、公告、记录等数据, 是否继续?',
+  Delete_Contest_Tips: '此操作将删除该比赛以及比赛的提交、公告、记录等数据, 是否继续?',
 
   // /views/admin/contest/Contest.vue
   Contest_Title: '比赛标题',

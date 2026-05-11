@@ -344,30 +344,11 @@ export const m = {
   // /views/oj/rank/OIRank.vue
   OI_Ranklist: 'OI 排行榜',
 
-  Go_to_problem: '前往原题',
-  Release_Time: '发布时间',
-  Likes: '点赞',
-  Like_Successfully: '点赞成功',
-  Cancel_Like_Successfully: '取消成功',
-  Views: '浏览',
   Edit: '编辑',
   Delete: '删除',
-  Return: '返回',
-  Category: '分类',
-  Associated_Problem:'讨论关联的题目ID',
-  Associated_Problem_Tips:'讨论关联的题目ID, 例如 P1000',
   Delete_successfully: '删除成功',
   Post_successfully: '发布成功',
   Send_successfully: '发送成功',
-  Can_not_exceed_255:'的长度不能超过255',
-  Can_not_exceed_65535:'的长度不能超过65535',
-  Can_not_exceed_10000:'的长度不能超过10000',
-
-  Report: '举报',
-  Like: '点赞',
-  Liked: '已点赞',
-  Report_Reason: '举报原因',
-  The_report_label_and_reason_cannot_be_empty: '举报标签和理由不能都为空',
 
   // 404.vue
   Page_Not_Found:"页面找不到啦",
