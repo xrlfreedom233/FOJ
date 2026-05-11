@@ -14,7 +14,6 @@ export const m = {
   // /components/oj/common/NavBar.vue 导航栏
   NavBar_Home: '首页',
   NavBar_Problem: '题目',
-  NavBar_Training: '训练',
   NavBar_Contest: '比赛',
   NavBar_Status: '评测',
   NavBar_Rank: '排名',
@@ -37,7 +36,6 @@ export const m = {
   Dialog_Reset_Password: '重置密码',
   Click_To_Change_Web_Language: '点击切换网站语言',
   NavBar_Back_Home:'前往首页',
-  NavBar_Training_Home: '训练主页',
   NavBar_Contest_Home: '比赛主页',
   NavBar_Contest_Own_Submission: '我的提交',
   NavBar_Contest_Rank: '比赛榜单',
@@ -602,28 +600,4 @@ export const m = {
   // /views/oj/message/message.vue
   Message_Center: '消息中心',
   No_Data: '暂无数据',
-
-  // /views/oj/training/TrainingList.vue
-  Search_Training: '搜索训练',
-  Training_Public: '公开训练',
-  Training_Private: '私有训练',
-  Training_Category: '训练分类',
-  Number: '编号',
-  Problem_Number: '题目数',
-  Recent_Update: '最近更新',
-  Progress:'进度',
-
-  // /views/oj/training/TrainingDetails.vue
-  Training_Introduction: '训练简介',
-  Training_Number: '训练编号',
-  Training_Auth: '训练权限',
-  Training_Total_Problems: '总题数',
-  Record_List: '记录榜单',
-  To_Enter_Training_Need_Password: '请输入该私有训练的密码，方可进入',
-  Enter_the_training_password: '请输入私有训练的密码',  
-  Register_training_successfully: '验证训练密码成功！',
-
-  // /views/oj/training/TrainingRank.vue
-  Total_AC: 'AC总数',
-  Training_Rank_Search_Placeholder:'请输入查询的用户名、真实姓名或学校',
 }

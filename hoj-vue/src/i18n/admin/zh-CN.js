@@ -23,9 +23,6 @@ export const m = {
   Create_Problem: '增加题目',
   Admin_Group_Apply_Problem:'团队题目审批',
   Export_Import_Problem: '导入|导出题目',
-  Training_Admin: '训练管理',
-  Training_List: '训练列表',
-  Create_Training: '创建训练',
   Admin_Category: '分类管理',
   Contest_Admin: '比赛管理',
   Contest_List: '比赛列表',
@@ -329,41 +326,6 @@ export const m = {
   Export_Problem_NULL_Tips: '选择导出的题目不能为空',
   Upload_Problem_Succeeded: '上传题目成功',
   Upload_Problem_Failed: '上传题目失败',
-
-  // /views/admin/training/TrainingList.vue
-  Update_Time: '更新时间',
-  Order_Number: '序号',
-  View_Training_Problem_List: '查看训练题目列表',
-  Delete_Training_Tips: '此操作将删除该训练提交记录、榜单等数据, 是否继续?',
-
-  // /views/admin/training/Training.vue
-  Training_rank: '训练排序编号(升序)',
-  Training_Title: '训练标题',
-  Training_Description: '训练描述',
-  Training_Auth: '训练权限',
-  Training_Category: '训练分类',
-  Public_Training: '公开训练',
-  Private_Training: '私有训练',
-  Training_Password: '训练密码',
-  Edit_Training: '编辑训练',
-  Redirect_To_Category: '当前训练的分类列表为空，请先前往创建分类！',
-  Redirect: '重定向',
-
-  // /views/admin/training/TrainingProblemList.vue
-  Training_Problem_List: '训练题目列表',
-  Add_Training_Problem: '添加训练题目',
-  Remove_Training_Problem_Tips: '你是否确定要将该题目移出训练？',
-  Training_Problem_Rank: '题目显示顺序(升序)',
-
-  // /views/admin/training/Category.vue
-  Add_Category: '添加分类',
-  Update_Category: '修改分类',
-  To_Add: '添加',
-  To_Update: '更新',
-
-  Category_Name: '分类名称',
-  Category_Color: '分类颜色',
-  Delete_Category_Tips: '你是否确定删除该分类？',
 
   // /views/admin/contest/ContestList.vue
   Start_Time: '开始时间',

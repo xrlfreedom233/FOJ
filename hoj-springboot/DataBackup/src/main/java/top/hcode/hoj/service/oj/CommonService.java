@@ -4,7 +4,6 @@ import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.pojo.entity.problem.CodeTemplate;
 import top.hcode.hoj.pojo.entity.problem.Language;
 import top.hcode.hoj.pojo.entity.problem.Tag;
-import top.hcode.hoj.pojo.entity.training.TrainingCategory;
 import top.hcode.hoj.pojo.vo.CaptchaVO;
 import top.hcode.hoj.pojo.vo.ProblemTagVO;
 
@@ -14,8 +13,6 @@ import java.util.List;
 public interface CommonService {
 
     public CommonResult<CaptchaVO> getCaptcha();
-
-    public CommonResult<List<TrainingCategory>> getTrainingCategory();
 
     public CommonResult<List<Tag>> getAllProblemTagsList(String oj);
 

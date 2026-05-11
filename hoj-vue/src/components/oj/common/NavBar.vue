@@ -26,10 +26,6 @@
               ><i class="el-icon-s-grid"></i
               >{{ $t('m.NavBar_Problem') }}</el-menu-item
             >
-            <el-menu-item index="/training"
-              ><i class="el-icon-s-claim"></i
-              >{{ $t('m.NavBar_Training') }}</el-menu-item
-            >
             <el-menu-item index="/contest"
               ><i class="el-icon-trophy"></i
               >{{ $t('m.NavBar_Contest') }}</el-menu-item
@@ -71,24 +67,6 @@
                 $t('m.NavBar_Developer')
               }}</el-menu-item>
             </el-submenu>
-        </template>
-        <template v-else-if="mode == 'training'">
-          <el-menu-item index="/home"
-              ><i class="el-icon-s-home"></i>{{ $t('m.NavBar_Back_Home') }}</el-menu-item
-            >
-            <template v-if="$route.params.groupID">
-              <el-menu-item :index="'/group/' + $route.params.groupID"
-              ><i
-                class="fa fa-users navbar-icon"
-              ></i
-              >{{ $t('m.NavBar_Group_Home') }}</el-menu-item>
-            </template>
-            <el-menu-item :index="getTrainingHomePath()"
-              ><i class="el-icon-s-claim"></i>{{ $t('m.NavBar_Training_Home') }}</el-menu-item
-            >
-            <el-menu-item :index="getTrainingProblemListPath()"
-              ><i class="fa fa-list navbar-icon"></i>{{ $t('m.Problem_List') }}</el-menu-item
-            >
         </template>
         <template v-else-if="mode == 'contest'">
           <el-menu-item index="/home"
@@ -312,18 +290,7 @@
 
           <mu-list-item
             button
-            to="/training"
-            @click="opendrawer = !opendrawer"
-            active-class="mobile-menu-active"
-          >
-            <mu-list-item-action>
-              <mu-icon value=":el-icon-s-claim" size="24"></mu-icon>
-            </mu-list-item-action>
-            <mu-list-item-title>{{
-              $t('m.NavBar_Training')
-            }}</mu-list-item-title>
-          </mu-list-item>
-
+            to="/contest"
           <mu-list-item
             button
             to="/contest"
@@ -566,24 +533,6 @@ export default {
         this.mode = this.$route.meta.fullScreenSource;
       }else{
         this.mode = 'defalut';
-      }
-    },
-    getTrainingHomePath(){
-      let tid = this.$route.params.trainingID
-      let gid = this.$route.params.groupID
-      if(gid){
-        return `/group/${gid}/training/${tid}`;
-      }else{
-        return `/training/${tid}`;
-      }
-    },
-    getTrainingProblemListPath(){
-      let tid = this.$route.params.trainingID
-      let gid = this.$route.params.groupID
-      if(gid){
-        return `/group/${gid}/training/${tid}/problems`;
-      }else{
-        return `/training/${tid}/problems`;
       }
     }
   },

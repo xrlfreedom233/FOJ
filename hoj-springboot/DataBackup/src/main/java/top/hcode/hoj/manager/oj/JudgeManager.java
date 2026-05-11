@@ -101,7 +101,6 @@ public class JudgeManager {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
         boolean isContestSubmission = judgeDto.getCid() != null && judgeDto.getCid() != 0;
-        boolean isTrainingSubmission = judgeDto.getTid() != null && judgeDto.getTid() != 0;
 
         SwitchConfig switchConfig = nacosSwitchConfig.getSwitchConfig();
         if (!isContestSubmission && switchConfig.getDefaultSubmitInterval() > 0) { // 非比赛提交有限制限制
@@ -130,9 +129,7 @@ public class JudgeManager {
         // 如果比赛id不等于0，则说明为比赛提交
         if (isContestSubmission) {
             beforeDispatchInitManager.initContestSubmission(judgeDto.getCid(), judgeDto.getPid(), userRolesVo, judge);
-        } else if (isTrainingSubmission) {
-            beforeDispatchInitManager.initTrainingSubmission(judgeDto.getTid(), judgeDto.getPid(), userRolesVo, judge);
-        } else { // 如果不是比赛提交和训练提交
+        } else {
             beforeDispatchInitManager.initCommonSubmission(judgeDto.getPid(), judgeDto.getGid(), judge);
 
         }

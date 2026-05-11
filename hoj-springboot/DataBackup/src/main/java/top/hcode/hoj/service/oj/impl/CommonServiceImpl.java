@@ -6,7 +6,6 @@ import top.hcode.hoj.manager.oj.CommonManager;
 import top.hcode.hoj.pojo.entity.problem.CodeTemplate;
 import top.hcode.hoj.pojo.entity.problem.Language;
 import top.hcode.hoj.pojo.entity.problem.Tag;
-import top.hcode.hoj.pojo.entity.training.TrainingCategory;
 import top.hcode.hoj.pojo.vo.CaptchaVO;
 import top.hcode.hoj.pojo.vo.ProblemTagVO;
 import top.hcode.hoj.service.oj.CommonService;
@@ -23,11 +22,6 @@ public class CommonServiceImpl implements CommonService {
     @Override
     public CommonResult<CaptchaVO> getCaptcha() {
         return CommonResult.successResponse(commonManager.getCaptcha());
-    }
-
-    @Override
-    public CommonResult<List<TrainingCategory>> getTrainingCategory() {
-        return CommonResult.successResponse(commonManager.getTrainingCategory());
     }
 
     @Override

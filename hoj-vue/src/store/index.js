@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import user from '@/store/user'
 import contest from "@/store/contest"
-import training from "@/store/training"
 import api from '@/common/api'
 import storage from '@/common/storage'
 Vue.use(Vuex)
@@ -112,8 +111,7 @@ const rootActions = {
 export default new Vuex.Store({
   modules: {
     user,
-    contest,
-    training
+    contest
   },
   state: rootState,
   getters: rootGetters,

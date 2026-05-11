@@ -235,7 +235,6 @@ export const JUDGE_CASE_MODE = {
 }
 
 export const FOCUS_MODE_ROUTE_NAME = {
-  'TrainingFullProblemDetails': 'TrainingProblemDetails',
   'ContestFullProblemDetails': 'ContestProblemDetails'
 }
 

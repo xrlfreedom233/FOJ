@@ -25,10 +25,6 @@ import DiscussionList from "@/views/oj/discussion/discussionList.vue"
 import Discussion from "@/views/oj/discussion/discussion.vue"
 import Introduction from "@/views/oj/about/Introduction.vue"
 import Developer from "@/views/oj/about/Developer.vue"
-import TrainingList from "@/views/oj/training/TrainingList.vue"
-import TrainingDetails from "@/views/oj/training/TrainingDetails.vue"
-import TrainingProblemList from "@/views/oj/training/TrainingProblemList.vue"
-import TrainingRank from "@/views/oj/training/TrainingRank.vue"
 import NotFound from "@/views/404.vue"
 
 const ojRoutes = [
@@ -57,48 +53,10 @@ const ojRoutes = [
     meta: { title: 'Problem Details' }
   },
   {
-    name: 'TrainingFullProblemDetails',
-    path: '/training/:trainingID/problem/:problemID/full-screen',
-    component: Problem,
-    meta: { title: 'Training Problem Details', fullScreenSource: 'training'}
-  },
-  {
     name: 'ContestFullProblemDetails',
     path: '/contest/:contestID/problem/:problemID/full-screen',
     component: Problem,
     meta: { title: 'Contest Problem Details', fullScreenSource: 'contest'}
-  },
-  {
-    path: '/training',
-    name: 'TrainingList',
-    component: TrainingList,
-    meta: { title: 'Training' }
-  },
-  {
-    name: 'TrainingDetails',
-    path: '/training/:trainingID/',
-    component:TrainingDetails,
-    meta: {title: 'Training Details'},
-    children: [
-      {
-        name: 'TrainingProblemList',
-        path: 'problems',
-        component: TrainingProblemList,
-        meta: { title: 'Training Problem' }
-      },
-      {
-        name: 'TrainingProblemDetails',
-        path: 'problem/:problemID',
-        component: Problem,
-        meta: { title: 'Training Problem Details' }
-      },
-      {
-        name: 'TrainingRank',
-        path: 'rank',
-        component: TrainingRank,
-        meta: { title: 'Training Rank' }
-      }
-    ]
   },
   {
     path: '/contest',

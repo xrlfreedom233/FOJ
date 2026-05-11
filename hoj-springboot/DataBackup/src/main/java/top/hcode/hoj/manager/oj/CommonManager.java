@@ -8,9 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import top.hcode.hoj.dao.problem.*;
-import top.hcode.hoj.dao.training.TrainingCategoryEntityService;
 import top.hcode.hoj.pojo.entity.problem.*;
-import top.hcode.hoj.pojo.entity.training.TrainingCategory;
 import top.hcode.hoj.pojo.vo.CaptchaVO;
 import top.hcode.hoj.pojo.vo.ProblemTagVO;
 import top.hcode.hoj.utils.RedisUtils;
@@ -44,9 +42,6 @@ public class CommonManager {
     @Autowired
     private CodeTemplateEntityService codeTemplateEntityService;
 
-    @Autowired
-    private TrainingCategoryEntityService trainingCategoryEntityService;
-
     public CaptchaVO getCaptcha() {
         ArithmeticCaptcha specCaptcha = new ArithmeticCaptcha(90, 30, 4);
         specCaptcha.setCharType(Captcha.TYPE_DEFAULT);
@@ -63,12 +58,6 @@ public class CommonManager {
         return captchaVo;
     }
 
-
-    public List<TrainingCategory> getTrainingCategory() {
-        QueryWrapper<TrainingCategory> trainingCategoryQueryWrapper = new QueryWrapper<>();
-        trainingCategoryQueryWrapper.isNull("gid");
-        return trainingCategoryEntityService.list(trainingCategoryQueryWrapper);
-    }
 
     public List<Tag> getAllProblemTagsList(String oj) {
         List<Tag> tagList;
