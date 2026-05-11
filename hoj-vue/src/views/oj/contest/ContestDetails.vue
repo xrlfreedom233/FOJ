@@ -24,19 +24,6 @@
                   {{ $t('m.' + CONTEST_TYPE_REVERSE[contest.auth]['name']) }}
                 </el-tag>
               </el-tooltip>
-              <el-tooltip
-                v-if="contest.gid != null"
-                :content="$t('m.Go_To_Group_Contest_List')"
-                style="margin-left:10px;"
-                placement="top">
-                <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="toGroupContestList(contest.gid)">
-                  <i class="fa fa-users"></i>
-                    {{ $t('m.Group_Contest_Tag')}}
-                </el-button>
-             </el-tooltip>
             </el-col>
             <el-col :span="10" style="text-align:right">
               <el-button size="small" plain v-if="contest.count != null">
@@ -436,14 +423,6 @@ export default {
       if (name !== this.$route.name) {
         this.$router.push({ name: name });
       }
-    },
-    toGroupContestList(gid){
-      this.$router.push({
-        name: 'GroupContestList',
-        params: {
-          groupID: gid,
-        },
-      })
     },
   },
   computed: {

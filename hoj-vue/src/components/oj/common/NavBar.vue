@@ -45,12 +45,6 @@
                 $t('m.NavBar_OI_Rank')
               }}</el-menu-item>
             </el-submenu>
-            <el-menu-item index="/group"
-              ><i
-                class="fa fa-users navbar-icon"
-              ></i
-              >{{ $t('m.NavBar_Group') }}</el-menu-item
-            >
             <el-submenu index="about">
               <template slot="title"
                 ><i class="el-icon-info"></i>{{ $t('m.NavBar_About') }}</template
@@ -78,21 +72,6 @@
             >
             <el-menu-item :index="'/contest/' + $route.params.contestID + '/rank'"
               ><i class="fa fa-bar-chart navbar-icon"></i>{{ $t('m.NavBar_Contest_Rank') }}</el-menu-item
-            >
-        </template>
-        <template v-else-if="mode == 'group'">
-          <el-menu-item index="/home"
-              ><i class="el-icon-s-home"></i>{{ $t('m.NavBar_Back_Home') }}</el-menu-item
-            >
-            <template v-if="$route.params.groupID">
-              <el-menu-item :index="'/group/' + $route.params.groupID"
-              ><i
-                class="fa fa-users navbar-icon"
-              ></i
-              >{{ $t('m.NavBar_Group_Home') }}</el-menu-item>
-            </template>
-            <el-menu-item :index="'/group/' + $route.params.groupID + '/problem'"
-              ><i class="fa fa-list navbar-icon"></i>{{ $t('m.Problem_List') }}</el-menu-item
             >
         </template>
 
@@ -354,18 +333,6 @@
                 $t('m.NavBar_OI_Rank')
               }}</mu-list-item-title>
             </mu-list-item>
-          </mu-list-item>
-
-          <mu-list-item
-            button
-            to="/group"
-            @click="opendrawer = !opendrawer"
-            active-class="mobile-menu-active"
-          >
-            <mu-list-item-action>
-              <mu-icon value=":fa fa-users" size="24"></mu-icon>
-            </mu-list-item-action>
-            <mu-list-item-title>{{ $t('m.NavBar_Group') }}</mu-list-item-title>
           </mu-list-item>
 
           <mu-list-item

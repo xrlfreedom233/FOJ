@@ -21,7 +21,6 @@ export const m = {
   Problem_Admin: '题目管理',
   Problem_List: '题目列表',
   Create_Problem: '增加题目',
-  Admin_Group_Apply_Problem:'团队题目审批',
   Export_Import_Problem: '导入|导出题目',
   Admin_Category: '分类管理',
   Contest_Admin: '比赛管理',
@@ -159,14 +158,9 @@ export const m = {
   // /views/admin/general/SysSwitch.vue
   Judge_Config:'评测配置',
   Open_Public_Judge:'是否开启公开题目评测',
-  Open_Group_Judge:'是否开启团队题目评测',
   Open_Contest_Judge:'是否开启比赛题目评测',
   Non_Contest_Submission_Frequency:'非比赛提交评测的间隔秒数',
   Hide_Non_Contest_Submission_Code:'隐藏非公共比赛提交详情的代码',
-  Group_Config:'团队配置',
-  Number_of_Groups_that_users_can_create_per_day:'普通用户每天可以创建的团队数',
-  Total_number_of_groups_that_ordinary_users_can_create:'普通用户总共可以创建的团队数',
-  Number_of_AC_required_for_ordinary_users_to_create_group:'普通用户创建团队需要的AC题目数',
   Account_Config:'账号配置',
   Account:'账号',
   Add_Account:'增加账号',
@@ -300,12 +294,6 @@ export const m = {
   Tag_Classification_Attribution: '标签分类归属',
   Delete_Tag_Classification_Tips: '你是否确定删除该分类？提示：此操作会把该分类下的标签归属到未分类！',
   Unclassified:'未分类',
-
-  // /views/amdin/problem/GroupProblemList.vue
-  Search:'搜索',
-  Enter_Group_ID:'请输入团队ID',
-  Agreed:'已同意',
-  Examine:'审批',
 
   // /views/admin/problem/ImportAndExport.vue
   Export_Problem: '导出题目',

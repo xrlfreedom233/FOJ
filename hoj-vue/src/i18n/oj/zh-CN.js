@@ -16,7 +16,6 @@ export const m = {
   NavBar_Rank: '排名',
   NavBar_ACM_Rank: 'ACM 排名',
   NavBar_OI_Rank: 'OI 排名',
-  NavBar_Group: '团队',
   NavBar_About: '关于',
   NavBar_Introduction: '简介',
   NavBar_Developer: '开发者',
@@ -35,7 +34,6 @@ export const m = {
   NavBar_Contest_Home: '比赛主页',
   NavBar_Contest_Own_Submission: '我的提交',
   NavBar_Contest_Rank: '比赛榜单',
-  NavBar_Group_Home: '团队主页',
 
   //  /components/oj/common/Login.vue 登录弹窗
   Login_Username: '用户名',
@@ -193,7 +191,6 @@ export const m = {
   Open_Source: '开源',
   Support: '支持',
   Help: '帮助',
-  Group: 'Q群',
 
   // /views/oj/Home.vue
   Welcome_to: '欢迎使用 ',
@@ -387,8 +384,6 @@ export const m = {
   ScrollBoard: '滚榜',
   Register_contest_successfully: '比赛报名成功',
   Please_check_the_contest_announcement_for_details: '具体内容请查看比赛公告',
-  Go_To_Group_Contest_List:'前往团队比赛列表',
-  Group_Contest_Tag:'团队比赛',
   Contains_Submission_After_Contest:'包含赛后的提交',
 
   // /views/oj/contest/children/ACMContestRank.vue
@@ -482,7 +477,6 @@ export const m = {
 
   // /views/oj/about/Developer.vue
   Leader_BackEnd_FrontEnd_Engineer: '主导 & 后端 | 前端 开发者',
-  Group_Function_Development_Contributor:'团队功能开发贡献者',
   Distributed: '分布式',
   Distributed_Desc: '前后端分离，支持判题微服务集群',
   Customization: '定制化',

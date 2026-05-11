@@ -94,14 +94,6 @@ export default {
       storage.set(key, this.concernedList);
       this.getContestOutsideScoreboard();
     },
-    toGroupContestList(gid){
-      this.$router.push({
-        name: 'GroupContestList',
-        params: {
-          groupID: gid,
-        },
-      })
-    },
     getRankShowName(rankShowName, username){
       let finalShowName = rankShowName;
       if(rankShowName == null || rankShowName == '' || rankShowName.trim().length == 0){
