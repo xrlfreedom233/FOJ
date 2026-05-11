@@ -161,9 +161,6 @@ export const m = {
   Open_Contest_Judge:'是否开启比赛题目评测',
   Non_Contest_Submission_Frequency:'非比赛提交评测的间隔秒数',
   Hide_Non_Contest_Submission_Code:'隐藏非公共比赛提交详情的代码',
-  Account_Config:'账号配置',
-  Account:'账号',
-  Add_Account:'增加账号',
 
   // /views/admin/problem/ProblemList.vue
   Contest_Problem_List: '比赛题目列表',

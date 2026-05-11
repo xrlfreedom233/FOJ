@@ -58,74 +58,14 @@
             </el-card>
         </el-col>
       </el-row>
-      <el-row :gutter="15">
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount 
-            :usernameList.sync="switchConfig.hduUsernameList"
-            :passwordList.sync="switchConfig.hduPasswordList"
-            :loading.sync="loading"
-            @saveSwitchConfig="saveSwitchConfig"
-            OJ="HDU">
-          </RemoteJudgeAccount>
-        </el-col>
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount 
-            :usernameList.sync="switchConfig.cfUsernameList"
-            :passwordList.sync="switchConfig.cfPasswordList"
-            :loading.sync="loading"
-            @saveSwitchConfig="saveSwitchConfig"
-            OJ="Codeforces">
-          </RemoteJudgeAccount>
-        </el-col>
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount 
-            :usernameList.sync="switchConfig.pojUsernameList"
-            :passwordList.sync="switchConfig.pojPasswordList"
-            :loading.sync="loading"
-            @saveSwitchConfig="saveSwitchConfig"
-            OJ="POJ">
-          </RemoteJudgeAccount>
-        </el-col>
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount 
-            :usernameList.sync="switchConfig.atcoderUsernameList"
-            :passwordList.sync="switchConfig.atcoderPasswordList"
-            :loading.sync="loading"
-            @saveSwitchConfig="saveSwitchConfig"
-            OJ="Atcoder">
-          </RemoteJudgeAccount>
-        </el-col>
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount 
-            :usernameList.sync="switchConfig.spojUsernameList"
-            :passwordList.sync="switchConfig.spojPasswordList"
-            :loading.sync="loading"
-            @saveSwitchConfig="saveSwitchConfig"
-            OJ="SPOJ">
-          </RemoteJudgeAccount>
-        </el-col>
-        <el-col :xs="24" :md="12" style="margin-top: 15px;">
-          <RemoteJudgeAccount
-              :usernameList.sync="switchConfig.libreojUsernameList"
-              :passwordList.sync="switchConfig.libreojPasswordList"
-              :loading.sync="loading"
-              @saveSwitchConfig="saveSwitchConfig"
-              OJ="LibreOJ">
-          </RemoteJudgeAccount>
-        </el-col>
-      </el-row>
     </el-card>
 </div>
 </template>
 <script>
 import api from '@/common/api';
 import myMessage from '@/common/message';
-const RemoteJudgeAccount = () => import('@/components/admin/RemoteJudgeAccount.vue');
 export default {
   name: 'SystemConfig',
-  components:{
-    RemoteJudgeAccount
-  },
   data() {
     return {
       loading: false,
@@ -137,7 +77,7 @@ export default {
     let screenWidth = window.screen.width;
     if (screenWidth < 500) {
       this.labelPosition = 'top';
-    } 
+    }
   },
   mounted() {
     api.admin_getSwitchConfig().then((res) => {
