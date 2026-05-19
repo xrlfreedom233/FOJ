@@ -1,6 +1,0 @@
-# 此目录会被 Dockerfile `ADD html/` 复制为 nginx web root
-#
-# 要重新打 frontend 镜像，先在 hoj-vue 跑：
-#   cd hoj-vue && npm run build
-# 然后把 dist/* 复制过来：
-#   cp -r hoj-vue/dist/* hoj-deploy/src/frontend/html/

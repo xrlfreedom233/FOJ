@@ -1,6 +1,16 @@
 .git.bak/
 .claude/
+.codex/
+.idea/
 
 # Docker 运行时数据（mysql/redis/log/testcase/file 挂载点）
 hoj-deploy/standAlone/hoj/
 hoj-deploy/distributed/*/hoj/
+
+# 本地运行日志
+hoj-springboot/hoj_backend/
+hoj-springboot/logging.path_IS_UNDEFINED/
+
+# 本地 docker-compose 覆盖文件（含本地凭据）
+docker-compose.override.yml
+docker-compose.override.yaml
