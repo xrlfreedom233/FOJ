@@ -20,3 +20,7 @@ foj-springboot/logging.path_IS_UNDEFINED/
 # Local docker-compose overrides may contain credentials.
 docker-compose.override.yml
 docker-compose.override.yaml
+
+# Local environment files may contain credentials. Commit .env.example instead.
+.env
+!.env.example

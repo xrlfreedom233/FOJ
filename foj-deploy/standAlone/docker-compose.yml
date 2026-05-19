@@ -33,7 +33,7 @@ services:
       - MYSQL_SERVICE_HOST=host.docker.internal
       - MYSQL_SERVICE_PORT=3306
       - MYSQL_SERVICE_USER=root
-      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-xrl15760326784}
+      - MYSQL_SERVICE_PASSWORD=${MYSQL_ROOT_PASSWORD:-change_me}
       - MYSQL_SERVICE_DB_NAME=nacos
       - NACOS_AUTH_ENABLE=true
     ports:
