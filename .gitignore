@@ -3,16 +3,20 @@
 .codex/
 .idea/
 
-# Docker 运行时数据（mysql/redis/log/testcase/file 挂载点）
-hoj-deploy/standAlone/hoj/
-hoj-deploy/distributed/*/hoj/
+node_modules/
+dist/
+target/
+*.log
+logging.path_IS_UNDEFINED/
 
-# 本地运行日志
-hoj-springboot/hoj_backend/
-hoj-springboot/logging.path_IS_UNDEFINED/
+# Docker runtime data: mysql/redis/log/testcase/file mount points.
+foj-deploy/standAlone/hoj/
+foj-deploy/distributed/*/hoj/
 
-# 本地 docker-compose 覆盖文件（含本地凭据）
+# Local backend runtime logs.
+foj-springboot/hoj_backend/
+foj-springboot/logging.path_IS_UNDEFINED/
+
+# Local docker-compose overrides may contain credentials.
 docker-compose.override.yml
 docker-compose.override.yaml
-
-foj-deploy/standAlone/hoj/data/mysql/data/
