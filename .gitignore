@@ -14,3 +14,5 @@ hoj-springboot/logging.path_IS_UNDEFINED/
 # 本地 docker-compose 覆盖文件（含本地凭据）
 docker-compose.override.yml
 docker-compose.override.yaml
+
+foj-deploy/standAlone/hoj/data/mysql/data/
