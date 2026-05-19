@@ -66,7 +66,6 @@ public class HomeManager {
      * @Params
      * @Description 获取最近14天的比赛信息列表
      * @Return CommonResult
-     * @Since 2020/12/29
      */
     public List<ContestVO> getRecentContest() {
         return contestEntityService.getWithinNext14DaysContests();
@@ -78,7 +77,6 @@ public class HomeManager {
      * @Params
      * @Description 获取主页轮播图
      * @Return
-     * @Since 2021/9/4
      */
     public List<HashMap<String, Object>> getHomeCarousel() {
         List<File> fileList = fileEntityService.queryCarouselFileList();
@@ -97,7 +95,6 @@ public class HomeManager {
      * @Params
      * @Description 获取最近7天用户做题榜单
      * @Return
-     * @Since 2021/1/15
      */
     public List<ACMRankVO> getRecentSevenACRank() {
         return userRecordEntityService.getRecent7ACRank();
@@ -109,7 +106,6 @@ public class HomeManager {
      * @Params
      * @Description 获取最近其他OJ的比赛信息列表
      * @Return CommonResult
-     * @Since 2020/1/15
      */
     @Deprecated
     public List<HashMap<String, Object>> getRecentOtherContest() {
@@ -124,7 +120,6 @@ public class HomeManager {
      * @Params
      * @Description 获取主页公告列表
      * @Return CommonResult
-     * @Since 2020/12/29
      */
     public IPage<AnnouncementVO> getCommonAnnouncement(Integer limit, Integer currentPage) {
         if (currentPage == null || currentPage < 1) currentPage = 1;
@@ -137,7 +132,6 @@ public class HomeManager {
      * @Params
      * @Description 获取网站的基础配置。例如名字，缩写名字等等。
      * @Return
-     * @Since 2020/12/29
      */
     public Map<Object, Object> getWebConfig() {
         WebConfig webConfig = nacosSwitchConfig.getWebConfig();
@@ -159,7 +153,6 @@ public class HomeManager {
      * @Params
      * @Description 获取最近前十更新的题目（不包括比赛题目、私有题目）
      * @Return List<Problem>
-     * @Since 2022/10/15
      */
     public List<RecentUpdatedProblemVO> getRecentUpdatedProblemList() {
         QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();

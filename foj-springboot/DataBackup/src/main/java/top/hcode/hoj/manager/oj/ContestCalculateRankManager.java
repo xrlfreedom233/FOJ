@@ -86,7 +86,6 @@ public class ContestCalculateRankManager {
      * @MethodName calcACMRank
      * @Description TODO
      * @Return
-     * @Since 2021/12/10
      */
     public List<ACMContestRankVO> calcACMRank(boolean isOpenSealRank,
                                               boolean removeStar,
@@ -379,7 +378,6 @@ public class ContestCalculateRankManager {
      * @MethodName calcOIRank
      * @Description TODO
      * @Return
-     * @Since 2021/12/10
      */
     public List<OIContestRankVO> calcOIRank(boolean isOpenSealRank,
                                             boolean removeStar,

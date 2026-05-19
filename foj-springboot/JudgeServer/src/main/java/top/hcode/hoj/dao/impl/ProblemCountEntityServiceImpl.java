@@ -18,7 +18,6 @@ import top.hcode.hoj.util.Constants;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 public class ProblemCountEntityServiceImpl extends ServiceImpl<ProblemCountMapper, ProblemCount> implements ProblemCountEntityService {

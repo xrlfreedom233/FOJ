@@ -13,7 +13,6 @@ import java.util.List;
  * 服务类
  * </p>
  *
- * @since 2020-10-23
  */
 public interface ContestProblemEntityService extends IService<ContestProblem> {
     List<ContestProblemVO> getContestProblemList(Long cid,

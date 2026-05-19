@@ -24,7 +24,6 @@ import java.util.List;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 @Slf4j(topic = "hoj")
@@ -65,7 +64,6 @@ public class UserRoleEntityServiceImpl extends ServiceImpl<UserRoleMapper, UserR
      * @MethodName deleteCache
      * @Description TODO
      * @Return
-     * @Since 2021/6/12
      */
     @Override
     public void deleteCache(String uid, boolean isRemoveSession) {

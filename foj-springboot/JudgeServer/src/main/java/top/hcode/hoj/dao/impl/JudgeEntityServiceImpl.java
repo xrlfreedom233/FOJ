@@ -12,7 +12,6 @@ import top.hcode.hoj.dao.JudgeEntityService;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 public class JudgeEntityServiceImpl extends ServiceImpl<JudgeMapper, Judge> implements JudgeEntityService {

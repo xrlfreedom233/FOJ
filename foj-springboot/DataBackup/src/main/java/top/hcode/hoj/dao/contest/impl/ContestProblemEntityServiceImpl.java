@@ -23,7 +23,6 @@ import java.util.List;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 public class ContestProblemEntityServiceImpl extends ServiceImpl<ContestProblemMapper, ContestProblem> implements ContestProblemEntityService {

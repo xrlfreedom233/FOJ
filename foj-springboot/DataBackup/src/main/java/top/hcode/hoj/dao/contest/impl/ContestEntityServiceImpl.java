@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 public class ContestEntityServiceImpl extends ServiceImpl<ContestMapper, Contest> implements ContestEntityService {

@@ -10,7 +10,6 @@ import top.hcode.hoj.pojo.vo.AnnouncementVO;
  *  服务类
  * </p>
  *
- * @since 2020-10-23
  */
 public interface AnnouncementEntityService extends IService<Announcement> {
 

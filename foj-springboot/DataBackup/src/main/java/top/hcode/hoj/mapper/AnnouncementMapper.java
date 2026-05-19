@@ -14,7 +14,6 @@ import top.hcode.hoj.pojo.vo.AnnouncementVO;
  *  Mapper 接口
  * </p>
  *
- * @since 2020-10-23
  */
 @Mapper
 @Repository

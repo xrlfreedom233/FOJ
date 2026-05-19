@@ -214,7 +214,6 @@ public class SandboxRun {
      * @MethodName compile
      * @Description 编译运行
      * @Return
-     * @Since 2022/1/3
      */
     public static JSONArray compile(Long maxCpuTime,
                                     Long maxRealTime,
@@ -296,7 +295,6 @@ public class SandboxRun {
      * @MethodName testCase
      * @Description 普通评测
      * @Return JSONArray
-     * @Since 2022/1/3
      */
     public static JSONArray testCase(List<String> args,
                                      List<String> envs,
@@ -398,7 +396,6 @@ public class SandboxRun {
      * @MethodName spjCheckResult
      * @Description 特殊判题的评测
      * @Return JSONArray
-     * @Since 2022/1/3
      */
     public static JSONArray spjCheckResult(List<String> args,
                                            List<String> envs,
@@ -498,7 +495,6 @@ public class SandboxRun {
      * @MethodName interactTestCase
      * @Description 交互评测
      * @Return JSONArray
-     * @Since 2022/1/3
      */
     public static JSONArray interactTestCase(List<String> args,
                                              List<String> envs,

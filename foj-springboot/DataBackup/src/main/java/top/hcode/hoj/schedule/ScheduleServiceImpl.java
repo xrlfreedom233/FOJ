@@ -99,7 +99,6 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @Params * @param null
      * @Description 每天3点定时查询数据库字段并删除未引用的头像
      * @Return
-     * @Since 2021/1/13
      */
     @Scheduled(cron = "0 0 3 * * *")
     @Override
@@ -131,7 +130,6 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @Params * @param null
      * @Description 每天3点定时删除指定文件夹的上传测试数据
      * @Return
-     * @Since 2021/2/7
      */
     @Scheduled(cron = "0 0 3 * * *")
 //    @Scheduled(cron = "0/5 * * * * *")
@@ -148,7 +146,6 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @Params * @param null
      * @Description 每天4点定时删除本地的比赛打印数据
      * @Return
-     * @Since 2021/9/19
      */
     @Scheduled(cron = "0 0 4 * * *")
     @Override
@@ -163,9 +160,9 @@ public class ScheduleServiceImpl implements ScheduleService {
      * 每两小时获取其他OJ的比赛列表，并保存在redis里
      * 保存格式：
      * oj: "Codeforces",
-     * title: "Codeforces Round #680 (Div. 1, based on VK Cup 2020-2021 - Final)",
-     * beginTime: "2020-11-08T05:00:00Z",
-     * endTime: "2020-11-08T08:00:00Z",
+     * title: "Codeforces Round",
+     * beginTime: "...",
+     * endTime: "...",
      */
     @Scheduled(cron = "0 0 0/2 * * *")
 //    @Scheduled(cron = "0/5 * * * * *")
@@ -291,7 +288,6 @@ public class ScheduleServiceImpl implements ScheduleService {
      * @Params * @param null
      * @Description 每天3点定时删除用户半年的session表记录
      * @Return
-     * @Since 2021/9/6
      */
     @Scheduled(cron = "0 0 3 * * *")
 //    @Scheduled(cron = "0/5 * * * * *")

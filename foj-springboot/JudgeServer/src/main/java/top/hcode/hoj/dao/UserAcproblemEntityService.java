@@ -8,7 +8,6 @@ import top.hcode.hoj.pojo.entity.user.UserAcproblem;
  *  服务类
  * </p>
  *
- * @since 2020-10-23
  */
 public interface UserAcproblemEntityService extends IService<UserAcproblem> {
 

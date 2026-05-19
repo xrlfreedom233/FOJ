@@ -26,7 +26,6 @@ public class ImportFpsProblemController {
      * @MethodName importFpsProblem
      * @Description zip文件导入题目 仅超级管理员可操作
      * @Return
-     * @Since 2021/10/06
      */
     @RequiresRoles("root")
     @RequiresAuthentication

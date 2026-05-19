@@ -54,7 +54,6 @@ public class ProblemFileManager {
      * @MethodName importProblem
      * @Description zip文件导入题目 仅超级管理员可操作
      * @Return
-     * @Since 2021/5/27
      */
     public void importProblem(MultipartFile file) throws StatusFailException, StatusSystemErrorException {
 
@@ -264,7 +263,6 @@ public class ProblemFileManager {
      * @MethodName exportProblem
      * @Description 导出指定的题目包括测试数据生成zip 仅超级管理员可操作
      * @Return
-     * @Since 2021/5/28
      */
     public void exportProblem(List<Long> pidList, HttpServletResponse response) {
 

@@ -11,7 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * Mapper 接口
  * </p>
  *
- * @since 2020-10-23
  */
 @Mapper
 @Repository

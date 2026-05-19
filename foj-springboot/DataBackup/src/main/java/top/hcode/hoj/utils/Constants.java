@@ -7,7 +7,6 @@ public class Constants {
 
     /**
      * @Description 提交评测结果的状态码
-     * @Since 2021/1/1
      */
     public enum Judge {
         STATUS_NOT_SUBMITTED(-10, "Not Submitted", null),
@@ -56,7 +55,6 @@ public class Constants {
     /**
      * 等待判题的redis队列
      *
-     * @Since 2021/12/22
      */
 
     public enum Queue {
@@ -77,7 +75,6 @@ public class Constants {
 
     /**
      * @Description 比赛相关的常量
-     * @Since 2021/1/7
      */
     public enum Contest {
         TYPE_ACM(0, "ACM"),
@@ -121,7 +118,6 @@ public class Constants {
 
     /**
      * @Description 账户相关常量
-     * @Since 2021/1/8
      */
 
     public enum Account {
@@ -158,7 +154,6 @@ public class Constants {
 
     /**
      * @Description 文件操作的一些常量
-     * @Since 2021/1/10
      */
     public enum File {
 
@@ -201,7 +196,6 @@ public class Constants {
 
     /**
      * @Description 邮件任务的一些常量
-     * @Since 2021/1/14
      */
 
     public enum Email {
@@ -246,7 +240,6 @@ public class Constants {
 
     /**
      * @Description 训练题单的一些常量
-     * @Since 2021/11/20
      */
     public enum Training {
 

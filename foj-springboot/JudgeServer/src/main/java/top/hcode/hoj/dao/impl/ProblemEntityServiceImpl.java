@@ -12,7 +12,6 @@ import top.hcode.hoj.dao.ProblemEntityService;
  * 服务实现类
  * </p>
  *
- * @since 2020-10-23
  */
 @Service
 public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem> implements ProblemEntityService {

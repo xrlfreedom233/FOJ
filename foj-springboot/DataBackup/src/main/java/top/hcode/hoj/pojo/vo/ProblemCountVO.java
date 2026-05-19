@@ -11,7 +11,6 @@ import java.io.Serializable;
  * 
  * </p>
  *
- * @since 2020-10-23
  */
 @Data
 @Accessors(chain = true)
