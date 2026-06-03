@@ -9,8 +9,8 @@ import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.ProblemFileManager;
 import top.hcode.hoj.service.file.ProblemFileService;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 @Service
 public class ProblemFileServiceImpl implements ProblemFileService {

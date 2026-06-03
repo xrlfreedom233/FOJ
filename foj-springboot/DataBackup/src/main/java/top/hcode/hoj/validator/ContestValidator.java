@@ -14,7 +14,7 @@ import top.hcode.hoj.pojo.vo.AdminContestVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Date;
 import java.util.Objects;
 @Component
@@ -56,7 +56,6 @@ public class ContestValidator {
             return false;
         }
         // 如果是管理员同时选择强制刷新榜单，则封榜无效
-        Long gid = contest.getGid();
         boolean isContestAdmin = isRoot || contest.getUid().equals(uid);
         if (forceRefresh && isContestAdmin) {
             return false;
@@ -87,7 +86,6 @@ public class ContestValidator {
         }
 
         boolean isContestAdmin = isRoot || contest.getUid().equals(userRolesVo.getUid());
-        Long gid = contest.getGid();
         // 若是比赛管理者
         if (isContestAdmin) {
             return;
@@ -98,10 +96,6 @@ public class ContestValidator {
                 contest.getStatus().intValue() != Constants.Contest.STATUS_ENDED.getCode()) {
             throw new StatusForbiddenException("比赛还未开始，您无权访问该比赛！");
         } else {
-
-            if (contest.getIsGroup()) {
-                throw new StatusForbiddenException("团队功能已关闭！");
-            }
 
             // 如果是处于比赛正在进行阶段，需要判断该场比赛是否为私有赛，私有赛需要判断该用户是否已注册
             if (contest.getAuth().intValue() == Constants.Contest.AUTH_PRIVATE.getCode()) {

@@ -17,7 +17,7 @@ import top.hcode.hoj.pojo.vo.ProblemVO;
 import top.hcode.hoj.pojo.vo.RandomProblemVO;
 import top.hcode.hoj.service.oj.ProblemService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 @Service
@@ -50,9 +50,9 @@ public class ProblemServiceImpl implements ProblemService {
     }
 
     @Override
-    public CommonResult<ProblemInfoVO> getProblemInfo(String problemId, Long gid) {
+    public CommonResult<ProblemInfoVO> getProblemInfo(String problemId) {
         try {
-            return CommonResult.successResponse(problemManager.getProblemInfo(problemId, gid));
+            return CommonResult.successResponse(problemManager.getProblemInfo(problemId));
         } catch (StatusNotFoundException e) {
             return CommonResult.errorResponse(e.getMessage(), ResultStatus.NOT_FOUND);
         } catch (StatusForbiddenException e) {

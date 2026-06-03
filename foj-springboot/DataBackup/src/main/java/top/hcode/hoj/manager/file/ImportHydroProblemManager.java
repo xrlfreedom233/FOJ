@@ -27,7 +27,7 @@ import top.hcode.hoj.pojo.entity.problem.Tag;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -155,9 +155,7 @@ public class ImportHydroProblemManager {
                                        List<Language> languageList) {
         ProblemDTO dto = new ProblemDTO();
         Problem problem = new Problem();
-        problem.setIsGroup(false)
-                .setAuth(1)
-                .setIsRemote(false)
+        problem.setAuth(1)
                 .setIsRemoveEndBlank(true)
                 .setOpenCaseResult(true)
                 .setCodeShare(false)

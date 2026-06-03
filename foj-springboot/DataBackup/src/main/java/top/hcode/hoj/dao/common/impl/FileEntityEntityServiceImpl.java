@@ -23,11 +23,6 @@ public class FileEntityEntityServiceImpl extends ServiceImpl<FileMapper, File> i
     }
 
     @Override
-    public int updateFileToDeleteByGidAndType(Long gid, String type) {
-        return fileMapper.updateFileToDeleteByGidAndType(gid, type);
-    }
-
-    @Override
     public List<File> queryDeleteAvatarList() {
         return fileMapper.queryDeleteAvatarList();
     }

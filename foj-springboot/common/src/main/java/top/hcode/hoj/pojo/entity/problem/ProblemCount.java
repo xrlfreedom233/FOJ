@@ -1,8 +1,7 @@
 package top.hcode.hoj.pojo.entity.problem;
 
 import com.baomidou.mybatisplus.annotation.*;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -19,40 +18,40 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="ProblemCount对象", description="")
+@Schema(name = "ProblemCount对象", description="")
 public class ProblemCount implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "pid", type = IdType.ID_WORKER)
+    @TableId(value = "pid", type = IdType.ASSIGN_ID)
     private Long pid;
 
     private Integer total;
 
     private Integer ac;
 
-    @ApiModelProperty(value = "空间超限")
+    @Schema(description = "空间超限")
     private Integer mle;
 
-    @ApiModelProperty(value = "时间超限")
+    @Schema(description = "时间超限")
     private Integer tle;
 
-    @ApiModelProperty(value = "运行错误")
+    @Schema(description = "运行错误")
     private Integer re;
 
-    @ApiModelProperty(value = "格式错误")
+    @Schema(description = "格式错误")
     private Integer pe;
 
-    @ApiModelProperty(value = "编译错误")
+    @Schema(description = "编译错误")
     private Integer ce;
 
-    @ApiModelProperty(value = "答案错误")
+    @Schema(description = "答案错误")
     private Integer wa;
 
-    @ApiModelProperty(value = "系统错误")
+    @Schema(description = "系统错误")
     private Integer se;
 
-    @ApiModelProperty(value = "部分通过，OI题目")
+    @Schema(description = "部分通过，OI题目")
     private Integer pa;
 
     @Version

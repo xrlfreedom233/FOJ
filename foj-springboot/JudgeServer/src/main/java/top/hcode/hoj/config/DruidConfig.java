@@ -15,25 +15,25 @@ import java.util.Objects;
 @Data
 public class DruidConfig {
 
-    @Value("${hoj.db.username:root}")
+    @Value("${spring.datasource.username:root}")
     private String username;
 
-    @Value("${hoj.db.password:hoj123456}")
+    @Value("${spring.datasource.password:hoj123456}")
     private String password;
 
-    @Value("${hoj.db.host:172.20.0.3}")
+    @Value("${MYSQL_HOST:127.0.0.1}")
     private String host;
 
-    @Value("${hoj.db.port:3306}")
+    @Value("${MYSQL_PORT:3306}")
     private Integer port;
 
-    @Value("${hoj.db.public-host:172.20.0.3}")
+    @Value("${MYSQL_HOST:127.0.0.1}")
     private String publicHost;
 
-    @Value("${hoj.db.public-port:3306}")
+    @Value("${MYSQL_PORT:3306}")
     private Integer publicPort;
 
-    @Value("${hoj.db.name:hoj}")
+    @Value("${MYSQL_DATABASE:hoj}")
     private String name;
 
     @Value("${spring.datasource.driver-class-name}")

@@ -1,7 +1,7 @@
 # redis配置
 redis-host: 127.0.0.1
-redis-port: 6379
-redis-password: hoj123456
+redis-port: 6380
+redis-password: ${REDIS_PASSWORD:change_me}
 
 # 本服务连接mysql的地址和端口号
 mysql-host: 127.0.0.1
@@ -10,7 +10,7 @@ mysql-port: 3306
 mysql-public-host: 127.0.0.1
 mysql-public-port: 3306
 mysql-username: root
-mysql-password: change_me
+mysql-password: ${MYSQL_PASSWORD:change_me}
 mysql-name: hoj
 
 # token密钥，default表示随机生成
@@ -26,13 +26,13 @@ open-remote-judge: true
 judge-token: default
 
 # 邮箱服务地址
-email-host: smtp.qq.com
+email-host: smtp.163.com
 # 邮箱服务端口号
 email-port: 465
 # 邮箱账号
-email-username: your_email_username
+email-username: ${EMAIL_USERNAME:your_email_username}
 # 邮箱授权码
-email-password: your_email_password
+email-password: ${EMAIL_PASSWORD:your_email_password}
 
 # 以下为各个remote judge平台的账号配置
 hdu-username-list:
@@ -103,12 +103,6 @@ spring:
     connectionProperties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=500
   thymeleaf:
     encoding: UTF-8
-
-shiro-redis:
-  enabled: true
-  redis-manager:
-    host: ${redis-host}:${redis-port}
-    password: ${redis-password}
 
 logging:
   level:

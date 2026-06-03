@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Auth对象", description="")
+@Schema(name = "Auth对象", description="")
 public class Auth implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +29,13 @@ public class Auth implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "权限名称")
+    @Schema(description = "权限名称")
     private String name;
 
-    @ApiModelProperty(value = "权限字符串")
+    @Schema(description = "权限字符串")
     private String permission;
 
-    @ApiModelProperty(value = "0可用，1不可用")
+    @Schema(description = "0可用，1不可用")
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)

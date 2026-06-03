@@ -15,7 +15,7 @@ import top.hcode.hoj.dao.common.FileEntityService;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.File;
 import java.util.Map;
 @Component
@@ -25,16 +25,13 @@ public class MarkDownFileManager {
     @Resource
     private FileEntityService fileEntityService;
 
-    public Map<Object, Object> uploadMDImg(MultipartFile image, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
+    public Map<Object, Object> uploadMDImg(MultipartFile image) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
         boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
-        if (!isRoot
-                && !isProblemAdmin
-                && !isAdmin) {
+        if (!isRoot && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -92,11 +89,11 @@ public class MarkDownFileManager {
         }
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
         if (!file.getUid().equals(userRolesVo.getUid())
                 && !isRoot
-                && !isProblemAdmin) {
+                && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 
@@ -108,14 +105,13 @@ public class MarkDownFileManager {
         }
     }
 
-    public Map<Object, Object> uploadMd(MultipartFile file, Long gid) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
+    public Map<Object, Object> uploadMd(MultipartFile file) throws StatusFailException, StatusSystemErrorException, StatusForbiddenException {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
         boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
 
-        if (!isRoot && !isProblemAdmin && !isAdmin) {
+        if (!isRoot && !isAdmin) {
             throw new StatusForbiddenException("对不起，您无权限操作！");
         }
 

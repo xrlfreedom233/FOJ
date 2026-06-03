@@ -2,7 +2,7 @@ package top.hcode.hoj.util;
 
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.net.*;
 import java.util.Enumeration;
 @Slf4j

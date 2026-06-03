@@ -62,6 +62,9 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
     private ProblemLanguageEntityService problemLanguageEntityService;
 
     @Autowired
+    private LanguageEntityService languageEntityService;
+
+    @Autowired
     private TagEntityService tagEntityService;
 
     @Autowired
@@ -115,10 +118,6 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
         }
 
         String ojName = "ME";
-        if (problem.getIsRemote()) {
-            String problemId = problem.getProblemId();
-            ojName = problemId.split("-")[0];
-        }
 
         /**
          *  problem_id唯一性检查
@@ -129,9 +128,6 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
         Problem existedProblem = problemMapper.selectOne(problemQueryWrapper);
 
         problem.setProblemId(problem.getProblemId().toUpperCase());
-        if (problem.getIsGroup() == null) {
-            problem.setIsGroup(false);
-        }
         // 后面许多表的更新或删除需要用到题目id
         long pid = problemDto.getProblem().getId();
 
@@ -244,6 +240,7 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
 
         // 根据上传来的language列表的每一个name字段查询对应的language表的id，更新problem_language
         //构建problem_language实体列表
+        problemDto.setLanguages(resolveProblemLanguages(problemDto.getLanguages()));
         List<ProblemLanguage> problemLanguageList = new LinkedList<>();
         for (Language language : problemDto.getLanguages()) { // 遍历插入
             if (mapOldPL.get(language.getId()) != null) { // 如果记录中有，则表式该language原来已有选中。
@@ -279,7 +276,7 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
 
         boolean checkProblemCase = true;
 
-        if (!problem.getIsRemote() && problemDto.getSamples().size() > 0) { // 如果是自家的题目才有测试数据
+        if (problemDto.getSamples().size() > 0) { // 如果是自家的题目才有测试数据
             // 新增加的case列表
             List<ProblemCase> newProblemCaseList = new LinkedList<>();
             // 需要修改的case列表
@@ -400,9 +397,6 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
 
         // 设置测试样例的版本号
         problem.setCaseVersion(String.valueOf(System.currentTimeMillis()));
-        if (problem.getIsGroup() == null) {
-            problem.setIsGroup(false);
-        }
 
         // 如果没有提供problemId,则或者生成 P1000之类的，以problem表的id作为数字
         if (problem.getProblemId() == null) {
@@ -419,7 +413,7 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
             String problemId = problem.getProblemId().toUpperCase();
             QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
             problemQueryWrapper.eq("problem_id", problemId);
-            int existedProblem = problemMapper.selectCount(problemQueryWrapper);
+            Long existedProblem = problemMapper.selectCount(problemQueryWrapper);
             if (existedProblem > 0) {
                 throw new ProblemIDRepeatException("The problem_id [" + problemId + "] already exists. Do not reuse it!");
             }
@@ -430,6 +424,8 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
         if (pid == null) {
             throw new ProblemIDRepeatException("The problem with problem_id [" + problem.getProblemId() + "] insert failed!");
         }
+
+        problemDto.setLanguages(resolveProblemLanguages(problemDto.getLanguages()));
 
         // 为新的题目添加对应的language
         List<ProblemLanguage> problemLanguageList = new LinkedList<>();
@@ -537,6 +533,36 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
         } else {
             return false;
         }
+    }
+
+    private List<Language> resolveProblemLanguages(List<Language> languages) {
+        if (CollectionUtils.isEmpty(languages)) {
+            throw new RuntimeException("The problem languages must not be empty!");
+        }
+        Map<Long, Language> resolvedLanguages = new LinkedHashMap<>();
+        for (Language language : languages) {
+            Language resolvedLanguage = language;
+            if (language.getId() == null) {
+                if (StrUtil.isBlank(language.getName())) {
+                    throw new RuntimeException("The problem language name must not be empty!");
+                }
+                resolvedLanguage = languageEntityService.getOne(new QueryWrapper<Language>()
+                        .eq("name", language.getName())
+                        .eq("oj", "ME"), false);
+                if (resolvedLanguage == null && "C++".equalsIgnoreCase(language.getName())) {
+                    resolvedLanguage = languageEntityService.getOne(new QueryWrapper<Language>()
+                            .likeRight("name", "C++")
+                            .eq("oj", "ME")
+                            .orderByAsc("seq", "id")
+                            .last("limit 1"), false);
+                }
+                if (resolvedLanguage == null) {
+                    throw new RuntimeException("The problem language [" + language.getName() + "] does not exist!");
+                }
+            }
+            resolvedLanguages.put(resolvedLanguage.getId(), resolvedLanguage);
+        }
+        return new ArrayList<>(resolvedLanguages.values());
     }
 
     // 初始化上传文件的测试数据，写成json文件
@@ -664,6 +690,7 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
 
         String testCasesDir = Constants.File.TESTCASE_BASE_FOLDER.getPath() + File.separator + "problem_" + problemId;
         FileUtil.del(testCasesDir);
+        FileUtil.mkdir(testCasesDir);
         for (int index = 0; index < problemCaseList.size(); index++) {
             JSONObject jsonObject = new JSONObject();
             String inputName = (index + 1) + ".in";
@@ -674,15 +701,13 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
             }
             jsonObject.set("score", problemCaseList.get(index).getScore());
             jsonObject.set("inputName", inputName);
-            // 生成对应文件
-            FileWriter infileWriter = new FileWriter(testCasesDir + "/" + inputName, CharsetUtil.UTF_8);
             // 将该测试数据的输入写入到文件
             String inputData = problemCaseList
                     .get(index)
                     .getInput()
                     .replaceAll("\r\n", "\n") // 避免window系统的换行问题
                     .replaceAll("\r", "\n"); // 避免mac系统的换行问题
-            infileWriter.write(inputData);
+            FileUtil.writeString(inputData, FileUtil.touch(testCasesDir + File.separator + inputName), CharsetUtil.UTF_8);
 
             String outputName = (index + 1) + ".out";
             jsonObject.set("outputName", outputName);
@@ -692,8 +717,7 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
                     .getOutput()
                     .replaceAll("\r\n", "\n") // 避免window系统的换行问题
                     .replaceAll("\r", "\n"); // 避免mac系统的换行问题
-            FileWriter outFile = new FileWriter(testCasesDir + "/" + outputName, CharsetUtil.UTF_8);
-            outFile.write(outputData);
+            FileUtil.writeString(outputData, FileUtil.touch(testCasesDir + File.separator + outputName), CharsetUtil.UTF_8);
 
             // spj和interactive是根据特判程序输出判断结果，所以无需初始化测试数据
             if (Constants.JudgeMode.DEFAULT.getMode().equals(judgeMode)) {
@@ -712,9 +736,8 @@ public class ProblemEntityServiceImpl extends ServiceImpl<ProblemMapper, Problem
 
         result.set("testCases", testCaseList);
 
-        FileWriter infoFile = new FileWriter(testCasesDir + "/info", CharsetUtil.UTF_8);
         // 写入记录文件
-        infoFile.write(JSONUtil.toJsonStr(result));
+        FileUtil.writeString(JSONUtil.toJsonStr(result), FileUtil.touch(testCasesDir + File.separator + "info"), CharsetUtil.UTF_8);
     }
 
 

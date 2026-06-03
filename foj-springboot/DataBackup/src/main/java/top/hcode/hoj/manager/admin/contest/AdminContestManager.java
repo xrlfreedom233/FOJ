@@ -17,8 +17,10 @@ import top.hcode.hoj.common.exception.StatusForbiddenException;
 import top.hcode.hoj.common.exception.StatusSystemErrorException;
 import top.hcode.hoj.dao.contest.ContestEntityService;
 import top.hcode.hoj.dao.contest.ContestRegisterEntityService;
+import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.pojo.entity.contest.Contest;
 import top.hcode.hoj.pojo.entity.contest.ContestRegister;
+import top.hcode.hoj.pojo.entity.user.UserInfo;
 import top.hcode.hoj.pojo.vo.AdminContestVO;
 import top.hcode.hoj.pojo.vo.ContestAwardConfigVO;
 import top.hcode.hoj.shiro.AccountProfile;
@@ -27,8 +29,11 @@ import top.hcode.hoj.validator.ContestValidator;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 @Component
 @Slf4j(topic = "hoj")
 public class AdminContestManager {
@@ -41,6 +46,9 @@ public class AdminContestManager {
 
     @Autowired
     private ContestValidator contestValidator;
+
+    @Autowired
+    private UserInfoEntityService userInfoEntityService;
 
     public IPage<Contest> getContestList(Integer limit, Integer currentPage, String keyword) {
 
@@ -56,7 +64,7 @@ public class AdminContestManager {
                     .like("title", keyword).or()
                     .like("id", keyword);
         }
-        queryWrapper.eq("is_group", false).orderByDesc("start_time");
+        queryWrapper.orderByDesc("start_time");
         return contestEntityService.page(iPage, queryWrapper);
     }
 
@@ -118,6 +126,7 @@ public class AdminContestManager {
 
     public void addContest(AdminContestVO adminContestVo) throws StatusFailException {
         contestValidator.validateContest(adminContestVo);
+        normalizeAndValidateStarAccounts(adminContestVo);
 
         Contest contest = BeanUtil.copyProperties(adminContestVo, Contest.class, "starAccount");
         JSONObject accountJson = new JSONObject();
@@ -162,6 +171,7 @@ public class AdminContestManager {
 
     public void updateContest(AdminContestVO adminContestVo) throws StatusForbiddenException, StatusFailException {
         contestValidator.validateContest(adminContestVo);
+        normalizeAndValidateStarAccounts(adminContestVo);
 
         // 获取当前登录的用户
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
@@ -218,6 +228,40 @@ public class AdminContestManager {
         }
         log.info("[{}],[{}],value:[{}],cid:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_Contest", "Change_Visible", visible, cid, userRolesVo.getUid(), userRolesVo.getUsername());
+    }
+
+    private void normalizeAndValidateStarAccounts(AdminContestVO adminContestVo) throws StatusFailException {
+        if (adminContestVo.getStarAccount() == null) {
+            adminContestVo.setStarAccount(new ArrayList<>());
+            return;
+        }
+
+        List<String> starAccounts = adminContestVo.getStarAccount().stream()
+                .filter(username -> !StringUtils.isEmpty(username))
+                .map(String::trim)
+                .filter(username -> !StringUtils.isEmpty(username))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        starAccounts = new ArrayList<>(new LinkedHashSet<>(starAccounts));
+        adminContestVo.setStarAccount(starAccounts);
+
+        if (starAccounts.isEmpty()) {
+            return;
+        }
+
+        List<UserInfo> users = userInfoEntityService.list(new QueryWrapper<UserInfo>()
+                .select("username")
+                .in("username", starAccounts));
+        Set<String> existingUsernames = users.stream()
+                .map(UserInfo::getUsername)
+                .collect(Collectors.toSet());
+
+        List<String> missingUsernames = starAccounts.stream()
+                .filter(username -> !existingUsernames.contains(username))
+                .collect(Collectors.toList());
+        if (!missingUsernames.isEmpty()) {
+            throw new StatusFailException("打星用户不存在：" + String.join(", ", missingUsernames));
+        }
     }
 
 }

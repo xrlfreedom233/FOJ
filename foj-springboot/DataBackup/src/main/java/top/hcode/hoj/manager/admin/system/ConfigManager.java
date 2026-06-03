@@ -59,34 +59,34 @@ public class ConfigManager {
     @Autowired
     private NacosSwitchConfig nacosSwitchConfig;
 
-    @Value("${service-url.name}")
+    @Value("${service-url.name:hoj-judge-server}")
     private String judgeServiceName;
 
-    @Value("${spring.application.name}")
+    @Value("${spring.application.name:hoj-backend}")
     private String currentServiceName;
 
-    @Value("${spring.cloud.nacos.url}")
+    @Value("${spring.cloud.nacos.url:}")
     private String NACOS_URL;
 
-    @Value("${spring.cloud.nacos.config.prefix}")
+    @Value("${spring.cloud.nacos.config.prefix:hoj}")
     private String prefix;
 
-    @Value("${spring.profiles.active}")
+    @Value("${spring.profiles.active:dev}")
     private String active;
 
-    @Value("${spring.cloud.nacos.config.file-extension}")
+    @Value("${spring.cloud.nacos.config.file-extension:yml}")
     private String fileExtension;
 
-    @Value("${spring.cloud.nacos.config.group}")
+    @Value("${spring.cloud.nacos.config.group:DEFAULT_GROUP}")
     private String GROUP;
 
-    @Value("${spring.cloud.nacos.config.type}")
+    @Value("${spring.cloud.nacos.config.type:yaml}")
     private String TYPE;
 
-    @Value("${spring.cloud.nacos.config.username}")
+    @Value("${spring.cloud.nacos.config.username:}")
     private String nacosUsername;
 
-    @Value("${spring.cloud.nacos.config.password}")
+    @Value("${spring.cloud.nacos.config.password:}")
     private String nacosPassword;
 
     /**
@@ -131,7 +131,14 @@ public class ConfigManager {
             try {
                 String result = restTemplate.getForObject(serviceInstance.getUri() + "/get-sys-config", String.class);
                 JSONObject jsonObject = JSONUtil.parseObj(result, false);
-                jsonObject.put("service", serviceInstance);
+                JSONObject service = new JSONObject();
+                service.put("serviceId", serviceInstance.getServiceId());
+                service.put("host", serviceInstance.getHost());
+                service.put("port", serviceInstance.getPort());
+                service.put("secure", serviceInstance.isSecure());
+                service.put("uri", serviceInstance.getUri().toString());
+                service.put("metadata", serviceInstance.getMetadata());
+                jsonObject.put("service", service);
                 serviceInfoList.add(jsonObject);
             } catch (Exception e) {
                 log.error("[Admin Dashboard] get judge service info error, uri={}, error={}", serviceInstance.getUri(), e);
@@ -144,16 +151,28 @@ public class ConfigManager {
     public WebConfigDTO getWebConfig() {
         WebConfig webConfig = nacosSwitchConfig.getWebConfig();
         return WebConfigDTO.builder()
-                .baseUrl(UnicodeUtil.toString(webConfig.getBaseUrl()))
-                .name(UnicodeUtil.toString(webConfig.getName()))
-                .shortName(UnicodeUtil.toString(webConfig.getShortName()))
-                .description(UnicodeUtil.toString(webConfig.getDescription()))
+                .baseUrl(publicBaseUrl(webConfig.getBaseUrl()))
+                .name(configText(webConfig.getName()))
+                .shortName(configText(webConfig.getShortName()))
+                .description(configText(webConfig.getDescription()))
                 .register(webConfig.getRegister())
-                .recordName(UnicodeUtil.toString(webConfig.getRecordName()))
-                .recordUrl(UnicodeUtil.toString(webConfig.getRecordUrl()))
-                .projectName(UnicodeUtil.toString(webConfig.getProjectName()))
-                .projectUrl(UnicodeUtil.toString(webConfig.getProjectUrl()))
+                .recordName(configText(webConfig.getRecordName()))
+                .recordUrl(configText(webConfig.getRecordUrl()))
+                .projectName(configText(webConfig.getProjectName()))
+                .projectUrl(configText(webConfig.getProjectUrl()))
                 .build();
+    }
+
+    private String configText(String value) {
+        return value == null ? "" : UnicodeUtil.toString(value);
+    }
+
+    private String publicBaseUrl(String value) {
+        String baseUrl = configText(value).trim();
+        if (baseUrl.contains("127.0.0.1") || baseUrl.contains("127.0.1.1") || baseUrl.contains("localhost")) {
+            return "";
+        }
+        return baseUrl;
     }
 
 

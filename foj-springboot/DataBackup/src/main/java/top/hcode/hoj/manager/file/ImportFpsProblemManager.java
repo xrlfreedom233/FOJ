@@ -26,7 +26,7 @@ import top.hcode.hoj.pojo.entity.problem.ProblemCase;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -145,9 +145,7 @@ public class ImportFpsProblemManager {
                     .setIsRemoveEndBlank(true)
                     .setOpenCaseResult(true)
                     .setCodeShare(false)
-                    .setIsRemote(false)
-                    .setAuth(1)
-                    .setIsGroup(false);
+                    .setAuth(1);
 
             Element title = XmlUtil.getElement(item, "title");
             // 标题

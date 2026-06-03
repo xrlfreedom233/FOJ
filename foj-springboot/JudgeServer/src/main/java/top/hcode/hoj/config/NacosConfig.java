@@ -26,6 +26,14 @@ public class NacosConfig {
     @Value("${hoj-judge-server.name}")
     private String name;
 
+    @Value("${hoj-judge-server.nacos-url}")
+    private String nacosUrl;
+
+    @Value("${spring.cloud.nacos.discovery.username:}")
+    private String nacosUsername;
+
+    @Value("${spring.cloud.nacos.discovery.password:}")
+    private String nacosPassword;
 
     /**
      * 用于改变程序自动获取的本机ip
@@ -34,6 +42,11 @@ public class NacosConfig {
     @Primary
     public NacosDiscoveryProperties nacosProperties() {
         NacosDiscoveryProperties nacosDiscoveryProperties = new NacosDiscoveryProperties();
+        nacosDiscoveryProperties.setServerAddr(nacosUrl);
+        nacosDiscoveryProperties.setUsername(nacosUsername);
+        nacosDiscoveryProperties.setPassword(nacosPassword);
+        nacosDiscoveryProperties.setRegisterEnabled(true);
+        nacosDiscoveryProperties.setInstanceEnabled(true);
         //此处我只改了ip，其他参数可以根据自己的需求改变
         nacosDiscoveryProperties.setIp(IpUtils.getServiceIp());
         HashMap<String, String> meta = new HashMap<>();

@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="UserAcproblem对象", description="")
+@Schema(name = "UserAcproblem对象", description="")
 public class UserAcproblem implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +29,13 @@ public class UserAcproblem implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "用户id")
+    @Schema(description = "用户id")
     private String uid;
 
-    @ApiModelProperty(value = "ac的题目id")
+    @Schema(description = "ac的题目id")
     private Long pid;
 
-    @ApiModelProperty(value = "提交的id")
+    @Schema(description = "提交的id")
     private Long submitId;
 
     @TableField(fill = FieldFill.INSERT)

@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,7 +15,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="Language对象", description="")
+@Schema(name = "Language对象", description="")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Language {
@@ -25,31 +24,31 @@ public class Language {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "语言类型")
+    @Schema(description = "语言类型")
     private String contentType;
 
-    @ApiModelProperty(value = "语言描述")
+    @Schema(description = "语言描述")
     private String description;
 
-    @ApiModelProperty(value = "语言名字")
+    @Schema(description = "语言名字")
     private String name;
 
-    @ApiModelProperty(value = "编译指令")
+    @Schema(description = "编译指令")
     private String compileCommand;
 
-    @ApiModelProperty(value = "A+B模板")
+    @Schema(description = "A+B模板")
     private String template;
 
-    @ApiModelProperty(value = "语言默认代码模板")
+    @Schema(description = "语言默认代码模板")
     private String codeTemplate;
 
-    @ApiModelProperty(value = "是否可作为特殊判题的一种语言")
+    @Schema(description = "是否可作为特殊判题的一种语言")
     private Boolean isSpj;
 
-    @ApiModelProperty(value = "该语言属于哪个oj，自身oj用ME")
+    @Schema(description = "该语言属于哪个oj，自身oj用ME")
     private String oj;
 
-    @ApiModelProperty(value = "语言顺序")
+    @Schema(description = "语言顺序")
     private Integer seq;
 
     @TableField(fill = FieldFill.INSERT)

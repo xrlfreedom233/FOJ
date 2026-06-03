@@ -1,3 +1,36 @@
+nacos-url: ${NACOS_URL:127.0.0.1:8848}
+nacos-username: ${NACOS_USERNAME:nacos}
+nacos-password: ${NACOS_PASSWORD:nacos}
+nacos-switch-config: hoj-switch.yml
+nacos-web-config: hoj-web.yml
+
+spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:}
+  profiles:
+    active: dev
+  application:
+    name: hoj-data-backup
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${NACOS_DISCOVERY_ENABLED:true}
+        username: ${nacos-username}
+        password: ${nacos-password}
+        server-addr: ${nacos-url}
+      config:
+        enabled: ${NACOS_CONFIG_ENABLED:false}
+        import-check:
+          enabled: false
+        username: ${nacos-username}
+        password: ${nacos-password}
+        server-addr: ${nacos-url}
+        file-extension: yml
+        group: DEFAULT_GROUP
+        type: yaml
+        prefix: hoj
+      url: http://${nacos-url}
+
 mybatis-plus:
   mapper-locations: classpath*:top/hcode/hoj/mapper/xml/**Mapper.xml
   type-aliases-package: top.hcode.hoj.pojo.entity
@@ -9,7 +42,7 @@ mybatis-plus:
 
 # 消费者将要去访问的微服务名称（注册成功进入nacos的微服务提供者）
 service-url:
-  name: hoj-judgeserver # 服务名
+  name: hoj-judge-server # 服务名
 
 # 需要更新的语言配置(更新language表), 必须填写oj、name、isSpj来唯一定位
 check-language-config:

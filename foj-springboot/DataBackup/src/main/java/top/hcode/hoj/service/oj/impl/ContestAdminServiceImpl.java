@@ -12,7 +12,7 @@ import top.hcode.hoj.pojo.entity.contest.ContestPrint;
 import top.hcode.hoj.pojo.entity.contest.ContestRecord;
 import top.hcode.hoj.service.oj.ContestAdminService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class ContestAdminServiceImpl implements ContestAdminService {
 

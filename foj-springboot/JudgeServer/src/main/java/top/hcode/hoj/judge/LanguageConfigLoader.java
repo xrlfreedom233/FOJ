@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
 import top.hcode.hoj.judge.entity.LanguageConfig;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

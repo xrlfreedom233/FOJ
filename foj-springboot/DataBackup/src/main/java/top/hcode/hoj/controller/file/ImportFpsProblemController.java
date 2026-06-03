@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.service.file.ImportFpsProblemService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Controller
 @RequestMapping("/api/file")
 public class ImportFpsProblemController {

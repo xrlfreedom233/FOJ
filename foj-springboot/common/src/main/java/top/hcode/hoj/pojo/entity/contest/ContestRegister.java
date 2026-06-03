@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -22,7 +21,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="ContestRegister对象", description="")
+@Schema(name = "ContestRegister对象", description="")
 public class ContestRegister implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -30,13 +29,13 @@ public class ContestRegister implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "比赛id")
+    @Schema(description = "比赛id")
     private Long cid;
 
-    @ApiModelProperty(value = "用户id")
+    @Schema(description = "用户id")
     private String uid;
 
-    @ApiModelProperty(value = "默认为0表示正常，1为失效。")
+    @Schema(description = "默认为0表示正常，1为失效。")
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)

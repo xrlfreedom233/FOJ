@@ -13,14 +13,11 @@
                 <if test="status!=null">
                     AND j.status = #{status}
                 </if>
+                <if test="language!=null and language!=''">
+                    AND j.language = #{language}
+                </if>
                 <if test="uid!=null and uid!=''">
                     AND j.uid = #{uid}
-                </if>
-                <if test="gid==null">
-                    AND j.gid is NULL
-                </if>
-                <if test="gid!=null">
-                    AND j.gid = #{gid}
                 </if>
                 <if test="searchPid!=null">
                     <if test="completeProblemID != true">
@@ -133,12 +130,6 @@
         FROM judge
         <where>
             pid=#{pid} AND cid=0
-            <if test="gid!=null">
-                AND gid = #{gid}
-            </if>
-            <if test="gid==null">
-                AND gid is null
-            </if>
         </where>
     </select>
 
@@ -155,7 +146,7 @@
         COUNT(*) AS total
         FROM judge
         <where>
-            cid=0 AND gid is null
+            cid=0
             <if test="pidList!=null and pidList.size > 0">
                 AND pid in
                 <foreach collection="pidList" item="pid" open="(" separator="," close=")">

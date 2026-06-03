@@ -25,8 +25,7 @@ public class AdminTagManager {
 
     public Tag addTag(Tag tag) throws StatusFailException {
         QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-        tagQueryWrapper.eq(tag.getGid() != null, "gid", tag.getGid())
-                .eq("name", tag.getName())
+        tagQueryWrapper.eq("name", tag.getName())
                 .eq("oj", tag.getOj());
         Tag existTag = tagEntityService.getOne(tagQueryWrapper, false);
 

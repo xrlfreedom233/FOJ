@@ -4,7 +4,6 @@ import cn.hutool.extra.spring.SpringUtil;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.subject.PrincipalCollection;
-import org.apache.shiro.util.CollectionUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
 import java.util.*;
@@ -109,7 +108,7 @@ public class ShiroCache<K, V> implements Cache<K, V> {
     @Override
     public Collection<V> values() {
         Set<String> keys = this.redisUtils.keys(this.cacheKeyPrefix + "*");
-        if (CollectionUtils.isEmpty(keys)) {
+        if (keys == null || keys.isEmpty()) {
             return Collections.emptySet();
         } else {
             List<Object> values = new ArrayList<>(keys.size());

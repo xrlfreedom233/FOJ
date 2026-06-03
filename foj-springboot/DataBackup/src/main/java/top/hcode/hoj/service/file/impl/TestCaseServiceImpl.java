@@ -10,8 +10,8 @@ import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.TestCaseManager;
 import top.hcode.hoj.service.file.TestCaseService;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 @Service
 public class TestCaseServiceImpl implements TestCaseService {
@@ -20,9 +20,9 @@ public class TestCaseServiceImpl implements TestCaseService {
     private TestCaseManager testCaseManager;
 
     @Override
-    public CommonResult<Map<Object, Object>> uploadTestcaseZip(MultipartFile file, Long gid, String mode) {
+    public CommonResult<Map<Object, Object>> uploadTestcaseZip(MultipartFile file, String mode) {
         try {
-            return CommonResult.successResponse(testCaseManager.uploadTestcaseZip(file, gid, mode));
+            return CommonResult.successResponse(testCaseManager.uploadTestcaseZip(file, mode));
         } catch (StatusFailException e) {
             return CommonResult.errorResponse(e.getMessage());
         } catch (StatusSystemErrorException e) {

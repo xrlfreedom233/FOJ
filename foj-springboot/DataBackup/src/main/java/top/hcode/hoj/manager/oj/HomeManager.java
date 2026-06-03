@@ -6,7 +6,7 @@ import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.text.UnicodeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.shiro.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import top.hcode.hoj.dao.common.FileEntityService;
 import top.hcode.hoj.dao.contest.ContestEntityService;
 import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
-import top.hcode.hoj.dao.user.UserRecordEntityService;
+import top.hcode.hoj.dao.user.UserInfoEntityService;
 import top.hcode.hoj.pojo.entity.common.File;
 import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.pojo.entity.problem.Problem;
@@ -41,8 +41,7 @@ public class HomeManager {
     private AnnouncementEntityService announcementEntityService;
 
     @Autowired
-
-    private UserRecordEntityService userRecordEntityService;
+    private UserInfoEntityService userInfoEntityService;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -97,7 +96,7 @@ public class HomeManager {
      * @Return
      */
     public List<ACMRankVO> getRecentSevenACRank() {
-        return userRecordEntityService.getRecent7ACRank();
+        return userInfoEntityService.getRecent7ACRank();
     }
 
 
@@ -135,17 +134,20 @@ public class HomeManager {
      */
     public Map<Object, Object> getWebConfig() {
         WebConfig webConfig = nacosSwitchConfig.getWebConfig();
-        return MapUtil.builder().put("baseUrl", UnicodeUtil.toString(webConfig.getBaseUrl()))
-                .put("name", UnicodeUtil.toString(webConfig.getName()))
-                .put("shortName", UnicodeUtil.toString(webConfig.getShortName()))
+        return MapUtil.builder()
+                .put("name", publicText(webConfig.getName()))
+                .put("shortName", publicText(webConfig.getShortName()))
+                .put("description", publicText(webConfig.getDescription()))
                 .put("register", webConfig.getRegister())
-                .put("recordName", UnicodeUtil.toString(webConfig.getRecordName()))
-                .put("recordUrl", UnicodeUtil.toString(webConfig.getRecordUrl()))
-                .put("description", UnicodeUtil.toString(webConfig.getDescription()))
-                .put("email", UnicodeUtil.toString(webConfig.getEmailUsername()))
-                .put("projectName", UnicodeUtil.toString(webConfig.getProjectName()))
-                .put("projectUrl", UnicodeUtil.toString(webConfig.getProjectUrl()))
+                .put("recordName", publicText(webConfig.getRecordName()))
+                .put("recordUrl", publicText(webConfig.getRecordUrl()))
+                .put("projectName", publicText(webConfig.getProjectName()))
+                .put("projectUrl", publicText(webConfig.getProjectUrl()))
                 .map();
+    }
+
+    private String publicText(String value) {
+        return value == null ? "" : UnicodeUtil.toString(value);
     }
 
     /**
@@ -158,7 +160,6 @@ public class HomeManager {
         QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
         problemQueryWrapper.select("id", "problem_id", "title", "type", "gmt_modified", "gmt_create");
         problemQueryWrapper.eq("auth", 1);
-        problemQueryWrapper.eq("is_group", false);
         problemQueryWrapper.orderByDesc("gmt_create");
         problemQueryWrapper.last("limit 10");
         List<Problem> problemList = problemEntityService.list(problemQueryWrapper);

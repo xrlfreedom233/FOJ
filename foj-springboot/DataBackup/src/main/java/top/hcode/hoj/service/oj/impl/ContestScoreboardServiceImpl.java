@@ -12,7 +12,7 @@ import top.hcode.hoj.pojo.dto.ContestRankDTO;
 import top.hcode.hoj.pojo.vo.ContestOutsideInfoVO;
 import top.hcode.hoj.service.oj.ContestScoreboardService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class ContestScoreboardServiceImpl implements ContestScoreboardService {
 

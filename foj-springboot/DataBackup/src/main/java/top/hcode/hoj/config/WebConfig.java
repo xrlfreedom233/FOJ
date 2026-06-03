@@ -1,7 +1,6 @@
 package top.hcode.hoj.config;
 
 import lombok.Data;
-import top.hcode.hoj.utils.IpUtils;
 @Data
 public class WebConfig {
 
@@ -19,7 +18,7 @@ public class WebConfig {
     private String emailBGImg = "";
 
     // 网站前端显示配置
-    private String baseUrl = "http://" + IpUtils.getServiceIp();
+    private String baseUrl = "";
 
     private String name = "FOJ";
 
@@ -28,6 +27,8 @@ public class WebConfig {
     private String description;
 
     private Boolean register = true;
+
+    private Boolean registerEmailBypass = false;
 
     private String recordName;
 

@@ -1,10 +1,10 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 @Data
 public class RandomProblemVO {
 
-    @ApiModelProperty(value = "题目id")
+    @Schema(description = "题目id")
     private String problemId;
 }

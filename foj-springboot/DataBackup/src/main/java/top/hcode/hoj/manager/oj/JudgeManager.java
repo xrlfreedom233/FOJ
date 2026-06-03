@@ -42,7 +42,7 @@ import top.hcode.hoj.validator.AccessValidator;
 import top.hcode.hoj.validator.ContestValidator;
 import top.hcode.hoj.validator.JudgeValidator;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 @Component
@@ -113,7 +113,6 @@ public class JudgeManager {
         judge.setShare(false) // 默认设置代码为单独自己可见
                 .setCode(judgeDto.getCode())
                 .setCid(judgeDto.getCid())
-                .setGid(judgeDto.getGid())
                 .setLanguage(judgeDto.getLanguage())
                 .setLength(judgeDto.getCode().length())
                 .setUid(userRolesVo.getUid())
@@ -127,7 +126,7 @@ public class JudgeManager {
         if (isContestSubmission) {
             beforeDispatchInitManager.initContestSubmission(judgeDto.getCid(), judgeDto.getPid(), userRolesVo, judge);
         } else {
-            beforeDispatchInitManager.initCommonSubmission(judgeDto.getPid(), judgeDto.getGid(), judge);
+            beforeDispatchInitManager.initCommonSubmission(judgeDto.getPid(), judge);
 
         }
 
@@ -226,7 +225,7 @@ public class JudgeManager {
         }
 
         QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-        problemQueryWrapper.select("id", "is_remote", "problem_id")
+        problemQueryWrapper.select("id", "problem_id")
                 .eq("id", judge.getPid());
         Problem problem = problemEntityService.getOne(problemQueryWrapper);
 
@@ -258,9 +257,6 @@ public class JudgeManager {
         judgeDispatcher.sendTask(judge.getSubmitId(),
                 judge.getPid(),
                 judge.getCid() != 0);
-        judge.setVjudgeUsername(null);
-        judge.setVjudgePassword(null);
-        judge.setVjudgeSubmitId(null);
         return judge;
     }
 
@@ -280,12 +276,7 @@ public class JudgeManager {
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
 
-        // 清空vj信息
-        judge.setVjudgeUsername(null);
-        judge.setVjudgeSubmitId(null);
-        judge.setVjudgePassword(null);
-
-        // 超级管理员与题目管理员有权限查看代码
+                // 超级管理员与管理员有权限查看代码
         // 如果不是本人或者并未分享代码，则不可查看
         // 当此次提交代码不共享
         // 比赛提交只有比赛创建者和root账号可看代码
@@ -317,22 +308,11 @@ public class JudgeManager {
                 }
             }
 
-            // 团队比赛的提交代码 如果不是超管，需要检查网站是否开启隐藏代码功能
-            if (!isRoot && contest.getIsGroup() && judge.getCode() != null) {
-                try {
-                    accessValidator.validateAccess(HOJAccessEnum.HIDE_NON_CONTEST_SUBMISSION_CODE);
-                } catch (AccessException e) {
-                    judge.setCode("Because the super administrator has enabled " +
-                            "the function of not viewing the submitted code outside the contest of master station, \n" +
-                            "the code of this submission details has been hidden.");
-                }
-            }
-
         } else {
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");// 是否为题目管理员
+            boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
             if (!judge.getShare()
                     && !isRoot
-                    && !isProblemAdmin) {
+                    && !isAdmin) {
                 if (userRolesVo != null) { // 当前是登陆状态
                     // 需要判断是否为当前登陆用户自己的提交代码
                     if (!judge.getUid().equals(userRolesVo.getUid())) {
@@ -342,8 +322,8 @@ public class JudgeManager {
                     judge.setCode(null);
                 }
             }
-            // 比赛外的提交代码 如果不是超管或题目管理员，需要检查网站是否开启隐藏代码功能
-            if (!isRoot && !isProblemAdmin && judge.getCode() != null) {
+            // 比赛外的提交代码 如果不是超管或管理员，需要检查网站是否开启隐藏代码功能
+            if (!isRoot && !isAdmin && judge.getCode() != null) {
                 try {
                     accessValidator.validateAccess(HOJAccessEnum.HIDE_NON_CONTEST_SUBMISSION_CODE);
                 } catch (AccessException e) {
@@ -355,6 +335,11 @@ public class JudgeManager {
         }
 
         Problem problem = problemEntityService.getById(judge.getPid());
+        if (problem != null) {
+            judge.setDisplayPid(problem.getProblemId());
+            submissionInfoVo.setDisplayPid(problem.getProblemId());
+            submissionInfoVo.setTitle(problem.getTitle());
+        }
 
         // 只允许用户查看ce错误,sf错误，se错误信息提示
         if (judge.getStatus().intValue() != Constants.Judge.STATUS_COMPILE_ERROR.getStatus() &&
@@ -363,7 +348,7 @@ public class JudgeManager {
             judge.setErrorMessage("The error message does not support viewing.");
         }
         submissionInfoVo.setSubmission(judge);
-        submissionInfoVo.setCodeShare(problem.getCodeShare());
+        submissionInfoVo.setCodeShare(problem != null && Boolean.TRUE.equals(problem.getCodeShare()));
 
         return submissionInfoVo;
 
@@ -413,16 +398,16 @@ public class JudgeManager {
                                        Boolean onlyMine,
                                        String searchPid,
                                        Integer searchStatus,
+                                       String searchLanguage,
                                        String searchUsername,
-                                       Boolean completeProblemID,
-                                       Long gid) throws StatusAccessDeniedException {
+                                       Boolean completeProblemID) throws StatusAccessDeniedException {
         // 页数，每页题数若为空，设置默认值
         if (currentPage == null || currentPage < 1) currentPage = 1;
         if (limit == null || limit < 1) limit = 30;
 
         String uid = null;
         // 只查看当前用户的提交
-        if (onlyMine) {
+        if (Boolean.TRUE.equals(onlyMine)) {
             // 需要获取一下该token对应用户的数据（有token便能获取到）
             AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
@@ -437,15 +422,18 @@ public class JudgeManager {
         if (searchUsername != null) {
             searchUsername = searchUsername.trim();
         }
+        if (searchLanguage != null) {
+            searchLanguage = searchLanguage.trim();
+        }
 
         return judgeEntityService.getCommonJudgeList(limit,
                 currentPage,
                 searchPid,
                 searchStatus,
+                searchLanguage,
                 searchUsername,
                 uid,
-                completeProblemID,
-                gid);
+                completeProblemID);
     }
 
 
@@ -469,9 +457,6 @@ public class JudgeManager {
         for (Judge judge : judgeList) {
             judge.setCode(null);
             judge.setErrorMessage(null);
-            judge.setVjudgeUsername(null);
-            judge.setVjudgeSubmitId(null);
-            judge.setVjudgePassword(null);
             result.put(judge.getSubmitId(), judge);
         }
         return result;
@@ -513,9 +498,6 @@ public class JudgeManager {
             judge.setCode(null);
             judge.setDisplayPid(null);
             judge.setErrorMessage(null);
-            judge.setVjudgeUsername(null);
-            judge.setVjudgeSubmitId(null);
-            judge.setVjudgePassword(null);
             if (!judge.getUid().equals(userRolesVo.getUid()) && !isContestAdmin) {
                 judge.setTime(null);
                 judge.setMemory(null);
@@ -555,9 +537,7 @@ public class JudgeManager {
                 wrapper.select("time", "memory", "score", "status", "user_output", "group_num", "seq", "mode");
             } else {
                 boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
-                if (!isRoot
-                        && !SecurityUtils.getSubject().hasRole("admin")
-                        && !SecurityUtils.getSubject().hasRole("problem_admin")) { // 不是管理员
+                if (!isRoot && !SecurityUtils.getSubject().hasRole("admin")) { // 不是管理员
                     wrapper.select("time", "memory", "score", "status", "user_output", "group_num", "seq", "mode");
                 }
             }

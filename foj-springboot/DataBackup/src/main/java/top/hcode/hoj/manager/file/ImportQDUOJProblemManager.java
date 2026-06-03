@@ -232,7 +232,6 @@ public class ImportQDUOJProblemManager {
                     .setSpjLanguage(spjJson.getStr("language"));
         }
         problem.setAuth(1)
-                .setIsGroup(false)
                 .setIsUploadCase(true)
                 .setSource(problemJson.getStr("source", null))
                 .setDifficulty(1)
@@ -273,7 +272,6 @@ public class ImportQDUOJProblemManager {
                 sumScore += score;
             }
         }
-        problem.setIsRemote(false);
         problem.setIoScore(sumScore);
         qdojProblemDto.setSamples(problemSamples);
         qdojProblemDto.setProblem(problem);

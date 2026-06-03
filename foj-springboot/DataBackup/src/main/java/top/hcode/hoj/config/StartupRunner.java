@@ -15,7 +15,7 @@ import top.hcode.hoj.manager.admin.system.ConfigManager;
 import top.hcode.hoj.pojo.entity.problem.Language;
 import top.hcode.hoj.pojo.vo.ConfigVO;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -190,7 +190,7 @@ public class StartupRunner implements CommandLineRunner {
         QueryWrapper<Language> rubyLanguageQueryWrapper = new QueryWrapper<>();
         rubyLanguageQueryWrapper.eq("oj", "ME")
                 .eq("name", "Ruby");
-        int countRuby = languageEntityService.count(rubyLanguageQueryWrapper);
+        long countRuby = languageEntityService.count(rubyLanguageQueryWrapper);
         if (countRuby == 0) {
             Language rubyLanguage = new Language();
             rubyLanguage.setName("Ruby")
@@ -210,7 +210,7 @@ public class StartupRunner implements CommandLineRunner {
         QueryWrapper<Language> rustLanguageQueryWrapper = new QueryWrapper<>();
         rustLanguageQueryWrapper.eq("oj", "ME")
                 .eq("name", "Rust");
-        int countRust = languageEntityService.count(rustLanguageQueryWrapper);
+        long countRust = languageEntityService.count(rustLanguageQueryWrapper);
         if (countRust == 0) {
             Language rustLanguage = new Language();
             rustLanguage.setName("Rust")
@@ -246,7 +246,7 @@ public class StartupRunner implements CommandLineRunner {
             QueryWrapper<Language> languageQueryWrapper = new QueryWrapper<>();
             languageQueryWrapper.eq("oj", "ME")
                     .eq("name", language);
-            int count = languageEntityService.count(languageQueryWrapper);
+            long count = languageEntityService.count(languageQueryWrapper);
             if (count == 0) {
                 Language newLanguage = buildHOJLanguage(language);
                 boolean isOk = languageEntityService.save(newLanguage);

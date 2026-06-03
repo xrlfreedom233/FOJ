@@ -1,13 +1,13 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 @Data
 public class CaptchaVO {
 
-    @ApiModelProperty(value = "验证码图片的base64")
+    @Schema(description = "验证码图片的base64")
     private String img;
 
-    @ApiModelProperty(value = "验证码key")
+    @Schema(description = "验证码key")
     private String captchaKey;
 }

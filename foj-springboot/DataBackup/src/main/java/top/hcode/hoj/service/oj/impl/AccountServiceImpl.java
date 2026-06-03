@@ -12,7 +12,7 @@ import top.hcode.hoj.pojo.dto.CheckUsernameOrEmailDTO;
 import top.hcode.hoj.pojo.vo.*;
 import top.hcode.hoj.service.oj.AccountService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class AccountServiceImpl implements AccountService {
 

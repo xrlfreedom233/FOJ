@@ -23,7 +23,7 @@ import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.util.Constants;
 import top.hcode.hoj.util.JudgeUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.File;
 import java.util.*;
 

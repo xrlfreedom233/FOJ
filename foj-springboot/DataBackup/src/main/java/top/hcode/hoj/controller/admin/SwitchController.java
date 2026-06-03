@@ -9,7 +9,7 @@ import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.pojo.dto.SwitchConfigDTO;
 import top.hcode.hoj.service.admin.system.ConfigService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @RestController
 @RequestMapping("/api/admin/switch")
 public class SwitchController {

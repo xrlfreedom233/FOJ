@@ -3,7 +3,7 @@ package top.hcode.hoj.pojo.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * @Description: 用户代码提交类
@@ -24,7 +24,5 @@ public class SubmitJudgeDTO {
     private Long cid;
 
     private Long tid;
-
-    private Long gid;
 
 }

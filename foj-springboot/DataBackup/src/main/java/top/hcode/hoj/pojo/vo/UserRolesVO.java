@@ -1,79 +1,78 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import top.hcode.hoj.pojo.entity.user.Role;
 
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-@ApiModel(value="用户信息以及其对应的角色", description="")
+@Schema(name = "用户信息以及其对应的角色", description="")
 @Data
 public class UserRolesVO implements Serializable {
 
     private static final long serialVersionUID = 10000L;
 
-    @ApiModelProperty(value = "用户id")
+    @Schema(description = "用户id")
     private String uid;
 
-    @ApiModelProperty(value = "用户名")
+    @Schema(description = "用户名")
     private String username;
 
-    @ApiModelProperty(value = "密码")
+    @Schema(description = "密码")
     private String password;
 
-    @ApiModelProperty(value = "昵称")
+    @Schema(description = "昵称")
     private String nickname;
 
-    @ApiModelProperty(value = "学校")
+    @Schema(description = "学校")
     private String school;
 
-    @ApiModelProperty(value = "专业")
+    @Schema(description = "专业")
     private String course;
 
-    @ApiModelProperty(value = "学号")
+    @Schema(description = "学号")
     private String number;
 
-    @ApiModelProperty(value = "性别")
+    @Schema(description = "性别")
     private String gender;
 
-    @ApiModelProperty(value = "真实姓名")
+    @Schema(description = "真实姓名")
     private String realname;
 
-    @ApiModelProperty(value = "cf的username")
+    @Schema(description = "cf的username")
     private String cfUsername;
 
-    @ApiModelProperty(value = "github地址")
+    @Schema(description = "github地址")
     private String github;
 
-    @ApiModelProperty(value = "博客地址")
+    @Schema(description = "博客地址")
     private String blog;
 
-    @ApiModelProperty(value = "邮箱")
+    @Schema(description = "邮箱")
     private String email;
 
-    @ApiModelProperty(value = "头像地址")
+    @Schema(description = "头像地址")
     private String avatar;
 
-    @ApiModelProperty(value = "头衔名称")
+    @Schema(description = "头衔名称")
     private String titleName;
 
-    @ApiModelProperty(value = "头衔背景颜色")
+    @Schema(description = "头衔背景颜色")
     private String titleColor;
 
-    @ApiModelProperty(value = "个性签名")
+    @Schema(description = "个性签名")
     private String signature;
 
-    @ApiModelProperty(value = "0可用，1不可用")
+    @Schema(description = "0可用，1不可用")
     private int status;
 
-    @ApiModelProperty(value = "创建时间")
+    @Schema(description = "创建时间")
     private Date gmtCreate;
 
-    @ApiModelProperty(value = "修改时间")
+    @Schema(description = "修改时间")
     private Date gmtModified;
 
-    @ApiModelProperty(value = "角色列表")
+    @Schema(description = "角色列表")
     private List<Role> roles;
 }

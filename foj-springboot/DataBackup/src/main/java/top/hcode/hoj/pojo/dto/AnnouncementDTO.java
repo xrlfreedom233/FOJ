@@ -3,7 +3,7 @@ package top.hcode.hoj.pojo.dto;
 import lombok.Data;
 import top.hcode.hoj.pojo.entity.common.Announcement;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 @Data
 public class AnnouncementDTO {
     @NotBlank(message = "比赛id不能为空")

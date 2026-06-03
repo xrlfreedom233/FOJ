@@ -9,7 +9,7 @@ import top.hcode.hoj.pojo.entity.problem.Tag;
 import top.hcode.hoj.pojo.entity.problem.TagClassification;
 import top.hcode.hoj.service.admin.tag.AdminTagService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 /**
@@ -26,21 +26,21 @@ public class AdminTagController {
 
     @PostMapping("")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<Tag> addTag(@RequestBody Tag tag) {
         return adminTagService.addTag(tag);
     }
 
     @PutMapping("")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<Void> updateTag(@RequestBody Tag tag) {
         return adminTagService.updateTag(tag);
     }
 
     @DeleteMapping("")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<Void> deleteTag(@RequestParam("tid") Long tid) {
         return adminTagService.deleteTag(tid);
     }
@@ -48,28 +48,28 @@ public class AdminTagController {
 
     @GetMapping("/classification")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<List<TagClassification>> getTagClassification(@RequestParam(value = "oj", defaultValue = "ME") String oj) {
         return adminTagService.getTagClassification(oj);
     }
 
     @PostMapping("/classification")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<TagClassification> addTagClassification(@RequestBody TagClassification tagClassification) {
         return adminTagService.addTagClassification(tagClassification);
     }
 
     @PutMapping("/classification")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<Void> updateTagClassification(@RequestBody TagClassification tagClassification) {
         return adminTagService.updateTagClassification(tagClassification);
     }
 
     @DeleteMapping("/classification")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     public CommonResult<Void> deleteTagClassification(@RequestParam("tcid") Long tcid) {
         return adminTagService.deleteTagClassification(tcid);
     }

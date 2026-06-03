@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j(topic = "hoj")
 public class ChooseUtils {
 
-    @Autowired
+    @Autowired(required = false)
     private NacosDiscoveryProperties discoveryProperties;
 
     @Value("${service-url.name}")
@@ -56,7 +56,6 @@ public class ChooseUtils {
         QueryWrapper<JudgeServer> judgeServerQueryWrapper = new QueryWrapper<>();
         judgeServerQueryWrapper
                 .in("url", keyList)
-                .eq("is_remote", false)
                 .orderByAsc("task_number")
                 .last("for update"); // 开启悲观锁
 
@@ -90,6 +89,10 @@ public class ChooseUtils {
      * @Return
      */
     private List<Instance> getInstances(String serviceId) {
+        if (discoveryProperties == null) {
+            log.warn("Nacos discovery is disabled, no judge service instances can be selected.");
+            return Collections.emptyList();
+        }
         // 获取服务发现的相关API
         NamingService namingService = discoveryProperties.namingServiceInstance();
         try {

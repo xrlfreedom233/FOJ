@@ -6,6 +6,8 @@ nacos-switch-config: hoj-switch.yml
 nacos-web-config: hoj-web.yml
 
 spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:}
   profiles:
     active: dev
   application:
@@ -13,10 +15,14 @@ spring:
   cloud:
     nacos:
       discovery:
+        enabled: ${NACOS_DISCOVERY_ENABLED:false}
         username: ${nacos-username}
         password: ${nacos-password}
         server-addr: ${nacos-url} # Nacos 作为服务注册中心 nacos的地址
       config:
+        enabled: ${NACOS_CONFIG_ENABLED:false}
+        import-check:
+          enabled: false
         username: ${nacos-username}
         password: ${nacos-password}
         server-addr: ${nacos-url}  #Nacos 作为配置中心地址 nacos的地址
@@ -30,4 +36,3 @@ spring:
 # ${spring.application.name}-${spring.profile.active}.${spring.cloud.naces.config.file-extension}
 # ${spring.cloud.nacos.config.prefix}-${spring.profile.active}.${spring.cloud.naces.config.file-extension}
 # hoj-prod.yml
-

@@ -106,12 +106,6 @@ spring:
   thymeleaf:
     encoding: UTF-8
 
-shiro-redis:
-  enabled: true
-  redis-manager:
-    host: ${redis-host}:${redis-port}
-    password: ${redis-password}
-
 logging:
   level:
     com:

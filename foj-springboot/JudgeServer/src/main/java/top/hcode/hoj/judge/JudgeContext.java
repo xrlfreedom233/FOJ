@@ -13,7 +13,7 @@ import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.user.UserAcproblem;
 import top.hcode.hoj.util.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 @Component
 public class JudgeContext {
@@ -95,13 +95,12 @@ public class JudgeContext {
                                  Long cid,
                                  String uid,
                                  Long pid,
-                                 Long gid,
                                  Integer score,
                                  Integer useTime) {
 
         if (cid == 0) { // 非比赛提交
             // 如果是AC,就更新user_acproblem表,
-            if (status.intValue() == Constants.Judge.STATUS_ACCEPTED.getStatus() && gid == null) {
+            if (status.intValue() == Constants.Judge.STATUS_ACCEPTED.getStatus()) {
                 userAcproblemEntityService.saveOrUpdate(new UserAcproblem()
                         .setPid(pid)
                         .setUid(uid)

@@ -1,6 +1,6 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,21 +9,21 @@ import java.util.Date;
 @Builder
 public class RecentUpdatedProblemVO {
 
-    @ApiModelProperty(value = "主键id")
+    @Schema(description = "主键id")
     private Long id;
 
-    @ApiModelProperty(value = "题目的自定义ID 例如（FOJ-1000）")
+    @Schema(description = "题目的自定义ID 例如（FOJ-1000）")
     private String problemId;
 
-    @ApiModelProperty(value = "题目")
+    @Schema(description = "题目")
     private String title;
 
-    @ApiModelProperty(value = "0为ACM,1为OI")
+    @Schema(description = "0为ACM,1为OI")
     private Integer type;
 
-    @ApiModelProperty(value = "创建时间")
+    @Schema(description = "创建时间")
     private Date gmtCreate;
 
-    @ApiModelProperty(value = "最近更新时间")
+    @Schema(description = "最近更新时间")
     private Date gmtModified;
 }

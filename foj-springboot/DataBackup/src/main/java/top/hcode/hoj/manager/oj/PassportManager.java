@@ -19,7 +19,6 @@ import top.hcode.hoj.config.NacosSwitchConfig;
 import top.hcode.hoj.config.WebConfig;
 import top.hcode.hoj.dao.user.SessionEntityService;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
-import top.hcode.hoj.dao.user.UserRecordEntityService;
 import top.hcode.hoj.dao.user.UserRoleEntityService;
 import top.hcode.hoj.manager.email.EmailManager;
 import top.hcode.hoj.pojo.bo.EmailRuleBO;
@@ -32,14 +31,15 @@ import top.hcode.hoj.pojo.vo.RegisterCodeVO;
 import top.hcode.hoj.pojo.vo.UserInfoVO;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
+import top.hcode.hoj.utils.AvatarUtils;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.IpUtils;
 import top.hcode.hoj.utils.JwtUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Objects;
 import java.util.stream.Collectors;
 @Component
@@ -62,9 +62,6 @@ public class PassportManager {
 
     @Resource
     private UserRoleEntityService userRoleEntityService;
-
-    @Resource
-    private UserRecordEntityService userRecordEntityService;
 
     @Resource
     private SessionEntityService sessionEntityService;
@@ -135,6 +132,7 @@ public class PassportManager {
 
         UserInfoVO userInfoVo = new UserInfoVO();
         BeanUtil.copyProperties(userRolesVo, userInfoVo, "roles");
+        userInfoVo.setAvatar(AvatarUtils.resolveAvatar(userRolesVo.getAvatar(), userRolesVo.getEmail()));
         userInfoVo.setRoleList(userRolesVo.getRoles()
                 .stream()
                 .map(Role::getRole)
@@ -148,9 +146,6 @@ public class PassportManager {
         WebConfig webConfig = nacosSwitchConfig.getWebConfig();
         if (!webConfig.getRegister()) { // 需要判断一下网站是否开启注册
             throw new StatusAccessDeniedException("对不起！本站暂未开启注册功能！");
-        }
-        if (!emailManager.isOk()) {
-            throw new StatusAccessDeniedException("对不起！本站邮箱系统未配置，暂不支持注册！");
         }
 
         email = email.trim();
@@ -177,14 +172,25 @@ public class PassportManager {
             throw new StatusFailException("对不起！该邮箱已被注册，请更换新的邮箱！");
         }
 
-        String numbers = RandomUtil.randomNumbers(6); // 随机生成6位数字的组合
+        boolean emailConfigured = emailManager.isOk();
+        boolean registerEmailBypass = Boolean.TRUE.equals(webConfig.getRegisterEmailBypass());
+        if (!emailConfigured && !registerEmailBypass) {
+            throw new StatusAccessDeniedException("对不起！本站邮箱系统未配置，暂不支持注册！");
+        }
+
+        String numbers = emailConfigured ? RandomUtil.randomNumbers(6) : "123456"; // 未配置邮件时仅允许显式开发开关兜底
         redisUtils.set(Constants.Email.REGISTER_KEY_PREFIX.getValue() + email, numbers, 10 * 60);//默认验证码有效10分钟
-        emailManager.sendRegisterCode(email, numbers);
+        if (emailConfigured) {
+            emailManager.sendRegisterCode(email, numbers);
+        }
         redisUtils.set(lockKey, 0, 60);
 
         RegisterCodeVO registerCodeVo = new RegisterCodeVO();
         registerCodeVo.setEmail(email);
         registerCodeVo.setExpire(5 * 60);
+        if (!emailConfigured) {
+            registerCodeVo.setCode(numbers);
+        }
 
         return registerCodeVo;
     }
@@ -235,10 +241,7 @@ public class PassportManager {
         //往user_role表插入数据
         boolean addUserRole = userRoleEntityService.save(new UserRole().setRoleId(1002L).setUid(uuid));
 
-        //往user_record表插入数据
-        boolean addUserRecord = userRecordEntityService.save(new UserRecord().setUid(uuid));
-
-        if (addUser && addUserRole && addUserRecord) {
+        if (addUser && addUserRole) {
             redisUtils.del(registerDto.getEmail());
         } else {
             throw new StatusFailException("注册失败，请稍后重新尝试！");

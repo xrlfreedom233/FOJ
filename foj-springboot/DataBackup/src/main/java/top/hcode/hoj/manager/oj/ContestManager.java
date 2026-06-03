@@ -109,10 +109,6 @@ public class ContestManager {
 
         Contest contest = contestEntityService.getById(cid);
 
-        if (contest.getIsGroup()) {
-            throw new StatusForbiddenException("团队功能已关闭！");
-        }
-
         // 设置当前服务器系统时间
         contestInfo.setNow(new Date());
 
@@ -137,10 +133,6 @@ public class ContestManager {
 
         if (contest == null || !contest.getVisible()) {
             throw new StatusFailException("对不起，该比赛不存在!");
-        }
-
-        if (contest.getIsGroup()) {
-            throw new StatusForbiddenException("团队功能已关闭！");
         }
 
         if (!contest.getPwd().equals(password)) { // 密码不对
@@ -206,9 +198,6 @@ public class ContestManager {
         Contest contest = contestEntityService.getById(cid);
 
         List<String> groupRootUidList = null;
-        if (contest.getIsGroup()) {
-            throw new StatusForbiddenException("团队功能已关闭！");
-        }
 
         isContainsContestEndJudge = Objects.equals(contest.getAllowEndSubmit(), true) && isContainsContestEndJudge;
 
@@ -600,15 +589,10 @@ public class ContestManager {
 
     public IPage<AnnouncementVO> getContestAnnouncement(Long cid, Integer limit, Integer currentPage) throws StatusFailException, StatusForbiddenException {
 
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        // 获取本场比赛的状态
         Contest contest = contestEntityService.getById(cid);
-
-        // 超级管理员或者该比赛的创建者，则为比赛管理者
-        boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-
-        // 需要对该比赛做判断，是否处于开始或结束状态才可以获取题目，同时若是私有赛需要判断是否已注册（比赛管理员包括超级管理员可以直接获取）
-        contestValidator.validateContestAuth(contest, userRolesVo, isRoot);
+        if (contest == null || !contest.getVisible()) {
+            throw new StatusFailException("对不起，该比赛不存在！");
+        }
 
         if (currentPage == null || currentPage < 1) currentPage = 1;
         if (limit == null || limit < 1) limit = 10;

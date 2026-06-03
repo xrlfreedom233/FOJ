@@ -16,12 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
-import top.hcode.hoj.dao.user.UserRecordEntityService;
 import top.hcode.hoj.dao.user.UserRoleEntityService;
 import top.hcode.hoj.pojo.dto.AdminEditUserDTO;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
-import top.hcode.hoj.pojo.entity.user.UserRecord;
 import top.hcode.hoj.pojo.entity.user.UserRole;
+import top.hcode.hoj.pojo.vo.ExcelUserVO;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
@@ -33,14 +32,14 @@ import java.util.stream.Collectors;
 @Slf4j(topic = "hoj")
 public class AdminUserManager {
 
+    private static final Set<Integer> SIMPLE_ROLE_TYPES =
+            new HashSet<>(Arrays.asList(1000, 1001, 1002));
+
     @Autowired
     private UserRoleEntityService userRoleEntityService;
 
     @Autowired
     private UserInfoEntityService userInfoEntityService;
-
-    @Autowired
-    private UserRecordEntityService userRecordEntityService;
 
     @Autowired
     private RedisUtils redisUtils;
@@ -61,19 +60,12 @@ public class AdminUserManager {
         String realname = adminEditUserDto.getRealname();
         String email = adminEditUserDto.getEmail();
         String password = adminEditUserDto.getPassword();
-        int type = adminEditUserDto.getType();
+        int type = normalizeRoleType(adminEditUserDto.getType());
         int status = adminEditUserDto.getStatus();
         boolean setNewPwd = adminEditUserDto.getSetNewPwd();
 
-        String titleName = adminEditUserDto.getTitleName();
-        String titleColor = adminEditUserDto.getTitleColor();
-
         if (!StringUtils.isEmpty(realname) && realname.length() > 50) {
             throw new StatusFailException("真实姓名的长度不能超过50位");
-        }
-
-        if (!StringUtils.isEmpty(titleName) && titleName.length() > 20) {
-            throw new StatusFailException("头衔的长度建议不要超过20位");
         }
 
         if (!StringUtils.isEmpty(password) && (password.length() < 6 || password.length() > 20)) {
@@ -96,22 +88,35 @@ public class AdminUserManager {
             }
         }
 
+        QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
+        userRoleQueryWrapper.eq("uid", uid);
+        UserRole userRole = userRoleEntityService.getOne(userRoleQueryWrapper, false);
+        if (userRole == null) {
+            throw new StatusFailException("修改失败，该用户角色不存在！");
+        }
+        int oldType = userRole.getRoleId().intValue();
+
+        AccountProfile currentUser = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        if (currentUser != null && Objects.equals(currentUser.getUid(), uid) && (type != oldType || status != 0)) {
+            throw new StatusFailException("不能修改自己的角色或禁用自己的账号！");
+        }
+        if (oldType == 1000 && type != 1000 && countRootUsers() <= 1) {
+            throw new StatusFailException("至少需要保留一个超级管理员！");
+        }
+        if (oldType == 1000 && status != 0 && countRootUsers() <= 1) {
+            throw new StatusFailException("不能禁用最后一个超级管理员！");
+        }
+
         UpdateWrapper<UserInfo> userInfoUpdateWrapper = new UpdateWrapper<>();
         userInfoUpdateWrapper.eq("uuid", uid)
                 .set("username", username)
                 .set("realname", realname)
                 .set("email", email)
                 .set(setNewPwd, "password", SecureUtil.md5(password))
-                .set("title_name", titleName)
-                .set("title_color", titleColor)
                 .set("status", status);
         boolean updateUserInfo = userInfoEntityService.update(userInfoUpdateWrapper);
 
-        QueryWrapper<UserRole> userRoleQueryWrapper = new QueryWrapper<>();
-        userRoleQueryWrapper.eq("uid", uid);
-        UserRole userRole = userRoleEntityService.getOne(userRoleQueryWrapper, false);
         boolean changeUserRole = false;
-        int oldType = userRole.getRoleId().intValue();
         if (userRole.getRoleId().intValue() != type) {
             userRole.setRoleId((long) type);
             changeUserRole = userRoleEntityService.updateById(userRole);
@@ -136,14 +141,42 @@ public class AdminUserManager {
 
     }
 
+    private int normalizeRoleType(Integer type) {
+        if (type == null || !SIMPLE_ROLE_TYPES.contains(type)) {
+            return 1002;
+        }
+        return type;
+    }
+
     public void deleteUser(List<String> deleteUserIdList) throws StatusFailException {
+        if (deleteUserIdList == null || deleteUserIdList.isEmpty()) {
+            throw new StatusFailException("删除失败，用户列表不能为空！");
+        }
+        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        if (userRolesVo != null && deleteUserIdList.contains(userRolesVo.getUid())) {
+            throw new StatusFailException("不能删除当前登录账号！");
+        }
+        if (countRootUsersAfterDelete(deleteUserIdList) <= 0) {
+            throw new StatusFailException("至少需要保留一个超级管理员！");
+        }
         boolean isOk = userInfoEntityService.removeByIds(deleteUserIdList);
         if (!isOk) {
             throw new StatusFailException("删除失败！");
         }
-        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
         log.info("[{}],[{}],uidList:[{}],operatorUid:[{}],operatorUsername:[{}]",
                 "Admin_User", "Delete", deleteUserIdList, userRolesVo.getUid(), userRolesVo.getUsername());
+    }
+
+    private long countRootUsers() {
+        return userRoleEntityService.count(new QueryWrapper<UserRole>().eq("role_id", 1000));
+    }
+
+    private long countRootUsersAfterDelete(List<String> deleteUserIdList) {
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<UserRole>().eq("role_id", 1000);
+        if (deleteUserIdList != null && !deleteUserIdList.isEmpty()) {
+            queryWrapper.notIn("uid", deleteUserIdList);
+        }
+        return userRoleEntityService.count(queryWrapper);
     }
 
     public void insertBatchUser(List<List<String>> users) throws StatusFailException {
@@ -220,9 +253,7 @@ public class AdminUserManager {
                 .setRoleId(1002L)
                 .setUid(uuid);
         boolean result2 = userRoleEntityService.save(userRole);
-        UserRecord userRecord = new UserRecord().setUid(uuid);
-        boolean result3 = userRecordEntityService.save(userRecord);
-        if (!result1 || !result2 || !result3) {
+        if (!result1 || !result2) {
             throw new StatusFailException("生成用户失败");
         }
         return uuid;
@@ -237,34 +268,84 @@ public class AdminUserManager {
         int numberTo = (int) params.getOrDefault("number_to", 10);
         int passwordLength = (int) params.getOrDefault("password_length", 6);
 
+        if (numberFrom > numberTo) {
+            throw new StatusFailException("生成失败，结束编号不能小于起始编号！");
+        }
+        if (passwordLength < 6 || passwordLength > 25) {
+            throw new StatusFailException("生成失败，密码长度需要在 6 到 25 之间！");
+        }
+
+        List<String> usernameList = new ArrayList<>();
+        for (int num = numberFrom; num <= numberTo; num++) {
+            usernameList.add(prefix + num + suffix);
+        }
+        List<UserInfo> existingUsers = userInfoEntityService.list(new QueryWrapper<UserInfo>()
+                .select("username")
+                .in("username", usernameList));
+        if (!existingUsers.isEmpty()) {
+            List<String> existingUsernameList = existingUsers.stream()
+                    .map(UserInfo::getUsername)
+                    .collect(Collectors.toList());
+            throw new StatusFailException("生成失败，以下用户名已存在：" + existingUsernameList);
+        }
+
         List<UserInfo> userInfoList = new LinkedList<>();
         List<UserRole> userRoleList = new LinkedList<>();
-        List<UserRecord> userRecordList = new LinkedList<>();
+        List<Map<String, String>> generatedUserList = new LinkedList<>();
 
         HashMap<String, Object> userInfo = new HashMap<>(); // 存储账号密码放入redis中，等待导出excel
-        for (int num = numberFrom; num <= numberTo; num++) {
+        for (String username : usernameList) {
             String uuid = IdUtil.simpleUUID();
             String password = RandomUtil.randomString(passwordLength);
-            String username = prefix + num + suffix;
             userInfoList.add(new UserInfo()
                     .setUuid(uuid)
                     .setUsername(username)
                     .setPassword(SecureUtil.md5(password)));
             userInfo.put(username, password);
+            Map<String, String> generatedUser = new HashMap<>();
+            generatedUser.put("username", username);
+            generatedUser.put("password", password);
+            generatedUserList.add(generatedUser);
             userRoleList.add(new UserRole()
                     .setRoleId(1002L)
                     .setUid(uuid));
-            userRecordList.add(new UserRecord().setUid(uuid));
         }
         boolean result1 = userInfoEntityService.saveBatch(userInfoList);
         boolean result2 = userRoleEntityService.saveBatch(userRoleList);
-        boolean result3 = userRecordEntityService.saveBatch(userRecordList);
-        if (result1 && result2 && result3) {
+        if (result1 && result2) {
             String key = IdUtil.simpleUUID();
-            redisUtils.hmset(key, userInfo, 1800); // 存储半小时
-            return MapUtil.builder().put("key", key).map();
+            boolean cacheOk = redisUtils.hmset(key, userInfo, 1800); // 存储半小时
+            if (!cacheOk) {
+                throw new StatusFailException("生成用户成功，但密码文件缓存失败，请检查 Redis 后重试！");
+            }
+            return MapUtil.builder()
+                    .put("key", key)
+                    .put("users", generatedUserList)
+                    .map();
         } else {
             throw new StatusFailException("生成指定用户失败！注意查看组合生成的用户名是否已有存在的！");
         }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public List<ExcelUserVO> generateUserExcelRows(Map<String, Object> params) throws StatusFailException {
+        Map<Object, Object> result = generateUser(params);
+        Object users = result.get("users");
+        if (!(users instanceof List<?> generatedUsers) || generatedUsers.isEmpty()) {
+            throw new StatusFailException("用户已生成，但密码文件数据为空，请重新生成！");
+        }
+
+        List<ExcelUserVO> rows = new LinkedList<>();
+        for (Object user : generatedUsers) {
+            if (user instanceof Map<?, ?> generatedUser) {
+                rows.add(new ExcelUserVO()
+                        .setUsername(String.valueOf(generatedUser.get("username")))
+                        .setPassword(String.valueOf(generatedUser.get("password"))));
+            }
+        }
+        if (rows.isEmpty()) {
+            throw new StatusFailException("用户已生成，但密码文件数据为空，请重新生成！");
+        }
+        return rows;
     }
 }

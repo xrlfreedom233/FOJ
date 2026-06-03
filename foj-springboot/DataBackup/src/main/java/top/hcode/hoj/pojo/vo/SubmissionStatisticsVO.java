@@ -1,18 +1,18 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
 @Data
 public class SubmissionStatisticsVO {
 
-    @ApiModelProperty(value = "最近七天日期格式 mm-dd,升序")
+    @Schema(description = "最近七天日期格式 mm-dd,升序")
     private List<String> dateStrList;
 
-    @ApiModelProperty(value = "最近七天每天AC数量")
+    @Schema(description = "最近七天每天AC数量")
     private List<Long> acCountList;
 
-    @ApiModelProperty(value = "最近七天每天提交数量")
+    @Schema(description = "最近七天每天提交数量")
     private List<Long> totalCountList;
 }

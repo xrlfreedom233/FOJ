@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -14,23 +13,23 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="CodeTemplate", description="")
+@Schema(name = "CodeTemplate", description="")
 public class CodeTemplate {
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    @ApiModelProperty(value = "题目id")
+    @Schema(description = "题目id")
     private Long pid;
 
-    @ApiModelProperty(value = "语言id")
+    @Schema(description = "语言id")
     private Long lid;
 
-    @ApiModelProperty(value = "代码")
+    @Schema(description = "代码")
     private String code;
 
-    @ApiModelProperty(value = "是否启用")
+    @Schema(description = "是否启用")
     private Boolean status;
 
     @TableField(fill = FieldFill.INSERT)

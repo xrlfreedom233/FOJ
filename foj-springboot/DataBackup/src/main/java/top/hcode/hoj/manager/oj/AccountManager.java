@@ -28,6 +28,7 @@ import top.hcode.hoj.pojo.entity.user.UserAcproblem;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
 import top.hcode.hoj.pojo.vo.*;
 import top.hcode.hoj.shiro.AccountProfile;
+import top.hcode.hoj.utils.AvatarUtils;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.RedisUtils;
 import top.hcode.hoj.validator.CommonValidator;
@@ -46,9 +47,6 @@ public class AccountManager {
 
     @Autowired
     private UserRoleEntityService userRoleEntityService;
-
-    @Autowired
-    private UserRecordEntityService userRecordEntityService;
 
     @Autowired
     private UserAcproblemEntityService userAcproblemEntityService;
@@ -132,10 +130,11 @@ public class AccountManager {
             }
         }
 
-        UserHomeVO userHomeInfo = userRecordEntityService.getUserHomeInfo(uid, username);
+        UserHomeVO userHomeInfo = userInfoEntityService.getUserHomeInfo(uid, username);
         if (userHomeInfo == null) {
             throw new StatusFailException("用户不存在");
         }
+        userHomeInfo.setAvatar(AvatarUtils.resolveAvatar(userHomeInfo.getAvatar(), userHomeInfo.getEmail()));
         QueryWrapper<UserAcproblem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", userHomeInfo.getUid())
                 .select("distinct pid", "submit_id")
@@ -195,7 +194,7 @@ public class AccountManager {
         }
         UserCalendarHeatmapVO userCalendarHeatmapVo = new UserCalendarHeatmapVO();
         userCalendarHeatmapVo.setEndDate(DateUtil.format(new Date(), "yyyy-MM-dd"));
-        List<Judge> lastYearUserJudgeList = userRecordEntityService.getLastYearUserJudgeList(uid, username);
+        List<Judge> lastYearUserJudgeList = userInfoEntityService.getLastYearUserJudgeList(uid, username);
         if (CollectionUtils.isEmpty(lastYearUserJudgeList)) {
             userCalendarHeatmapVo.setDataList(new ArrayList<>());
             return userCalendarHeatmapVo;
@@ -476,7 +475,7 @@ public class AccountManager {
                 .set("nickname", userInfoVo.getNickname())
                 .set("signature", userInfoVo.getSignature())
                 .set("blog", userInfoVo.getBlog())
-                .set("gender", userInfoVo.getGender())
+                .set(userInfoVo.getGender() != null, "gender", userInfoVo.getGender())
                 .set("github", userInfoVo.getGithub())
                 .set("school", userInfoVo.getSchool())
                 .set("number", userInfoVo.getNumber());
@@ -489,6 +488,7 @@ public class AccountManager {
             BeanUtil.copyProperties(userRoles, userRolesVo);
             UserInfoVO userInfoVO = new UserInfoVO();
             BeanUtil.copyProperties(userRoles, userInfoVO, "roles");
+            userInfoVO.setAvatar(AvatarUtils.resolveAvatar(userRoles.getAvatar(), userRoles.getEmail()));
             userInfoVO.setRoleList(userRoles.getRoles().stream().map(Role::getRole).collect(Collectors.toList()));
             return userInfoVO;
         } else {
@@ -504,6 +504,23 @@ public class AccountManager {
         List<Role> roles = userRoleEntityService.getRolesByUid(userRolesVo.getUid());
         UserAuthInfoVO authInfoVO = new UserAuthInfoVO();
         authInfoVO.setRoles(roles.stream().map(Role::getRole).collect(Collectors.toList()));
+        authInfoVO.setEmail(userRolesVo.getEmail());
+        authInfoVO.setAvatar(AvatarUtils.resolveAvatar(userRolesVo.getAvatar(), userRolesVo.getEmail()));
+        if (userRolesVo.getGmtCreate() != null) {
+            authInfoVO.setGmtCreate(userRolesVo.getGmtCreate());
+        }
+        if (userRolesVo.getGmtCreate() == null || StringUtils.isEmpty(userRolesVo.getEmail())) {
+            QueryWrapper<UserInfo> userInfoQueryWrapper = new QueryWrapper<>();
+            userInfoQueryWrapper.select("uuid", "avatar", "email", "gmt_create").eq("uuid", userRolesVo.getUid());
+            UserInfo userInfo = userInfoEntityService.getOne(userInfoQueryWrapper, false);
+            if (userInfo != null) {
+                if (authInfoVO.getGmtCreate() == null) {
+                    authInfoVO.setGmtCreate(userInfo.getGmtCreate());
+                }
+                authInfoVO.setEmail(userInfo.getEmail());
+                authInfoVO.setAvatar(AvatarUtils.resolveAvatar(userInfo.getAvatar(), userInfo.getEmail()));
+            }
+        }
         return authInfoVO;
     }
 

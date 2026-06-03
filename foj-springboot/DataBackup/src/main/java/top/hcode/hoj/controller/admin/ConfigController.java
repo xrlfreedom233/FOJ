@@ -29,13 +29,13 @@ public class ConfigController {
      * @Description 获取当前服务的相关信息以及当前系统的cpu情况，内存使用情况
      * @Return CommonResult
      */
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     @RequestMapping("/get-service-info")
     public CommonResult<JSONObject> getServiceInfo() {
         return configService.getServiceInfo();
     }
 
-    @RequiresRoles(value = {"root", "admin", "problem_admin"}, logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"}, logical = Logical.OR)
     @RequestMapping("/get-judge-service-info")
     public CommonResult<List<JSONObject>> getJudgeServiceInfo() {
         return configService.getJudgeServiceInfo();

@@ -1,7 +1,7 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,59 +11,63 @@ import java.util.Map;
 /**
  * @Description:用户主页的数据格式
  */
-@ApiModel(value = "用户主页的数据格式类UserHomeVO", description = "")
+@Schema(name = "用户主页的数据格式类UserHomeVO", description = "")
 @Data
 public class UserHomeVO {
 
-    @ApiModelProperty(value = "用户id")
+    @Schema(description = "用户id")
     private String uid;
 
-    @ApiModelProperty(value = "用户名")
+    @Schema(description = "用户名")
     private String username;
 
-    @ApiModelProperty(value = "学校")
+    @Schema(description = "学校")
     private String school;
 
-    @ApiModelProperty(value = "个性签名")
+    @Schema(description = "个性签名")
     private String signature;
 
-    @ApiModelProperty(value = "昵称")
+    @Schema(description = "昵称")
     private String nickname;
 
-    @ApiModelProperty(value = "gender")
+    @Schema(description = "gender")
     private String gender;
 
-    @ApiModelProperty(value = "github地址")
+    @Schema(description = "github地址")
     private String github;
 
-    @ApiModelProperty(value = "博客地址")
+    @Schema(description = "博客地址")
     private String blog;
 
-    @ApiModelProperty(value = "头像地址")
+    @Schema(description = "头像地址")
     private String avatar;
 
-    @ApiModelProperty(value = "头衔、称号")
+    @Schema(description = "邮箱")
+    @JsonIgnore
+    private String email;
+
+    @Schema(description = "头衔、称号")
     private String titleName;
 
-    @ApiModelProperty(value = "头衔、称号的颜色")
+    @Schema(description = "头衔、称号的颜色")
     private String titleColor;
 
-    @ApiModelProperty(value = "总提交数")
+    @Schema(description = "总提交数")
     private Integer total;
 
-    @ApiModelProperty(value = "cf得分")
+    @Schema(description = "cf得分")
     private Integer rating;
 
-    @ApiModelProperty(value = "OI得分列表")
+    @Schema(description = "OI得分列表")
     private List<Integer> scoreList;
 
-    @ApiModelProperty(value = "已解决题目列表")
+    @Schema(description = "已解决题目列表")
     private List<String> solvedList;
 
-    @ApiModelProperty(value = "难度=>[P1000,P1001]")
+    @Schema(description = "难度=>[P1000,P1001]")
     private Map<Integer, List<UserHomeProblemVO>> solvedGroupByDifficulty;
 
-    @ApiModelProperty(value = "最近上线时间")
+    @Schema(description = "最近上线时间")
     private Date recentLoginTime;
 
 }

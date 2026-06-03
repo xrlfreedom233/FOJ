@@ -10,17 +10,23 @@ hoj-judge-server:
 server:
   port: ${hoj-judge-server.port}
 spring:
+  config:
+    import: ${SPRING_CONFIG_IMPORT:}
   profiles:
     active: prod
   application:
-    name: hoj-judgeserver
+    name: hoj-judge-server
   cloud:
     nacos:
       discovery:
+        enabled: ${NACOS_DISCOVERY_ENABLED:false}
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         server-addr: ${hoj-judge-server.nacos-url} #配置Nacos地址
       config:
+        enabled: ${NACOS_CONFIG_ENABLED:false}
+        import-check:
+          enabled: false
         username: ${NACOS_USERNAME:nacos}
         password: ${NACOS_PASSWORD:nacos}
         server-addr: ${hoj-judge-server.nacos-url} #Nacos 作为配置中心地址

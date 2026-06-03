@@ -9,7 +9,7 @@ import top.hcode.hoj.pojo.entity.common.Announcement;
 import top.hcode.hoj.pojo.vo.AnnouncementVO;
 import top.hcode.hoj.service.admin.announcement.AdminAnnouncementService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class AdminAnnouncementServiceImpl implements AdminAnnouncementService {
 

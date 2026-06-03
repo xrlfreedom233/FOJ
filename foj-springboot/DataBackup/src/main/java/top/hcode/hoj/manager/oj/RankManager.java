@@ -11,7 +11,6 @@ import top.hcode.hoj.pojo.entity.user.UserInfo;
 import top.hcode.hoj.pojo.vo.ACMRankVO;
 import top.hcode.hoj.pojo.vo.OIRankVO;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
-import top.hcode.hoj.dao.user.UserRecordEntityService;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.RedisUtils;
 
@@ -19,9 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 @Component
 public class RankManager {
-
-    @Autowired
-    private UserRecordEntityService userRecordEntityService;
 
     @Autowired
     private UserInfoEntityService userInfoEntityService;
@@ -84,7 +80,7 @@ public class RankManager {
         if (uidList != null) {
             Page<ACMRankVO> page = new Page<>(currentPage, limit);
             if (uidList.size() > 0) {
-                data = userRecordEntityService.getACMRankList(page, uidList);
+                data = userInfoEntityService.getACMRankList(page, uidList);
             } else {
                 data = page;
             }
@@ -93,7 +89,7 @@ public class RankManager {
             data = (IPage<ACMRankVO>) redisUtils.get(key);
             if (data == null) {
                 Page<ACMRankVO> page = new Page<>(currentPage, limit);
-                data = userRecordEntityService.getACMRankList(page, null);
+                data = userInfoEntityService.getACMRankList(page, null);
                 redisUtils.set(key, data, cacheRankSecond);
             }
         }
@@ -108,7 +104,7 @@ public class RankManager {
         if (uidList != null) {
             Page<OIRankVO> page = new Page<>(currentPage, limit);
             if (uidList.size() > 0) {
-                data = userRecordEntityService.getOIRankList(page, uidList);
+                data = userInfoEntityService.getOIRankList(page, uidList);
             } else {
                 data = page;
             }
@@ -117,7 +113,7 @@ public class RankManager {
             data = (IPage<OIRankVO>) redisUtils.get(key);
             if (data == null) {
                 Page<OIRankVO> page = new Page<>(currentPage, limit);
-                data = userRecordEntityService.getOIRankList(page, null);
+                data = userInfoEntityService.getOIRankList(page, null);
                 redisUtils.set(key, data, cacheRankSecond);
             }
         }

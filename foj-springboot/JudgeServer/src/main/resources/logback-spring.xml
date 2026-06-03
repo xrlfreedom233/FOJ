@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
     <!-- 属性文件:在properties文件中找到对应的配置项 -->
-    <springProperty scope="context" name="logging.path" source="logging.file.path"/>
+    <springProperty scope="context" name="logging.path" source="logging.file.path" defaultValue="./hoj_judgeserver"/>
     <springProperty scope="context" name="logging.level.root" source="logging.level.root"/>
     <contextName>hoj</contextName>
     <property name="LOG_LEVEL" value="${logging.level.root}"/>

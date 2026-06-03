@@ -9,7 +9,7 @@ import cn.hutool.json.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.retry.annotation.Backoff;
@@ -22,19 +22,18 @@ import top.hcode.hoj.dao.judge.JudgeEntityService;
 import top.hcode.hoj.dao.problem.ProblemEntityService;
 import top.hcode.hoj.dao.user.SessionEntityService;
 import top.hcode.hoj.dao.user.UserInfoEntityService;
-import top.hcode.hoj.dao.user.UserRecordEntityService;
+import top.hcode.hoj.mapper.ContestMapper;
 import top.hcode.hoj.pojo.entity.common.File;
 import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.pojo.entity.user.Session;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
-import top.hcode.hoj.pojo.entity.user.UserRecord;
 import top.hcode.hoj.service.admin.rejudge.RejudgeService;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.JsoupUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -76,8 +75,8 @@ public class ScheduleServiceImpl implements ScheduleService {
     @Autowired
     private UserInfoEntityService userInfoEntityService;
 
-    @Autowired
-    private UserRecordEntityService userRecordEntityService;
+    @Resource
+    private ContestMapper contestMapper;
 
     @Resource
     private SessionEntityService sessionEntityService;
@@ -122,6 +121,16 @@ public class ScheduleServiceImpl implements ScheduleService {
         if (!isSuccess) {
             log.error("数据库file表删除头像数据失败----------------->sql语句执行失败");
         }
+    }
+
+    /**
+     * @MethodName refreshContestStatus
+     * @Description 每30秒根据时间刷新比赛状态（替代原每秒全表 UPDATE 的数据库事件，仅更新状态发生变化的行）
+     */
+    @Scheduled(cron = "*/30 * * * * *")
+    @Override
+    public void refreshContestStatus() {
+        contestMapper.updateContestStatus();
     }
 
 
@@ -255,12 +264,12 @@ public class ScheduleServiceImpl implements ScheduleService {
                 JSONObject cfUserInfo = resultObject.getJSONArray("result").getJSONObject(0);
                 // 获取cf的分数
                 Integer cfRating = cfUserInfo.getInt("rating", null);
-                UpdateWrapper<UserRecord> userRecordUpdateWrapper = new UpdateWrapper<>();
+                UpdateWrapper<UserInfo> userInfoUpdateWrapper = new UpdateWrapper<>();
                 // 将对应的cf分数修改
-                userRecordUpdateWrapper.eq("uid", uuid).set("rating", cfRating);
-                boolean result = userRecordEntityService.update(userRecordUpdateWrapper);
+                userInfoUpdateWrapper.eq("uuid", uuid).set("rating", cfRating);
+                boolean result = userInfoEntityService.update(userInfoUpdateWrapper);
                 if (!result) {
-                    log.error("插入UserRecord表失败------------------------------->");
+                    log.error("更新user_info表rating失败------------------------------->");
                 }
 
             } catch (Exception e) {

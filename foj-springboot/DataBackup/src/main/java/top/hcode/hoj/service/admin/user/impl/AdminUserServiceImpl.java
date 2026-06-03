@@ -9,7 +9,7 @@ import top.hcode.hoj.pojo.dto.AdminEditUserDTO;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.service.admin.user.AdminUserService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 @Service

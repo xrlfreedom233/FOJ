@@ -12,7 +12,7 @@ import top.hcode.hoj.pojo.entity.judge.Judge;
 import top.hcode.hoj.service.admin.rejudge.RejudgeService;
 
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @Description: 超管重判提交

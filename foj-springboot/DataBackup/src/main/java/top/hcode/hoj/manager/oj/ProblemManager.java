@@ -94,8 +94,7 @@ public class ProblemManager {
     public RandomProblemVO getRandomProblem() throws StatusFailException {
         QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
         // 必须是公开题目
-        queryWrapper.select("problem_id").eq("auth", 1)
-                .eq("is_group", false);
+        queryWrapper.select("problem_id").eq("auth", 1);
         List<Problem> list = problemEntityService.list(queryWrapper);
         if (list.size() == 0) {
             throw new StatusFailException("获取随机题目失败，题库暂无公开题目！");
@@ -128,11 +127,6 @@ public class ProblemManager {
             queryWrapper.eq("cid", pidListDto.getCid());
         } else {
             queryWrapper.eq("cid", 0);
-            if (pidListDto.getGid() != null) {
-                queryWrapper.eq("gid", pidListDto.getGid());
-            } else {
-                queryWrapper.isNull("gid");
-            }
         }
         List<Judge> judges = judgeEntityService.list(queryWrapper);
 
@@ -232,7 +226,7 @@ public class ProblemManager {
      * @MethodName getProblemInfo
      * @Description 获取指定题目的详情信息，标签，所支持语言，做题情况（只能查询公开题目 也就是auth为1）
      */
-    public ProblemInfoVO getProblemInfo(String problemId, Long gid) throws StatusNotFoundException, StatusForbiddenException {
+    public ProblemInfoVO getProblemInfo(String problemId) throws StatusNotFoundException, StatusForbiddenException {
         QueryWrapper<Problem> wrapper = new QueryWrapper<Problem>().eq("problem_id", problemId);
         //查询题目详情，题目标签，题目语言，题目做题情况
         Problem problem = problemEntityService.getOne(wrapper, false);
@@ -245,9 +239,6 @@ public class ProblemManager {
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
-        if (problem.getIsGroup() && !isRoot) {
-            throw new StatusForbiddenException("团队功能已关闭，该题目不可访问！");
-        }
 
         QueryWrapper<ProblemTag> problemTagQueryWrapper = new QueryWrapper<>();
         problemTagQueryWrapper.eq("pid", problem.getId());
@@ -281,7 +272,7 @@ public class ProblemManager {
             });
         }
         // 获取题目的提交记录
-        ProblemCountVO problemCount = judgeEntityService.getProblemCount(problem.getId(), gid);
+        ProblemCountVO problemCount = judgeEntityService.getProblemCount(problem.getId());
 
         // 获取题目的代码模板
         QueryWrapper<CodeTemplate> codeTemplateQueryWrapper = new QueryWrapper<>();
@@ -330,10 +321,10 @@ public class ProblemManager {
 
     private String buildCode(Judge judge) {
         if (judge.getCid() == 0) {
-            // 比赛外的提交代码 如果不是超管或题目管理员，需要检查网站是否开启隐藏代码功能
+            // 比赛外的提交代码 如果不是超管或管理员，需要检查网站是否开启隐藏代码功能
             boolean isRoot = SecurityUtils.getSubject().hasRole("root"); // 是否为超级管理员
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");// 是否为题目管理员
-            if (!isRoot && !isProblemAdmin) {
+            boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+            if (!isRoot && !isAdmin) {
                 try {
                     accessValidator.validateAccess(HOJAccessEnum.HIDE_NON_CONTEST_SUBMISSION_CODE);
                 } catch (AccessException e) {

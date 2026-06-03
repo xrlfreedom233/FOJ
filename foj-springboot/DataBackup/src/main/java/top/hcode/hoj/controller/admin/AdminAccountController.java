@@ -26,7 +26,7 @@ public class AdminAccountController {
 
     @GetMapping("/logout")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root","admin","problem_admin"},logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"},logical = Logical.OR)
     public CommonResult<Void> logout() {
         return adminAccountService.logout();
     }

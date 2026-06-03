@@ -3,7 +3,7 @@ package top.hcode.hoj.pojo.dto;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 @Data
 @Accessors(chain = true)
 public class TestJudgeDTO {

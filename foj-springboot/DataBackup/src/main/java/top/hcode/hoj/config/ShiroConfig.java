@@ -19,7 +19,7 @@ import top.hcode.hoj.shiro.ShiroCacheManager;
 import top.hcode.hoj.shiro.ShiroConstant;
 import top.hcode.hoj.utils.RedisUtils;
 
-import javax.servlet.Filter;
+import jakarta.servlet.Filter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;

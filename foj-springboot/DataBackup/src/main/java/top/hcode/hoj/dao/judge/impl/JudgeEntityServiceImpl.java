@@ -51,14 +51,14 @@ public class JudgeEntityServiceImpl extends ServiceImpl<JudgeMapper, Judge> impl
                                              Integer currentPage,
                                              String searchPid,
                                              Integer status,
+                                             String language,
                                              String username,
                                              String uid,
-                                             Boolean completeProblemID,
-                                             Long gid) {
+                                             Boolean completeProblemID) {
         //新建分页
         Page<JudgeVO> page = new Page<>(currentPage, limit);
 
-        IPage<JudgeVO> commonJudgeList = judgeMapper.getCommonJudgeList(page, searchPid, status, username, uid, completeProblemID, gid);
+        IPage<JudgeVO> commonJudgeList = judgeMapper.getCommonJudgeList(page, searchPid, status, language, username, uid, completeProblemID);
         List<JudgeVO> records = commonJudgeList.getRecords();
         if (!CollectionUtils.isEmpty(records)) {
             List<Long> pidList = records.stream().map(JudgeVO::getPid).collect(Collectors.toList());
@@ -133,8 +133,8 @@ public class JudgeEntityServiceImpl extends ServiceImpl<JudgeMapper, Judge> impl
     }
 
     @Override
-    public ProblemCountVO getProblemCount(Long pid, Long gid) {
-        return judgeMapper.getProblemCount(pid, gid);
+    public ProblemCountVO getProblemCount(Long pid) {
+        return judgeMapper.getProblemCount(pid);
     }
 
     @Override

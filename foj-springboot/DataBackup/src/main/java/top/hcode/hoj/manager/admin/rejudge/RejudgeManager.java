@@ -21,7 +21,7 @@ import top.hcode.hoj.pojo.entity.user.UserAcproblem;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 @Component
 public class RejudgeManager {
@@ -214,7 +214,7 @@ public class RejudgeManager {
         } else if (!Objects.equals(judge.getStatus(), Constants.Judge.STATUS_ACCEPTED.getStatus())
                 && Objects.equals(status, Constants.Judge.STATUS_ACCEPTED.getStatus())) {
             // 如果原先不是AC,现在人工评测后是AC,就更新user_acproblem表
-            if (status.intValue() == Constants.Judge.STATUS_ACCEPTED.getStatus() && judge.getGid() == null) {
+            if (status.intValue() == Constants.Judge.STATUS_ACCEPTED.getStatus()) {
                 userAcproblemEntityService.saveOrUpdate(new UserAcproblem()
                         .setPid(judge.getPid())
                         .setUid(judge.getUid())

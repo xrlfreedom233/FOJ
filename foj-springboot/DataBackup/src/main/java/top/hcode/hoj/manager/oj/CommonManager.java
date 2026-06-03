@@ -2,7 +2,7 @@ package top.hcode.hoj.manager.oj;
 
 import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wf.captcha.ArithmeticCaptcha;
+import com.wf.captcha.SpecCaptcha;
 import com.wf.captcha.base.Captcha;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -43,10 +43,8 @@ public class CommonManager {
     private CodeTemplateEntityService codeTemplateEntityService;
 
     public CaptchaVO getCaptcha() {
-        ArithmeticCaptcha specCaptcha = new ArithmeticCaptcha(90, 30, 4);
+        SpecCaptcha specCaptcha = new SpecCaptcha(90, 30, 4);
         specCaptcha.setCharType(Captcha.TYPE_DEFAULT);
-        // 2位数运算
-        specCaptcha.setLen(2);
         String verCode = specCaptcha.text().toLowerCase();
         String key = IdUtil.simpleUUID();
         // 存入redis并设置过期时间为30分钟
@@ -63,7 +61,6 @@ public class CommonManager {
         List<Tag> tagList;
         oj = oj.toUpperCase();
         QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-        tagQueryWrapper.isNull("gid");
         if (oj.equals("ALL")) {
             tagList = tagEntityService.list(tagQueryWrapper);
         } else {
@@ -81,7 +78,6 @@ public class CommonManager {
         if (oj.equals("ALL")) {
             classificationList = tagClassificationEntityService.list();
             QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-            tagQueryWrapper.isNull("gid");
             tagList = tagEntityService.list(tagQueryWrapper);
         } else {
             QueryWrapper<TagClassification> tagClassificationQueryWrapper = new QueryWrapper<>();
@@ -90,7 +86,6 @@ public class CommonManager {
             classificationList = tagClassificationEntityService.list(tagClassificationQueryWrapper);
 
             QueryWrapper<Tag> tagQueryWrapper = new QueryWrapper<>();
-            tagQueryWrapper.isNull("gid");
             tagQueryWrapper.eq("oj", oj);
             tagList = tagEntityService.list(tagQueryWrapper);
         }
@@ -147,12 +142,6 @@ public class CommonManager {
     public List<Language> getLanguages(Long pid, Boolean all) {
 
         String oj = "ME";
-        if (pid != null) {
-            Problem problem = problemEntityService.getById(pid);
-            if (problem.getIsRemote()) {
-                oj = problem.getProblemId().split("-")[0];
-            }
-        }
 
         if (oj.equals("GYM")) {  // GYM用与CF一样的编程语言列表
             oj = "CF";

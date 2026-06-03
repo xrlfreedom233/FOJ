@@ -68,13 +68,8 @@ public class AdminContestProblemManager {
         QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
 
         if (problemType != null) { // 必备条件 隐藏的不可取来做比赛题目
-            problemQueryWrapper.eq("is_group", false)
-                    .eq("type", problemType)
+            problemQueryWrapper.eq("type", problemType)
                     .ne("auth", 2); // 同时需要与比赛相同类型的题目，权限需要是公开的（隐藏的不可加入！）
-            Contest contest = contestEntityService.getById(cid);
-            if (contest.getGid() != null) { //团队比赛不能查看公共题库的隐藏题目
-                problemQueryWrapper.ne("auth", 3);
-            }
         }
 
         // 逻辑判断，如果是查询已有的就应该是in，如果是查询不要重复的，使用not in
@@ -82,11 +77,6 @@ public class AdminContestProblemManager {
             problemQueryWrapper.notIn(pidList.size() > 0, "id", pidList);
         } else {
             problemQueryWrapper.in(pidList.size() > 0, "id", pidList);
-        }
-
-        // 根据oj筛选过滤
-        if (oj != null && !"All".equals(oj)) {
-            problemQueryWrapper.eq("is_remote", false);
         }
 
         if (!StringUtils.isEmpty(keyword)) {
@@ -136,9 +126,9 @@ public class AdminContestProblemManager {
             AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
             boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-            // 只有超级管理员和题目管理员、题目创建者才能操作
-            if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
+            boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+            // 只有超级管理员和管理员、题目创建者才能操作
+            if (!isRoot && !isAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
                 throw new StatusForbiddenException("对不起，你无权限查看题目！");
             }
 
@@ -181,6 +171,11 @@ public class AdminContestProblemManager {
 
     public Map<Object, Object> addProblem(ProblemDTO problemDto) throws StatusFailException {
 
+        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        problemDto.getProblem()
+                .setAuthor(userRolesVo.getUsername())
+                .setModifiedUser(userRolesVo.getUsername());
+
         QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("problem_id", problemDto.getProblem().getProblemId().toUpperCase());
         Problem problem = problemEntityService.getOne(queryWrapper);
@@ -203,9 +198,9 @@ public class AdminContestProblemManager {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        // 只有超级管理员和题目管理员、题目创建者才能操作
-        if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
+        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        // 只有超级管理员和管理员、题目创建者才能操作
+        if (!isRoot && !isAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限修改题目！");
         }
 

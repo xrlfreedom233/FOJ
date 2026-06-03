@@ -10,7 +10,7 @@ import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.MarkDownFileManager;
 import top.hcode.hoj.service.file.MarkDownFileService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Map;
 @Service
 public class MarkDownFileServiceImpl implements MarkDownFileService {
@@ -19,9 +19,9 @@ public class MarkDownFileServiceImpl implements MarkDownFileService {
     private MarkDownFileManager markDownFileManager;
 
     @Override
-    public CommonResult<Map<Object, Object>> uploadMDImg(MultipartFile image, Long gid) {
+    public CommonResult<Map<Object, Object>> uploadMDImg(MultipartFile image) {
         try {
-            return CommonResult.successResponse(markDownFileManager.uploadMDImg(image, gid));
+            return CommonResult.successResponse(markDownFileManager.uploadMDImg(image));
         } catch (StatusFailException e) {
             return CommonResult.errorResponse(e.getMessage());
         } catch (StatusSystemErrorException e) {
@@ -44,9 +44,9 @@ public class MarkDownFileServiceImpl implements MarkDownFileService {
     }
 
     @Override
-    public CommonResult<Map<Object, Object>> uploadMd(MultipartFile file, Long gid) {
+    public CommonResult<Map<Object, Object>> uploadMd(MultipartFile file) {
         try {
-            return CommonResult.successResponse(markDownFileManager.uploadMd(file, gid));
+            return CommonResult.successResponse(markDownFileManager.uploadMd(file));
         } catch (StatusFailException e) {
             return CommonResult.errorResponse(e.getMessage());
         } catch (StatusSystemErrorException e) {

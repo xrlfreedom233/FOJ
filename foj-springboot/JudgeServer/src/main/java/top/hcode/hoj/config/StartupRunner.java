@@ -60,7 +60,6 @@ public class StartupRunner implements CommandLineRunner {
                 .setPort(port)
                 .setUrl(ip + ":" + port)
                 .setMaxTaskNumber(maxTaskNum)
-                .setIsRemote(false)
                 .setName(name));
 
         if (!isOk1) {

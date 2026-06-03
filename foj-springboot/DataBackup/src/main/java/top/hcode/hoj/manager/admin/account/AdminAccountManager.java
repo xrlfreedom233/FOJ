@@ -17,14 +17,15 @@ import top.hcode.hoj.pojo.entity.user.Session;
 import top.hcode.hoj.pojo.vo.UserInfoVO;
 import top.hcode.hoj.pojo.vo.UserRolesVO;
 import top.hcode.hoj.shiro.AccountProfile;
+import top.hcode.hoj.utils.AvatarUtils;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.IpUtils;
 import top.hcode.hoj.utils.JwtUtils;
 import top.hcode.hoj.utils.RedisUtils;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -87,7 +88,7 @@ public class AdminAccountManager {
                 .forEach(role -> rolesList.add(role.getRole()));
 
 
-        if (rolesList.contains("admin") || rolesList.contains("root") || rolesList.contains("problem_admin")) { // 超级管理员或管理员、题目管理员
+        if (rolesList.contains("root") || rolesList.contains("admin")) {
             String jwt = jwtUtils.generateToken(userRolesVo.getUid());
 
             response.setHeader("Authorization", jwt); //放到信息头部
@@ -100,6 +101,7 @@ public class AdminAccountManager {
 
             UserInfoVO userInfoVo = new UserInfoVO();
             BeanUtil.copyProperties(userRolesVo, userInfoVo, "roles");
+            userInfoVo.setAvatar(AvatarUtils.resolveAvatar(userRolesVo.getAvatar(), userRolesVo.getEmail()));
             userInfoVo.setRoleList(userRolesVo.getRoles()
                     .stream()
                     .map(Role::getRole)

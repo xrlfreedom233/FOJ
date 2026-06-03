@@ -78,9 +78,8 @@ public class ProblemController {
      */
     @RequestMapping(value = "/get-problem-detail", method = RequestMethod.GET)
     @AnonApi
-    public CommonResult<ProblemInfoVO> getProblemInfo(@RequestParam(value = "problemId", required = true) String problemId,
-                                                      @RequestParam(value = "gid", required = false) Long gid) {
-        return problemService.getProblemInfo(problemId, gid);
+    public CommonResult<ProblemInfoVO> getProblemInfo(@RequestParam(value = "problemId", required = true) String problemId) {
+        return problemService.getProblemInfo(problemId);
     }
 
     /**

@@ -7,7 +7,7 @@ import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.manager.file.ImportFpsProblemManager;
 import top.hcode.hoj.service.file.ImportFpsProblemService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.IOException;
 @Service
 public class ImportFpsProblemServiceImpl implements ImportFpsProblemService {

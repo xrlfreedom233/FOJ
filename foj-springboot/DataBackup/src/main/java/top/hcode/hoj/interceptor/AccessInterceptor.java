@@ -11,8 +11,8 @@ import top.hcode.hoj.annotation.HOJAccessEnum;
 import top.hcode.hoj.utils.ServiceContextUtils;
 import top.hcode.hoj.validator.AccessValidator;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class AccessInterceptor implements HandlerInterceptor {
 

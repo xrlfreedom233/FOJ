@@ -22,7 +22,7 @@ import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.validator.ContestValidator;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Objects;
 @Component
 public class BeforeDispatchInitManager {
@@ -45,9 +45,9 @@ public class BeforeDispatchInitManager {
     @Resource
     private ContestValidator contestValidator;
 
-    public void initCommonSubmission(String problemId, Long gid, Judge judge) throws StatusForbiddenException {
+    public void initCommonSubmission(String problemId, Judge judge) throws StatusForbiddenException {
         QueryWrapper<Problem> problemQueryWrapper = new QueryWrapper<>();
-        problemQueryWrapper.select("id", "problem_id", "auth", "is_group", "gid");
+        problemQueryWrapper.select("id", "problem_id", "auth");
         problemQueryWrapper.eq("problem_id", problemId);
         Problem problem = problemEntityService.getOne(problemQueryWrapper, false);
 
@@ -57,10 +57,6 @@ public class BeforeDispatchInitManager {
 
         if (problem.getAuth() == 2) {
             throw new StatusForbiddenException("错误！当前题目不可提交！");
-        }
-
-        if (problem.getIsGroup()) {
-            throw new StatusForbiddenException("团队功能已关闭，该题目不可提交！");
         }
 
         judge.setCpid(0L)
@@ -106,8 +102,7 @@ public class BeforeDispatchInitManager {
         contestProblemQueryWrapper.eq("cid", cid).eq("display_id", displayId);
         ContestProblem contestProblem = contestProblemEntityService.getOne(contestProblemQueryWrapper, false);
         judge.setCpid(contestProblem.getId())
-                .setPid(contestProblem.getPid())
-                .setGid(contest.getGid());
+                .setPid(contestProblem.getPid());
 
         Problem problem = problemEntityService.getById(contestProblem.getPid());
 
@@ -117,10 +112,6 @@ public class BeforeDispatchInitManager {
 
         if (problem.getAuth() == 2) {
             throw new StatusForbiddenException("错误！当前题目已被隐藏，不可提交！");
-        }
-
-        if (problem.getIsGroup()){
-            judge.setGid(problem.getGid());
         }
 
         judge.setDisplayPid(problem.getProblemId());

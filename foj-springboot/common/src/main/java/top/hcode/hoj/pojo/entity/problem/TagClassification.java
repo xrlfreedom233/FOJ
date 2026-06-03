@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -14,7 +13,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="TagClassification对象", description="标签分类")
+@Schema(name = "TagClassification对象", description="标签分类")
 public class TagClassification {
 
     private static final long serialVersionUID = 1L;
@@ -22,13 +21,13 @@ public class TagClassification {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
-    @ApiModelProperty(value = "标签分类名字")
+    @Schema(description = "标签分类名字")
     private String name;
 
-    @ApiModelProperty(value = "标签分类所属oj")
+    @Schema(description = "标签分类所属oj")
     private String oj;
 
-    @ApiModelProperty(value = "标签分类优先级 越小越高")
+    @Schema(description = "标签分类优先级 越小越高")
     @TableField("`rank`")
     private Integer rank;
 

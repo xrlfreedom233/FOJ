@@ -31,4 +31,6 @@ public interface ContestMapper extends BaseMapper<Contest> {
     ContestVO getContestInfoById(@Param("cid") long cid);
 
     List<ContestVO> getWithinNext14DaysContests();
+
+    int updateContestStatus();
 }

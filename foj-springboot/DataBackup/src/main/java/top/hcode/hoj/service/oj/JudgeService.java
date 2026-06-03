@@ -30,9 +30,9 @@ public interface JudgeService {
                                                      Boolean onlyMine,
                                                      String searchPid,
                                                      Integer searchStatus,
+                                                     String searchLanguage,
                                                      String searchUsername,
-                                                     Boolean completeProblemID,
-                                                     Long gid);
+                                                     Boolean completeProblemID);
 
     public CommonResult<Void> updateSubmission(Judge judge);
 

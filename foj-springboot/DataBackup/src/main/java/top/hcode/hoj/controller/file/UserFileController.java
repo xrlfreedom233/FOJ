@@ -7,9 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.service.file.UserFileService;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Controller
 @RequestMapping("/api/file")
@@ -21,7 +22,7 @@ public class UserFileController {
     @RequestMapping("/generate-user-excel")
     @RequiresAuthentication
     @RequiresRoles("root")
-    public void generateUserExcel(@RequestParam("key") String key, HttpServletResponse response) throws IOException {
+    public void generateUserExcel(@RequestParam("key") String key, HttpServletResponse response) throws IOException, StatusFailException {
         userFileService.generateUserExcel(key, response);
     }
 

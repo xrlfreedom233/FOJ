@@ -36,6 +36,7 @@ public class RedisAutoConfig {
 
 
     @Bean
+    @RefreshScope
     public RedisConnectionFactory redisConnectionFactory(JedisPoolConfig jedisPool,
                                                          RedisStandaloneConfiguration jedisConfig) {
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory(jedisConfig);

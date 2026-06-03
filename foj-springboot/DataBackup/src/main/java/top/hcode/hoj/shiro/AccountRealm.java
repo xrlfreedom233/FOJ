@@ -16,6 +16,7 @@ import top.hcode.hoj.mapper.RoleAuthMapper;
 import top.hcode.hoj.pojo.entity.user.Auth;
 import top.hcode.hoj.pojo.entity.user.Role;
 import top.hcode.hoj.pojo.entity.user.UserInfo;
+import top.hcode.hoj.utils.AvatarUtils;
 import top.hcode.hoj.utils.JwtUtils;
 
 import java.util.LinkedList;
@@ -73,7 +74,7 @@ public class AccountRealm extends AuthorizingRealm {
 
         QueryWrapper<UserInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uuid", userId)
-                .select("uuid", "username", "nickname", "realname", "title_name", "title_color", "avatar", "status");
+                .select("uuid", "username", "nickname", "realname", "title_name", "title_color", "avatar", "email", "status", "gmt_create");
 
         UserInfo userInfo = userInfoEntityService.getOne(queryWrapper, false);
         if (userInfo == null) {
@@ -85,6 +86,7 @@ public class AccountRealm extends AuthorizingRealm {
         AccountProfile profile = new AccountProfile();
         BeanUtil.copyProperties(userInfo, profile);
         profile.setUid(userInfo.getUuid());
+        profile.setAvatar(AvatarUtils.resolveAvatar(userInfo.getAvatar(), userInfo.getEmail()));
         return new SimpleAuthenticationInfo(profile, jwt.getCredentials(), getName());
     }
 }

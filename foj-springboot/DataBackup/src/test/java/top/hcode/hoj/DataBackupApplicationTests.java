@@ -136,7 +136,6 @@ public class DataBackupApplicationTests {
         info.setDescription(ReUtil.get(">Problem Description</div> <div class=.*?>([\\s\\S]*?)</div>", html, 1).replaceAll("src=\"../../", "src=\"" + HOST + "/"));
         info.setInput(ReUtil.get(">Input</div> <div class=.*?>([\\s\\S]*?)</div>", html, 1));
         info.setOutput(ReUtil.get(">Output</div> <div class=.*?>([\\s\\S]*?)</div>", html, 1));
-        info.setIsRemote(true);
         System.out.println(info.getDescription());
         System.out.println(info.getInput());
         System.out.println(info.getOutput());
@@ -198,7 +197,6 @@ public class DataBackupApplicationTests {
         System.out.println(info.getExamples());
 
         info.setHint(ReUtil.get("<div class=\"section-title\">\\s*Note\\s*</div>([\\s\\S]*?)</div></div>", html, 1));
-        info.setIsRemote(true);
         info.setSource(String.format("<p>Problem：<a style='color:#1A5CC8' href='https://codeforces.com/problemset/problem/%s/%s'>%s</a></p><p>" +
                         "Contest：" + ReUtil.get("(<a[^<>]+/contest/\\d+\">.+?</a>)", html, 1).replace("/contest", HOST + "/contest")
                         .replace("color: black", "color: #009688;") + "</p>",

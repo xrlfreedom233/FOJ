@@ -6,7 +6,7 @@ import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.utils.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Component
 public class ProblemValidator {
 

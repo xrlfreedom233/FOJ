@@ -9,7 +9,7 @@ import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.ImportHydroProblemManager;
 import top.hcode.hoj.service.file.ImportHydroProblemService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Component
 public class ImportHydroProblemServiceImpl implements ImportHydroProblemService {
 

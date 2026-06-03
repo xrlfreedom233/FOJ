@@ -29,7 +29,7 @@ import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.validator.ProblemValidator;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.File;
 import java.util.List;
 @Component
@@ -61,13 +61,7 @@ public class AdminProblemManager {
         IPage<Problem> problemList;
 
         QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("is_group", false)
-                .orderByDesc("id");
-
-        // 根据oj筛选过滤
-        if (oj != null && !"All".equals(oj)) {
-            queryWrapper.eq("is_remote", false);
-        }
+        queryWrapper.orderByDesc("id");
 
         if (auth != null && auth != 0) {
             queryWrapper.eq("auth", auth);
@@ -93,9 +87,9 @@ public class AdminProblemManager {
             AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
             boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-            boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-            // 只有超级管理员和题目管理员、题目创建者才能操作
-            if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
+            boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+            // 只有超级管理员和管理员、题目创建者才能操作
+            if (!isRoot && !isAdmin && !userRolesVo.getUsername().equals(problem.getAuthor())) {
                 throw new StatusForbiddenException("对不起，你无权限查看题目！");
             }
 
@@ -122,6 +116,11 @@ public class AdminProblemManager {
 
     public void addProblem(ProblemDTO problemDto) throws StatusFailException {
 
+        AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
+        problemDto.getProblem()
+                .setAuthor(userRolesVo.getUsername())
+                .setModifiedUser(userRolesVo.getUsername());
+
         problemValidator.validateProblem(problemDto.getProblem());
 
         QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
@@ -146,9 +145,9 @@ public class AdminProblemManager {
         AccountProfile userRolesVo = (AccountProfile) SecurityUtils.getSubject().getPrincipal();
 
         boolean isRoot = SecurityUtils.getSubject().hasRole("root");
-        boolean isProblemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
-        // 只有超级管理员和题目管理员、题目创建者才能操作
-        if (!isRoot && !isProblemAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
+        boolean isAdmin = SecurityUtils.getSubject().hasRole("admin");
+        // 只有超级管理员和管理员、题目创建者才能操作
+        if (!isRoot && !isAdmin && !userRolesVo.getUsername().equals(problemDto.getProblem().getAuthor())) {
             throw new StatusForbiddenException("对不起，你无权限修改题目！");
         }
 
@@ -212,7 +211,7 @@ public class AdminProblemManager {
         // 普通管理员只能将题目变成隐藏题目和比赛题目
         boolean root = SecurityUtils.getSubject().hasRole("root");
 
-        boolean problemAdmin = SecurityUtils.getSubject().hasRole("problem_admin");
+        boolean problemAdmin = SecurityUtils.getSubject().hasRole("admin");
 
         if (!problemAdmin && !root && problem.getAuth() == 1) {
             throw new StatusForbiddenException("修改失败！你无权限公开题目！");

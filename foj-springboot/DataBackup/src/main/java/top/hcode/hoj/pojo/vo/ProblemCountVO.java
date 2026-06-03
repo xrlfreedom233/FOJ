@@ -1,6 +1,6 @@
 package top.hcode.hoj.pojo.vo;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -24,28 +24,28 @@ public class ProblemCountVO implements Serializable {
 
     private Integer ac;
 
-    @ApiModelProperty(value = "空间超限")
+    @Schema(description = "空间超限")
     private Integer mle;
 
-    @ApiModelProperty(value = "时间超限")
+    @Schema(description = "时间超限")
     private Integer tle;
 
-    @ApiModelProperty(value = "运行错误")
+    @Schema(description = "运行错误")
     private Integer re;
 
-    @ApiModelProperty(value = "格式错误")
+    @Schema(description = "格式错误")
     private Integer pe;
 
-    @ApiModelProperty(value = "编译错误")
+    @Schema(description = "编译错误")
     private Integer ce;
 
-    @ApiModelProperty(value = "答案错误")
+    @Schema(description = "答案错误")
     private Integer wa;
 
-    @ApiModelProperty(value = "系统错误")
+    @Schema(description = "系统错误")
     private Integer se;
 
-    @ApiModelProperty(value = "部分通过，OI题目")
+    @Schema(description = "部分通过，OI题目")
     private Integer pa;
 
 }

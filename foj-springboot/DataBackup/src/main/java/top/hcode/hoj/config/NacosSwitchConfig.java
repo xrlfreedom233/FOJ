@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -23,22 +23,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Slf4j(topic = "hoj")
 public class NacosSwitchConfig {
 
-    @Value("${spring.cloud.nacos.url}")
+    @Value("${spring.cloud.nacos.config.enabled:true}")
+    private boolean nacosConfigEnabled;
+
+    @Value("${spring.cloud.nacos.url:}")
     private String NACOS_URL;
 
-    @Value("${spring.cloud.nacos.config.username}")
+    @Value("${spring.cloud.nacos.config.username:}")
     private String nacosUsername;
 
-    @Value("${spring.cloud.nacos.config.password}")
+    @Value("${spring.cloud.nacos.config.password:}")
     private String nacosPassword;
 
-    @Value("${nacos-switch-config}")
+    @Value("${nacos-switch-config:hoj-switch.yml}")
     private String switchConfigFileName;
 
-    @Value("${nacos-web-config}")
+    @Value("${nacos-web-config:hoj-web.yml}")
     private String webConfigFileName;
 
-    @Value("${spring.cloud.nacos.config.group}")
+    @Value("${spring.cloud.nacos.config.group:DEFAULT_GROUP}")
     private String group;
 
     private static AtomicBoolean init = new AtomicBoolean(false);
@@ -52,6 +55,12 @@ public class NacosSwitchConfig {
     @PostConstruct
     public void init() throws NacosException {
         if (init.compareAndSet(false, true)) {
+            if (!nacosConfigEnabled || StrUtil.isBlank(NACOS_URL)) {
+                refreshSwitchConfig(null);
+                refreshWebConfig(null);
+                log.info("[Nacos Config] disabled, using local default switch/web config.");
+                return;
+            }
             Properties properties = new Properties();
             properties.put("serverAddr", NACOS_URL);
             // if need username and password to login
@@ -127,6 +136,10 @@ public class NacosSwitchConfig {
     }
 
     public boolean publishSwitchConfig() {
+        if (configService == null) {
+            log.warn("[Nacos Config] publish switch config skipped because Nacos config is disabled, using in-memory config only.");
+            return true;
+        }
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);
@@ -142,6 +155,10 @@ public class NacosSwitchConfig {
     }
 
     public boolean publishWebConfig() {
+        if (configService == null) {
+            log.warn("[Nacos Config] publish web config skipped because Nacos config is disabled, using in-memory config only.");
+            return true;
+        }
         DumperOptions options = new DumperOptions();
         options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         options.setDefaultScalarStyle(DumperOptions.ScalarStyle.PLAIN);

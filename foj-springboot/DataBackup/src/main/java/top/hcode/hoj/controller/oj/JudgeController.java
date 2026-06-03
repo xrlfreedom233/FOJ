@@ -50,11 +50,11 @@ public class JudgeController {
                                                      @RequestParam(value = "onlyMine", required = false) Boolean onlyMine,
                                                      @RequestParam(value = "problemID", required = false) String searchPid,
                                                      @RequestParam(value = "status", required = false) Integer searchStatus,
+                                                     @RequestParam(value = "language", required = false) String searchLanguage,
                                                      @RequestParam(value = "username", required = false) String searchUsername,
-                                                     @RequestParam(value = "completeProblemID", defaultValue = "false") Boolean completeProblemID,
-                                                     @RequestParam(value = "gid", required = false) Long gid) {
+                                                     @RequestParam(value = "completeProblemID", defaultValue = "false") Boolean completeProblemID) {
 
-        return judgeService.getJudgeList(limit, currentPage, onlyMine, searchPid, searchStatus, searchUsername, completeProblemID, gid);
+        return judgeService.getJudgeList(limit, currentPage, onlyMine, searchPid, searchStatus, searchLanguage, searchUsername, completeProblemID);
     }
 
     /**

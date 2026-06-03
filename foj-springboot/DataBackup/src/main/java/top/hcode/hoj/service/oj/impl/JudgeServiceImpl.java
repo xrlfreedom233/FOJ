@@ -17,7 +17,7 @@ import top.hcode.hoj.pojo.vo.SubmissionInfoVO;
 import top.hcode.hoj.pojo.vo.TestJudgeVO;
 import top.hcode.hoj.service.oj.JudgeService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 @Service
 public class JudgeServiceImpl implements JudgeService {
@@ -90,18 +90,18 @@ public class JudgeServiceImpl implements JudgeService {
                                                      Boolean onlyMine,
                                                      String searchPid,
                                                      Integer searchStatus,
+                                                     String searchLanguage,
                                                      String searchUsername,
-                                                     Boolean completeProblemID,
-                                                     Long gid) {
+                                                     Boolean completeProblemID) {
         try {
             return CommonResult.successResponse(judgeManager.getJudgeList(limit,
                     currentPage,
                     onlyMine,
                     searchPid,
                     searchStatus,
+                    searchLanguage,
                     searchUsername,
-                    completeProblemID,
-                    gid));
+                    completeProblemID));
         } catch (StatusAccessDeniedException e) {
             return CommonResult.errorResponse(e.getMessage(), ResultStatus.ACCESS_DENIED);
         }

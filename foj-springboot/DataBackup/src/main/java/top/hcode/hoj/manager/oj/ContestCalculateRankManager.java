@@ -19,7 +19,7 @@ import top.hcode.hoj.pojo.vo.OIContestRankVO;
 import top.hcode.hoj.utils.Constants;
 import top.hcode.hoj.utils.RedisUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.*;
 import java.util.stream.Collectors;
 @Component
@@ -234,7 +234,7 @@ public class ContestCalculateRankManager {
                 externalCidList,
                 contest.getStartTime());
 
-        List<String> superAdminUidList = getSuperAdminUidList(contest.getGid());
+        List<String> superAdminUidList = getSuperAdminUidList();
 
         List<ACMContestRankVO> result = new ArrayList<>();
 
@@ -513,7 +513,7 @@ public class ContestCalculateRankManager {
         List<ContestRecordVO> oiContestRecord = contestRecordEntityService.getOIContestRecord(contest,
                 externalCidList, isOpenSealRank, isContainsAfterContestJudge);
 
-        List<String> superAdminUidList = getSuperAdminUidList(contest.getGid());
+        List<String> superAdminUidList = getSuperAdminUidList();
 
         List<OIContestRankVO> result = new ArrayList<>();
 
@@ -630,14 +630,8 @@ public class ContestCalculateRankManager {
     }
 
 
-    public List<String> getSuperAdminUidList(Long gid) {
-
-        List<String> superAdminUidList = userInfoEntityService.getSuperAdminUidList();
-
-        if (gid != null) {
-            // 团队功能已关闭
-        }
-        return superAdminUidList;
+    public List<String> getSuperAdminUidList() {
+        return userInfoEntityService.getSuperAdminUidList();
     }
 
     private boolean isInSealTimeSubmission(Long minSealRankTime, Long maxSealRankTime, Long time) {

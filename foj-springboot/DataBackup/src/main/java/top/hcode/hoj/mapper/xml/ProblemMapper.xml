@@ -32,7 +32,7 @@
             ON p.id = pt.pid
         </if>
         <where>
-            p.auth = 1 and p.is_group = false
+            p.auth = 1
             <if test="keyword != null and keyword != ''">
                 and (
                 p.title like concat('%',#{keyword},'%') or p.problem_id like concat('%',#{keyword},'%')
@@ -45,10 +45,7 @@
                 and p.difficulty = #{difficulty}
             </if>
             <if test="oj != null and oj !='Mine'">
-                and p.problem_id like concat(#{oj},'%') and p.is_remote=true
-            </if>
-            <if test="oj != null and oj =='Mine'">
-                and p.is_remote=false
+                and p.problem_id like concat(#{oj},'%')
             </if>
         </where>
         order by length(p.problem_id) asc,p.problem_id asc

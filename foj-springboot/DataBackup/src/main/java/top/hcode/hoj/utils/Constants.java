@@ -5,6 +5,22 @@ package top.hcode.hoj.utils;
  */
 public class Constants {
 
+    private static String getDataPath(String path) {
+        String basePath = System.getProperty("hoj.data.dir");
+        if (basePath == null || basePath.isBlank()) {
+            basePath = System.getenv("HOJ_DATA_DIR");
+        }
+        if (basePath == null || basePath.isBlank()) {
+            java.io.File defaultDir = new java.io.File("/hoj");
+            if (defaultDir.exists() || defaultDir.mkdirs()) {
+                basePath = defaultDir.getAbsolutePath();
+            } else {
+                basePath = new java.io.File(System.getProperty("user.dir"), "hoj").getAbsolutePath();
+            }
+        }
+        return basePath.replaceAll("[/\\\\]+$", "") + path;
+    }
+
     /**
      * @Description 提交评测结果的状态码
      */
@@ -158,29 +174,29 @@ public class Constants {
     public enum File {
 
 
-        USER_AVATAR_FOLDER("/hoj/file/avatar"),
+        USER_AVATAR_FOLDER(getDataPath("/file/avatar")),
 
-        GROUP_AVATAR_FOLDER("/hoj/file/avatar/group"),
+        GROUP_AVATAR_FOLDER(getDataPath("/file/avatar/group")),
 
-        HOME_CAROUSEL_FOLDER("/hoj/file/carousel"),
+        HOME_CAROUSEL_FOLDER(getDataPath("/file/carousel")),
 
-        MARKDOWN_FILE_FOLDER("/hoj/file/md"),
+        MARKDOWN_FILE_FOLDER(getDataPath("/file/md")),
 
-        PROBLEM_FILE_FOLDER("/hoj/file/problem"),
+        PROBLEM_FILE_FOLDER(getDataPath("/file/problem")),
 
-        CONTEST_TEXT_PRINT_FOLDER("/hoj/file/contest_print"),
+        CONTEST_TEXT_PRINT_FOLDER(getDataPath("/file/contest_print")),
 
         IMG_API("/api/public/img/"),
 
         FILE_API("/api/public/file/"),
 
-        TESTCASE_TMP_FOLDER("/hoj/file/zip"),
+        TESTCASE_TMP_FOLDER(getDataPath("/file/zip")),
 
-        TESTCASE_BASE_FOLDER("/hoj/testcase"),
+        TESTCASE_BASE_FOLDER(getDataPath("/testcase")),
 
-        FILE_DOWNLOAD_TMP_FOLDER("/hoj/file/zip/download"),
+        FILE_DOWNLOAD_TMP_FOLDER(getDataPath("/file/zip/download")),
 
-        CONTEST_AC_SUBMISSION_TMP_FOLDER("/hoj/file/zip/contest_ac");
+        CONTEST_AC_SUBMISSION_TMP_FOLDER(getDataPath("/file/zip/contest_ac"));
 
         private final String path;
 

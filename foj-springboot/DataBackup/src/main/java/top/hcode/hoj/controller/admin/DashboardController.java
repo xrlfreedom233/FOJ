@@ -24,7 +24,7 @@ public class DashboardController {
 
     @PostMapping("/get-sessions")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root","admin","problem_admin"},logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"},logical = Logical.OR)
     public CommonResult<Session> getRecentSession(){
 
         return dashboardService.getRecentSession();
@@ -32,7 +32,7 @@ public class DashboardController {
 
     @GetMapping("/get-dashboard-info")
     @RequiresAuthentication
-    @RequiresRoles(value = {"root","admin","problem_admin"},logical = Logical.OR)
+    @RequiresRoles(value = {"root", "admin"},logical = Logical.OR)
     public CommonResult<Map<Object,Object>> getDashboardInfo(){
 
         return dashboardService.getDashboardInfo();

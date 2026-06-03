@@ -10,7 +10,7 @@ import top.hcode.hoj.pojo.vo.UserInfoVO;
 import top.hcode.hoj.service.admin.account.AdminAccountService;
 import top.hcode.hoj.pojo.dto.LoginDTO;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class AdminAccountServiceImpl implements AdminAccountService {
 

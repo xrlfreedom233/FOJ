@@ -6,15 +6,23 @@
 node_modules/
 dist/
 target/
+*.jar
 *.log
 logging.path_IS_UNDEFINED/
+tmp/
 
 # Docker runtime data: mysql/redis/log/testcase/file mount points.
 foj-deploy/standAlone/hoj/
 foj-deploy/distributed/*/hoj/
 
+# Built frontend files for docker images. Keep only the placeholder directory.
+foj-deploy/src/frontend/html/*
+!foj-deploy/src/frontend/html/.gitkeep
+
 # Local backend runtime logs.
 foj-springboot/hoj_backend/
+foj-springboot/**/hoj_backend/
+foj-springboot/hoj/
 foj-springboot/logging.path_IS_UNDEFINED/
 
 # Local docker-compose overrides may contain credentials.

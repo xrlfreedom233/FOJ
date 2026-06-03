@@ -20,7 +20,7 @@ public interface ProblemService {
 
     public CommonResult<HashMap<Long, Object>> getUserProblemStatus(PidListDTO pidListDto);
 
-    public CommonResult<ProblemInfoVO> getProblemInfo(String problemId, Long gid);
+    public CommonResult<ProblemInfoVO> getProblemInfo(String problemId);
 
     public CommonResult<LastAcceptedCodeVO> getUserLastAcceptedCode(Long pid, Long cid);
 

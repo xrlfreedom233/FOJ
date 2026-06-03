@@ -24,6 +24,7 @@ import top.hcode.hoj.utils.Constants;
 
 import java.io.File;
 import java.util.Map;
+import java.util.stream.Collectors;
 @Component
 @Slf4j(topic = "hoj")
 public class ImageManager {
@@ -101,7 +102,7 @@ public class ImageManager {
                 .put("github", userRolesVo.getGithub())
                 .put("blog", userRolesVo.getBlog())
                 .put("cfUsername", userRolesVo.getCfUsername())
-                .put("roleList", userRolesVo.getRoles().stream().map(Role::getRole))
+                .put("roleList", userRolesVo.getRoles().stream().map(Role::getRole).collect(Collectors.toList()))
                 .map();
     }
 

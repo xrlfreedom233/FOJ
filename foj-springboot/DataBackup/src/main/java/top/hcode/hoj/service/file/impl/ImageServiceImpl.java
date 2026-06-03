@@ -10,7 +10,7 @@ import top.hcode.hoj.common.result.ResultStatus;
 import top.hcode.hoj.manager.file.ImageManager;
 import top.hcode.hoj.service.file.ImageService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Map;
 @Service
 public class ImageServiceImpl implements ImageService {

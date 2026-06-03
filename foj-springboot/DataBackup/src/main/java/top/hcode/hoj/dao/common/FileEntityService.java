@@ -10,8 +10,6 @@ import java.util.List;
 public interface FileEntityService extends IService<File> {
     int updateFileToDeleteByUidAndType(String uid, String type);
 
-    int updateFileToDeleteByGidAndType(Long gid, String type);
-
     List<File> queryDeleteAvatarList();
 
     List<File> queryCarouselFileList();

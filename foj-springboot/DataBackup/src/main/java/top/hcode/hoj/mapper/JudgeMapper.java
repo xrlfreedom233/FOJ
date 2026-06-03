@@ -26,10 +26,10 @@ public interface JudgeMapper extends BaseMapper<Judge> {
     IPage<JudgeVO> getCommonJudgeList(Page<JudgeVO> page,
                                       @Param("searchPid") String searchPid,
                                       @Param("status") Integer status,
+                                      @Param("language") String language,
                                       @Param("username") String username,
                                       @Param("uid") String uid,
-                                      @Param("completeProblemID") Boolean completeProblemID,
-                                      @Param("gid") Long gid);
+                                      @Param("completeProblemID") Boolean completeProblemID);
 
     IPage<JudgeVO> getContestJudgeList(Page<JudgeVO> page,
                                        @Param("displayId") String displayId,
@@ -53,7 +53,7 @@ public interface JudgeMapper extends BaseMapper<Judge> {
                                           @Param("sealRankTime") Date sealRankTime,
                                           @Param("adminList") List<String> adminList);
 
-    ProblemCountVO getProblemCount(@Param("pid") Long pid, @Param("gid") Long gid);
+    ProblemCountVO getProblemCount(@Param("pid") Long pid);
 
     List<ProblemCountVO> getProblemListCount(@Param("pidList") List<Long> pidList);
 

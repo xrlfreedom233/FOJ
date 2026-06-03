@@ -10,7 +10,7 @@ import top.hcode.hoj.common.exception.StatusFailException;
 import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.service.file.TestCaseService;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.*;
 @Controller
 @RequestMapping("/api/file")
@@ -24,9 +24,8 @@ public class TestCaseController {
     @ResponseBody
     @RequiresAuthentication
     public CommonResult<Map<Object, Object>> uploadTestcaseZip(@RequestParam("file") MultipartFile file,
-                                                               @RequestParam(value = "mode", defaultValue = "default") String mode,
-                                                               @RequestParam(value = "gid", required = false) Long gid) {
-        return testCaseService.uploadTestcaseZip(file, gid, mode);
+                                                               @RequestParam(value = "mode", defaultValue = "default") String mode) {
+        return testCaseService.uploadTestcaseZip(file, mode);
     }
 
 

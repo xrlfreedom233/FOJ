@@ -17,7 +17,7 @@ import top.hcode.hoj.pojo.entity.problem.Problem;
 import top.hcode.hoj.service.JudgeService;
 import top.hcode.hoj.util.Constants;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.Objects;
 @Service
@@ -54,7 +54,6 @@ public class JudgeServiceImpl implements JudgeService {
                     judge.getCid(),
                     judge.getUid(),
                     judge.getPid(),
-                    judge.getGid(),
                     null,
                     null);
             return;
@@ -95,7 +94,6 @@ public class JudgeServiceImpl implements JudgeService {
                     judge.getCid(),
                     judge.getUid(),
                     judge.getPid(),
-                    judge.getGid(),
                     finalJudgeRes.getScore(),
                     finalJudgeRes.getTime());
         }

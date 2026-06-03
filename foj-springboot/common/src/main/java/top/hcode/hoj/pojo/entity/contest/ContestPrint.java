@@ -4,8 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -14,7 +13,7 @@ import java.util.Date;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@ApiModel(value="ContestPrint", description="")
+@Schema(name = "ContestPrint", description="")
 public class ContestPrint {
     private static final long serialVersionUID = 1L;
 
@@ -23,16 +22,16 @@ public class ContestPrint {
 
     private Long cid;
 
-    @ApiModelProperty(value = "提交打印文本的用户")
+    @Schema(description = "提交打印文本的用户")
     private String username;
 
-    @ApiModelProperty(value = "真实姓名")
+    @Schema(description = "真实姓名")
     private String realname;
 
-    @ApiModelProperty(value = "内容")
+    @Schema(description = "内容")
     private String content;
 
-    @ApiModelProperty(value = "状态")
+    @Schema(description = "状态")
     private Integer status;
 
     @TableField(fill = FieldFill.INSERT)

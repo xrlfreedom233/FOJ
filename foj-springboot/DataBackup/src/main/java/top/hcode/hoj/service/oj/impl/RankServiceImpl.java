@@ -7,7 +7,7 @@ import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.manager.oj.RankManager;
 import top.hcode.hoj.service.oj.RankService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 @Service
 public class RankServiceImpl implements RankService {
 

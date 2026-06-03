@@ -15,7 +15,7 @@ import top.hcode.hoj.util.Constants;
 import top.hcode.hoj.util.JudgeUtils;
 import top.hcode.hoj.util.ThreadPoolUtils;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutionException;

@@ -6,8 +6,8 @@ import top.hcode.hoj.common.exception.StatusForbiddenException;
 import top.hcode.hoj.manager.file.ContestFileManager;
 import top.hcode.hoj.service.file.ContestFileService;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 @Service
 public class ContestFileServiceImpl implements ContestFileService {

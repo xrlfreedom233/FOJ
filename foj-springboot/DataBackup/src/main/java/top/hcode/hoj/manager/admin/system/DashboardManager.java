@@ -42,7 +42,7 @@ public class DashboardManager {
     }
 
     public Map<Object, Object> getDashboardInfo() {
-        int userNum = userInfoEntityService.count();
+        long userNum = userInfoEntityService.count();
         int recentContestNum = contestEntityService.getWithinNext14DaysContests().size();
         int todayJudgeNum = judgeEntityService.getTodayJudgeNum();
         return MapUtil.builder()

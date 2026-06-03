@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import top.hcode.hoj.common.result.CommonResult;
 import top.hcode.hoj.service.file.MarkDownFileService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Map;
 @Controller
 @RequestMapping("/api/file")
@@ -23,9 +23,8 @@ public class MarkDownFileController {
     @RequestMapping(value = "/upload-md-img", method = RequestMethod.POST)
     @RequiresAuthentication
     @ResponseBody
-    public CommonResult<Map<Object, Object>> uploadMDImg(@RequestParam("image") MultipartFile image,
-                                                         @RequestParam(value = "gid", required = false) Long gid) {
-        return markDownFileService.uploadMDImg(image, gid);
+    public CommonResult<Map<Object, Object>> uploadMDImg(@RequestParam("image") MultipartFile image) {
+        return markDownFileService.uploadMDImg(image);
     }
 
 
@@ -40,9 +39,8 @@ public class MarkDownFileController {
     @RequestMapping(value = "/upload-md-file", method = RequestMethod.POST)
     @RequiresAuthentication
     @ResponseBody
-    public CommonResult<Map<Object, Object>> uploadMd(@RequestParam("file") MultipartFile file,
-                                                      @RequestParam(value = "gid", required = false) Long gid) {
-        return markDownFileService.uploadMd(file, gid);
+    public CommonResult<Map<Object, Object>> uploadMd(@RequestParam("file") MultipartFile file) {
+        return markDownFileService.uploadMd(file);
     }
 
 }

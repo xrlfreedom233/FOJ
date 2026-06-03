@@ -9,7 +9,7 @@ import top.hcode.hoj.exception.AccessException;
 import top.hcode.hoj.pojo.dto.TestJudgeDTO;
 import top.hcode.hoj.pojo.dto.SubmitJudgeDTO;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -41,9 +41,7 @@ public class JudgeValidator {
 
     public void validateSubmissionInfo(SubmitJudgeDTO submitJudgeDto) throws StatusFailException, AccessException {
 
-        if (submitJudgeDto.getGid() != null) { // 团队内的提交
-            accessValidator.validateAccess(HOJAccessEnum.GROUP_JUDGE);
-        } else if (submitJudgeDto.getCid() != null && submitJudgeDto.getCid() != 0) {
+        if (submitJudgeDto.getCid() != null && submitJudgeDto.getCid() != 0) {
             accessValidator.validateAccess(HOJAccessEnum.CONTEST_JUDGE);
         } else {
             accessValidator.validateAccess(HOJAccessEnum.PUBLIC_JUDGE);

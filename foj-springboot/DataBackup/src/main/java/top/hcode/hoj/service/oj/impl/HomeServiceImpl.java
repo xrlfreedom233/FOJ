@@ -7,7 +7,7 @@ import top.hcode.hoj.manager.oj.HomeManager;
 import top.hcode.hoj.pojo.vo.*;
 import top.hcode.hoj.service.oj.HomeService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

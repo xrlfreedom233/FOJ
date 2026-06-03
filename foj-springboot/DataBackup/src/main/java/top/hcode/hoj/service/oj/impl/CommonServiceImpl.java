@@ -10,7 +10,7 @@ import top.hcode.hoj.pojo.vo.CaptchaVO;
 import top.hcode.hoj.pojo.vo.ProblemTagVO;
 import top.hcode.hoj.service.oj.CommonService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 @Service

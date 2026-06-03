@@ -8,7 +8,7 @@ import top.hcode.hoj.pojo.dto.ContestRankDTO;
 import top.hcode.hoj.pojo.vo.ContestOutsideInfoVO;
 import top.hcode.hoj.service.oj.ContestScoreboardService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 /**
  * @Description: 处理比赛外榜的相关请求

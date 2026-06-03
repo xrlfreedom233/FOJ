@@ -8,7 +8,7 @@ import top.hcode.hoj.manager.admin.system.ConfigManager;
 import top.hcode.hoj.pojo.dto.*;
 import top.hcode.hoj.service.admin.system.ConfigService;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 @Service
 public class ConfigServiceImpl implements ConfigService {

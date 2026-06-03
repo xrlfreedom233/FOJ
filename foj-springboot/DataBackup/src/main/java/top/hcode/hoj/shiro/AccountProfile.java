@@ -1,9 +1,10 @@
 package top.hcode.hoj.shiro;
 
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @Description: 存在redis session的当前登录用户信息
@@ -11,29 +12,35 @@ import java.io.Serializable;
 @Data
 public class AccountProfile implements Serializable {
 
-    @ApiModelProperty(value = "用户id")
+    @Schema(description = "用户id")
     private String uid;
 
-    @ApiModelProperty(value = "用户名")
+    @Schema(description = "用户名")
     private String username;
 
-    @ApiModelProperty(value = "昵称")
+    @Schema(description = "昵称")
     private String nickname;
 
-    @ApiModelProperty(value = "真实姓名")
+    @Schema(description = "真实姓名")
     private String realname;
 
-    @ApiModelProperty(value = "头衔名称")
+    @Schema(description = "头衔名称")
     private String titleName;
 
-    @ApiModelProperty(value = "头衔背景颜色")
+    @Schema(description = "头衔背景颜色")
     private String titleColor;
 
-    @ApiModelProperty(value = "头像地址")
+    @Schema(description = "头像地址")
     private String avatar;
 
-    @ApiModelProperty(value = "0可用，1不可用")
+    @Schema(description = "邮箱")
+    private String email;
+
+    @Schema(description = "0可用，1不可用")
     private int status;
+
+    @Schema(description = "创建时间")
+    private Date gmtCreate;
 
     public String getId() { //shiro登录用户实体默认主键获取方法要为getId
         return uid;

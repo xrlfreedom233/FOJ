@@ -29,7 +29,7 @@ import top.hcode.hoj.pojo.vo.ImportProblemVO;
 import top.hcode.hoj.shiro.AccountProfile;
 import top.hcode.hoj.utils.Constants;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
 import java.util.*;
@@ -188,7 +188,6 @@ public class ProblemFileManager {
             if (problem.getAuthor() == null) {
                 problem.setAuthor(userRolesVo.getUsername());
             }
-            problem.setIsGroup(false);
             List<ProblemCase> problemCaseList = new LinkedList<>();
             for (Map<String, Object> tmp : importProblemVo.getSamples()) {
                 problemCaseList.add(BeanUtil.mapToBean(tmp, ProblemCase.class, true));

@@ -1,0 +1,292 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --color-background: 246 248 251;
+  --color-foreground: 17 24 39;
+  --color-card: 255 255 255;
+  --color-card-foreground: 17 24 39;
+  --color-primary: 8 145 178;
+  --color-primary-foreground: 255 255 255;
+  --color-secondary: 232 238 247;
+  --color-secondary-foreground: 17 24 39;
+  --color-muted: 232 238 247;
+  --color-muted-foreground: 100 116 139;
+  --color-accent: 217 119 6;
+  --color-accent-foreground: 255 255 255;
+  --color-destructive: 220 38 38;
+  --color-destructive-foreground: 255 255 255;
+  --color-border: 203 213 225;
+  --color-input: 255 255 255;
+  --color-ring: 8 145 178;
+  --color-success: 22 163 74;
+  --color-warning: 202 138 4;
+}
+
+.theme-dark {
+  color-scheme: dark;
+  --color-background: 26 26 46;
+  --color-foreground: 238 240 242;
+  --color-card: 22 33 62;
+  --color-card-foreground: 238 240 242;
+  --color-primary: 15 163 177;
+  --color-primary-foreground: 255 255 255;
+  --color-secondary: 45 58 79;
+  --color-secondary-foreground: 238 240 242;
+  --color-muted: 45 58 79;
+  --color-muted-foreground: 148 163 184;
+  --color-accent: 252 163 17;
+  --color-accent-foreground: 26 26 46;
+  --color-destructive: 239 68 68;
+  --color-destructive-foreground: 255 255 255;
+  --color-border: 61 79 111;
+  --color-input: 45 58 79;
+  --color-ring: 15 163 177;
+  --color-success: 34 197 94;
+  --color-warning: 234 179 8;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: rgb(var(--color-background));
+  color: rgb(var(--color-foreground));
+  min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--color-card));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--color-border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--color-muted-foreground));
+}
+
+/* Code editor styling */
+.cm-editor {
+  height: 100%;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.cm-editor .cm-scroller {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.markdown-preview,
+.prose {
+  line-height: 1.75;
+  word-break: break-word;
+}
+
+.markdown-preview > * + *,
+.prose > * + * {
+  margin-top: 0.75rem;
+}
+
+.markdown-preview h1,
+.prose h1 {
+  @apply text-2xl font-bold;
+}
+
+.markdown-preview h2,
+.prose h2 {
+  @apply text-xl font-semibold;
+}
+
+.markdown-preview h3,
+.prose h3 {
+  @apply text-lg font-semibold;
+}
+
+.markdown-preview h4,
+.markdown-preview h5,
+.markdown-preview h6,
+.prose h4,
+.prose h5,
+.prose h6 {
+  @apply font-semibold;
+}
+
+.markdown-preview ul,
+.prose ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+}
+
+.markdown-preview ol,
+.prose ol {
+  list-style: decimal;
+  padding-left: 1.5rem;
+}
+
+.markdown-preview blockquote,
+.prose blockquote {
+  @apply border-l-4 border-primary/60 bg-secondary/30 px-4 py-2 text-muted-foreground;
+}
+
+.markdown-preview a,
+.prose a {
+  @apply text-primary underline underline-offset-2;
+}
+
+.markdown-preview code,
+.prose code {
+  @apply rounded bg-secondary px-1.5 py-0.5 font-mono text-sm;
+}
+
+.markdown-preview pre,
+.prose pre {
+  @apply overflow-x-auto rounded-lg border border-border bg-secondary/40 p-4;
+}
+
+.markdown-preview pre code,
+.prose pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* Button transitions */
+.btn-transition {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+/* Card hover effect */
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-lg hover:shadow-primary/10 hover:border-primary/50;
+}
+
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent;
+}
+
+/* Status colors */
+.status-accepted {
+  @apply text-success;
+}
+
+.status-wrong {
+  @apply text-destructive;
+}
+
+.status-pending {
+  @apply text-warning;
+}
+
+.status-running {
+  @apply text-primary;
+}
+
+/* Difficulty colors */
+.difficulty-easy {
+  @apply text-success;
+}
+
+.difficulty-medium {
+  @apply text-warning;
+}
+
+.difficulty-hard {
+  @apply text-destructive;
+}
+
+/* Animation */
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: rgba(15, 163, 177, 0.5);
+  }
+  50% {
+    border-color: rgba(15, 163, 177, 1);
+  }
+}
+
+.animate-pulse-border {
+  animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-secondary rounded;
+}
+
+.admin-shell {
+  background:
+    linear-gradient(180deg, rgb(var(--color-secondary) / 0.38), rgb(var(--color-background) / 0)),
+    rgb(var(--color-background));
+}
+
+.admin-main {
+  @apply max-w-[1440px] mx-auto px-4 sm:px-6 py-6 lg:py-8;
+}
+
+.admin-nav-link {
+  @apply flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors;
+}
+
+.admin-nav-link-active {
+  @apply bg-primary text-primary-foreground shadow-sm;
+}
+
+.admin-page-header {
+  @apply mb-6 flex flex-col gap-4 border-b border-border pb-5 md:flex-row md:items-end md:justify-between;
+}
+
+.admin-page-title {
+  @apply text-2xl font-bold tracking-normal;
+}
+
+.admin-page-description {
+  @apply mt-1 text-sm text-muted-foreground;
+}
+
+.admin-toolbar {
+  @apply flex flex-wrap items-center gap-2;
+}
+
+.admin-table {
+  @apply w-full text-sm;
+}
+
+.admin-table thead {
+  @apply bg-secondary/60 text-muted-foreground;
+}
+
+.admin-table th {
+  @apply px-4 py-3 text-left font-medium;
+}
+
+.admin-table td {
+  @apply px-4 py-3 align-middle;
+}
+
+.admin-table tbody tr {
+  @apply border-t border-border transition-colors hover:bg-secondary/20;
+}
+
+.admin-status-pill {
+  @apply inline-flex items-center rounded-md border border-border bg-secondary/40 px-2 py-1 text-xs font-medium;
+}
