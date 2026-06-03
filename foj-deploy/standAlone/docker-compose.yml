@@ -82,11 +82,83 @@ services:
       hoj-network:
         ipv4_address: ${NACOS_HOST:-172.20.0.4}
 
+  hoj-backend:
+    build:
+      context: ../src/backend
+    image: foj-backend:latest
+    container_name: hoj-backend
+    restart: always
+    depends_on:
+      hoj-redis:
+        condition: service_healthy
+      hoj-mysql:
+        condition: service_healthy
+      hoj-nacos:
+        condition: service_healthy
+    volumes:
+      - ${HOJ_DATA_DIRECTORY}/file:/hoj/file
+      - ${HOJ_DATA_DIRECTORY}/testcase:/hoj/testcase
+      - ${HOJ_DATA_DIRECTORY}/log/backend:/hoj/log/backend
+    environment:
+      - TZ=Asia/Shanghai
+      - BACKEND_SERVER_PORT=${BACKEND_PORT:-6688}
+      - NACOS_URL=${NACOS_HOST:-172.20.0.4}:8848
+      - NACOS_USERNAME=${NACOS_USERNAME:-nacos}
+      - NACOS_PASSWORD=${NACOS_PASSWORD:-change_me}
+      - NACOS_DISCOVERY_ENABLED=true
+      - NACOS_CONFIG_ENABLED=false
+      - JWT_TOKEN_SECRET=${JWT_TOKEN_SECRET:-change_me}
+      - JWT_TOKEN_EXPIRE=${JWT_TOKEN_EXPIRE:-86400}
+      - JWT_TOKEN_FRESH_EXPIRE=${JWT_TOKEN_FRESH_EXPIRE:-43200}
+      - JUDGE_TOKEN=${JUDGE_TOKEN:-change_me}
+      - MYSQL_HOST=${MYSQL_HOST:-172.20.0.3}
+      - MYSQL_PUBLIC_HOST=${MYSQL_PUBLIC_HOST:-172.20.0.3}
+      - MYSQL_PUBLIC_PORT=${MYSQL_PUBLIC_PORT:-3306}
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE_NAME=hoj
+      - MYSQL_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-change_me}
+      - EMAIL_SERVER_HOST=${EMAIL_SERVER_HOST:-smtp.qq.com}
+      - EMAIL_SERVER_PORT=${EMAIL_SERVER_PORT:-465}
+      - EMAIL_USERNAME=${EMAIL_USERNAME:-your_email_username}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD:-your_email_password}
+      - REDIS_HOST=${REDIS_HOST:-172.20.0.2}
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-change_me}
+      - OPEN_REMOTE_JUDGE=false
+      - HDU_ACCOUNT_USERNAME_LIST=${HDU_ACCOUNT_USERNAME_LIST}
+      - HDU_ACCOUNT_PASSWORD_LIST=${HDU_ACCOUNT_PASSWORD_LIST}
+      - CF_ACCOUNT_USERNAME_LIST=${CF_ACCOUNT_USERNAME_LIST}
+      - CF_ACCOUNT_PASSWORD_LIST=${CF_ACCOUNT_PASSWORD_LIST}
+      - POJ_ACCOUNT_USERNAME_LIST=${POJ_ACCOUNT_USERNAME_LIST}
+      - POJ_ACCOUNT_PASSWORD_LIST=${POJ_ACCOUNT_PASSWORD_LIST}
+      - ATCODER_ACCOUNT_USERNAME_LIST=${ATCODER_ACCOUNT_USERNAME_LIST}
+      - ATCODER_ACCOUNT_PASSWORD_LIST=${ATCODER_ACCOUNT_PASSWORD_LIST}
+      - SPOJ_ACCOUNT_USERNAME_LIST=${SPOJ_ACCOUNT_USERNAME_LIST}
+      - SPOJ_ACCOUNT_PASSWORD_LIST=${SPOJ_ACCOUNT_PASSWORD_LIST}
+      - LIBRE_ACCOUNT_USERNAME_LIST=${LIBRE_ACCOUNT_USERNAME_LIST}
+      - LIBRE_ACCOUNT_PASSWORD_LIST=${LIBRE_ACCOUNT_PASSWORD_LIST}
+      - FORCED_UPDATE_REMOTE_JUDGE_ACCOUNT=${FORCED_UPDATE_REMOTE_JUDGE_ACCOUNT:-false}
+    ports:
+      - ${BACKEND_PORT:-6688}:${BACKEND_PORT:-6688}
+    healthcheck:
+      test: curl -f http://localhost:${BACKEND_PORT:-6688}/api/captcha || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      hoj-network:
+        ipv4_address: ${BACKEND_HOST:-172.20.0.5}
+
   hoj-judgeserver:
-    image: registry.cn-shenzhen.aliyuncs.com/hcode/hoj_judgeserver
+    build:
+      context: ../src/judgeserver
+    image: foj-judgeserver:latest
     container_name: hoj-judgeserver
     restart: always
     depends_on:
+      hoj-backend:
+        condition: service_healthy
       hoj-nacos:
         condition: service_healthy
     volumes:
