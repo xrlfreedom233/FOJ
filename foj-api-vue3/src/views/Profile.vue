@@ -173,7 +173,7 @@
             </div>
             <div class="p-4 bg-secondary/30 rounded-lg">
               <div class="text-sm text-muted-foreground mb-1">角色</div>
-              <div>{{ getRoleText(userStore.user.role) }}</div>
+              <div>{{ userRoleText }}</div>
             </div>
             <div class="p-4 bg-secondary/30 rounded-lg">
               <div class="text-sm text-muted-foreground mb-1">注册时间</div>
@@ -380,9 +380,18 @@ const registerTime = computed(() => {
   return userStore.user?.create_time || userStore.user?.gmtCreate || userStore.user?.gmt_create || ''
 })
 
+const userRoleText = computed(() => {
+  const roles = userStore.user?.roleList ?? (userStore.user?.role ? [userStore.user.role] : [])
+  if (roles.includes('root')) return '超级管理员'
+  if (roles.includes('admin')) return '管理员'
+  return getRoleText(roles[0] || 'user')
+})
+
 const getRoleText = (role: string) => {
   const roles: Record<string, string> = {
+    root: '超级管理员',
     admin: '管理员',
+    default_user: '普通用户',
     user: '普通用户',
     vip: 'VIP用户',
   }

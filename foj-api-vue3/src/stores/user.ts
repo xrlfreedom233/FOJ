@@ -31,11 +31,12 @@ export const useUserStore = defineStore('user', () => {
 
   const setUser = (newUser: User) => {
     const roleList = newUser.roleList ?? (newUser as unknown as { roles?: string[] }).roles ?? user.value?.roleList ?? []
+    const primaryRole = roleList[0] ?? newUser.role ?? user.value?.role ?? 'user'
     const mergedUser = {
       ...user.value,
       ...newUser,
       uid: newUser.uid === undefined || newUser.uid === null ? String(user.value?.uid ?? '') : String(newUser.uid),
-      role: newUser.role ?? roleList[0] ?? 'user',
+      role: primaryRole,
       roleList,
     }
     user.value = mergedUser
