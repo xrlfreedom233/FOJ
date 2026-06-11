@@ -159,6 +159,7 @@ const total = ref(0)
 const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = 20
+let requestId = 0
 
 const filters = reactive<SubmissionQueryParams>({
   status: undefined,
@@ -176,6 +177,7 @@ const formatTime = (time: string) => {
 }
 
 const fetchSubmissions = async () => {
+  const currentRequestId = ++requestId
   loading.value = true
   try {
     const params: SubmissionQueryParams = {
@@ -194,6 +196,7 @@ const fetchSubmissions = async () => {
     if (filters.language) params.language = filters.language
 
     const response = await submissionApi.getList(params)
+    if (currentRequestId !== requestId) return
     if (isSuccess(response.data)) {
       submissions.value = getPageRecords(response.data.data).map(mapSubmission)
       total.value = getPageTotal(response.data.data)
@@ -202,10 +205,13 @@ const fetchSubmissions = async () => {
       total.value = 0
     }
   } catch {
+    if (currentRequestId !== requestId) return
     submissions.value = []
     total.value = 0
   } finally {
-    loading.value = false
+    if (currentRequestId === requestId) {
+      loading.value = false
+    }
   }
 }
 
@@ -241,6 +247,9 @@ onMounted(() => {
 watch(
   () => route.query,
   () => {
+    currentPage.value = route.query.page ? Number(route.query.page) : 1
+    filters.status = route.query.status ? Number(route.query.status) : undefined
+    filters.language = route.query.language ? String(route.query.language) : undefined
     fetchSubmissions()
   }
 )
