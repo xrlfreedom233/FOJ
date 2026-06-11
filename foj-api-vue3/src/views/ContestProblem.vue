@@ -343,7 +343,13 @@ const handleSubmit = async () => {
         message: '提交成功！',
         sid: submitId,
       }
-      router.push(`/contest/${cid.value}`)
+      router.push({
+        path: `/contest/${cid.value}`,
+        query: {
+          submitId: submitId ? String(submitId) : undefined,
+          problemId: index.value,
+        },
+      })
     } else {
       submitResult.value = {
         success: false,
@@ -384,6 +390,14 @@ const fetchProblem = async () => {
 watch(selectedLanguage, () => {
   resetCode()
 }, { immediate: true })
+
+watch(
+  () => [route.params.cid, route.params.index],
+  () => {
+    submitResult.value = null
+    fetchProblem()
+  }
+)
 
 onMounted(fetchProblem)
 </script>

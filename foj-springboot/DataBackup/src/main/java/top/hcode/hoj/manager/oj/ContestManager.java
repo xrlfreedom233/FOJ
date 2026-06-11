@@ -120,8 +120,8 @@ public class ContestManager {
 
         Long cid = registerContestDto.getCid();
         String password = registerContestDto.getPassword();
-        if (cid == null || StringUtils.isEmpty(password)) {
-            throw new StatusFailException("cid或者password不能为空！");
+        if (cid == null) {
+            throw new StatusFailException("cid不能为空！");
         }
 
         // 获取当前登录的用户
@@ -135,8 +135,15 @@ public class ContestManager {
             throw new StatusFailException("对不起，该比赛不存在!");
         }
 
-        if (!contest.getPwd().equals(password)) { // 密码不对
-            throw new StatusFailException("比赛密码错误，请重新输入！");
+        boolean needPassword = contest.getAuth().intValue() == Constants.Contest.AUTH_PRIVATE.getCode()
+                || contest.getAuth().intValue() == Constants.Contest.AUTH_PROTECT.getCode();
+        if (needPassword) {
+            if (StringUtils.isEmpty(password)) {
+                throw new StatusFailException("比赛密码不能为空！");
+            }
+            if (!Objects.equals(contest.getPwd(), password)) { // 密码不对
+                throw new StatusFailException("比赛密码错误，请重新输入！");
+            }
         }
 
         // 需要校验当前比赛是否开启账号规则限制，如果有，需要对当前用户的用户名进行验证
@@ -436,6 +443,7 @@ public class ContestManager {
                                                    boolean onlyMine,
                                                    String displayId,
                                                    Integer searchStatus,
+                                                   String searchLanguage,
                                                    String searchUsername,
                                                    Long searchCid,
                                                    boolean beforeContestSubmit,
@@ -461,6 +469,9 @@ public class ContestManager {
         if (onlyMine) {
             // 需要获取一下该token对应用户的数据（有token便能获取到）
             uid = userRolesVo.getUid();
+        }
+        if (searchLanguage != null) {
+            searchLanguage = searchLanguage.trim();
         }
 
         String rule;
@@ -488,6 +499,7 @@ public class ContestManager {
                 displayId,
                 searchCid,
                 searchStatus,
+                searchLanguage,
                 searchUsername,
                 uid,
                 beforeContestSubmit,

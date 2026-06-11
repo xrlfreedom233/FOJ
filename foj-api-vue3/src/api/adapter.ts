@@ -120,7 +120,6 @@ type BackendRankUser = {
   avatar?: string
   total?: number
   ac?: number
-  rating?: number
 }
 
 type BackendContestRank = {
@@ -338,7 +337,6 @@ export const mapRankUser = (value: unknown, index: number, page = 1, pageSize = 
   avatar: raw.avatar ?? '',
   solved: raw.ac ?? 0,
   submit: raw.total ?? 0,
-  rating: raw.rating ?? 0,
   }
 }
 

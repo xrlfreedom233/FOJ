@@ -61,26 +61,57 @@
         </div>
       </Card>
 
-      <Card v-if="!hasContestAccess">
+      <div
+        v-if="latestSubmission"
+        class="rounded-lg border px-4 py-3"
+        :class="latestSubmission.status === 0 ? 'border-success/30 bg-success/10' : isPendingStatus(latestSubmission.status) ? 'border-border bg-card' : 'border-destructive/30 bg-destructive/10'"
+      >
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <div class="text-sm text-muted-foreground">本次提交结果</div>
+            <div class="mt-1 flex flex-wrap items-center gap-2">
+              <span class="font-mono text-sm">#{{ latestSubmission.submitId }}</span>
+              <span
+                :class="SUBMISSION_STATUS_CLASS[latestSubmission.status] || 'status-pending'"
+                class="font-semibold"
+              >
+                {{ SUBMISSION_STATUS_TEXT[latestSubmission.status] || 'Unknown' }}
+              </span>
+              <span v-if="latestSubmission.problemId" class="text-sm text-muted-foreground">
+                {{ latestSubmission.problemId }}
+              </span>
+            </div>
+          </div>
+          <RouterLink
+            :to="`/submission/${latestSubmission.submitId}`"
+            class="text-sm text-primary hover:underline"
+          >
+            查看详情
+          </RouterLink>
+        </div>
+      </div>
+
+      <Card v-if="showRegisterCard">
         <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 class="text-lg font-semibold">需要报名后进入比赛</h2>
+            <h2 class="text-lg font-semibold">{{ registerCardTitle }}</h2>
             <p class="mt-1 text-sm text-muted-foreground">
-              {{ contest.type === 2 ? '该比赛需要密码，报名通过后可查看题目和榜单。' : '报名通过后可查看题目和榜单。' }}
+              {{ registerCardDescription }}
             </p>
             <p v-if="accessMessage" class="mt-2 text-sm" :class="accessMessageType === 'error' ? 'text-destructive' : 'text-success'">
               {{ accessMessage }}
             </p>
           </div>
-          <div class="grid w-full gap-2 sm:grid-cols-[minmax(0,1fr)_96px] md:max-w-md">
+          <div class="grid w-full gap-2 md:max-w-md" :class="contestRequiresPassword ? 'sm:grid-cols-[minmax(0,1fr)_96px]' : 'sm:grid-cols-[96px]'">
             <input
+              v-if="contestRequiresPassword"
               v-model="contestPassword"
               type="password"
               class="h-10 px-3 bg-input border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              placeholder="比赛密码，可留空"
+              placeholder="比赛密码"
               @keyup.enter="registerContest"
             />
-            <Button :loading="registering" @click="registerContest">报名</Button>
+            <Button :loading="registering" @click="registerContest">{{ registerButtonText }}</Button>
           </div>
         </div>
       </Card>
@@ -281,6 +312,12 @@
       </Card>
     </div>
 
+    <div v-else-if="!userStore.isLoggedIn">
+      <Empty title="请先登录" description="登录后可以查看并参加比赛">
+        <Button class="mt-4" @click="goLogin">去登录</Button>
+      </Empty>
+    </div>
+
     <div v-else>
       <Empty title="比赛不存在" description="请检查比赛编号是否正确">
         <RouterLink
@@ -296,8 +333,9 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted } from 'vue'
-import { useRoute, RouterLink } from 'vue-router'
+import { useRoute, useRouter, RouterLink } from 'vue-router'
 import { contestApi } from '@/api/contest'
+import { submissionApi } from '@/api/submission'
 import {
   getPageRecords,
   getPageTotal,
@@ -314,6 +352,7 @@ import Loading from '@/components/ui/Loading.vue'
 import Empty from '@/components/ui/Empty.vue'
 import Button from '@/components/ui/Button.vue'
 import Pagination from '@/components/ui/Pagination.vue'
+import { useUserStore } from '@/stores/user'
 import dayjs from 'dayjs'
 import duration from 'dayjs/plugin/duration'
 import relativeTime from 'dayjs/plugin/relativeTime'
@@ -324,6 +363,8 @@ dayjs.extend(relativeTime)
 dayjs.locale('zh-cn')
 
 const route = useRoute()
+const router = useRouter()
+const userStore = useUserStore()
 
 const contest = ref<ContestDetail | null>(null)
 const rankList = ref<ContestRankUser[]>([])
@@ -337,12 +378,15 @@ const activeTab = ref('problems')
 const countdown = ref('')
 const progress = ref(0)
 const hasContestAccess = ref(true)
+const isContestRegistered = ref(false)
 const contestPassword = ref('')
 const registering = ref(false)
 const accessMessage = ref('')
 const accessMessageType = ref<'success' | 'error'>('error')
+const latestSubmission = ref<{ submitId: number; status: number; problemId?: string } | null>(null)
 
 let timer: ReturnType<typeof setInterval> | null = null
+let submissionTimer: ReturnType<typeof setInterval> | null = null
 
 const tabs = [
   { value: 'problems', label: '题目列表' },
@@ -353,6 +397,19 @@ const tabs = [
 
 const submissionPageSize = 20
 const submissionTotalPages = computed(() => Math.ceil(submissionTotal.value / submissionPageSize))
+const contestRequiresPassword = computed(() => contest.value?.type === 1 || contest.value?.type === 2)
+const showRegisterCard = computed(() => Boolean(contest.value) && !isContestRegistered.value)
+const registerCardTitle = computed(() => {
+  if (contest.value?.type === 1) return '需要报名后进入比赛'
+  if (contest.value?.type === 2) return '参加比赛后可提交代码'
+  return '参加比赛'
+})
+const registerCardDescription = computed(() => {
+  if (contest.value?.type === 1) return '该比赛需要密码，报名通过后可查看题目和榜单。'
+  if (contest.value?.type === 2) return '该比赛需要密码，报名通过后可提交代码。'
+  return '参加后会记录参赛身份，并可在比赛中提交代码。'
+})
+const registerButtonText = computed(() => contest.value?.type === 0 ? '参加' : '报名')
 
 type ContestAnnouncement = {
   id: number
@@ -407,6 +464,48 @@ const formatPenalty = (minutes: number) => {
   return `${hours}:${mins.toString().padStart(2, '0')}`
 }
 
+const isPendingStatus = (status: number) => [5, 6, 7, 9, 15].includes(status)
+
+const stopSubmissionPolling = () => {
+  if (submissionTimer) {
+    clearInterval(submissionTimer)
+    submissionTimer = null
+  }
+}
+
+const checkLatestSubmission = async () => {
+  const cid = Number(route.params.cid)
+  if (!cid || !latestSubmission.value) return
+
+  try {
+    const response = await submissionApi.checkContestStatuses(cid, [latestSubmission.value.submitId])
+    if (!isSuccess(response.data)) return
+
+    const raw = response.data.data?.[latestSubmission.value.submitId] as { status?: number; displayPid?: string } | undefined
+    if (!raw || raw.status === undefined || raw.status === null) return
+
+    latestSubmission.value = {
+      ...latestSubmission.value,
+      status: raw.status,
+      problemId: raw.displayPid || latestSubmission.value.problemId,
+    }
+
+    if (!isPendingStatus(raw.status)) {
+      stopSubmissionPolling()
+      fetchContestSubmissions(cid)
+    }
+  } catch {
+    stopSubmissionPolling()
+  }
+}
+
+const startSubmissionPolling = (submitId: number, problemId?: string) => {
+  stopSubmissionPolling()
+  latestSubmission.value = { submitId, status: 9, problemId }
+  checkLatestSubmission()
+  submissionTimer = setInterval(checkLatestSubmission, 2000)
+}
+
 const updateCountdown = () => {
   if (!contest.value) return
 
@@ -438,18 +537,20 @@ const updateCountdown = () => {
 }
 
 const checkContestAccess = async (cid: number, contestInfo: ContestDetail) => {
-  if (contestInfo.type === 0) {
+  if (contestInfo.type === 0 && !userStore.isLoggedIn) {
     hasContestAccess.value = true
+    isContestRegistered.value = false
     return true
   }
 
   try {
     const response = await contestApi.getAccess(cid)
-    hasContestAccess.value = isSuccess(response.data) && Boolean(response.data.data?.access)
+    isContestRegistered.value = isSuccess(response.data) && Boolean(response.data.data?.access)
   } catch {
-    hasContestAccess.value = false
+    isContestRegistered.value = false
   }
 
+  hasContestAccess.value = contestInfo.type !== 1 || isContestRegistered.value
   if (!hasContestAccess.value) {
     activeTab.value = 'announcements'
   }
@@ -488,6 +589,12 @@ const handleSubmissionPageChange = (page: number) => {
 const fetchContest = async () => {
   const cid = Number(route.params.cid)
   if (!cid) return
+
+  if (!userStore.isLoggedIn) {
+    loading.value = false
+    contest.value = null
+    return
+  }
 
   loading.value = true
   if (timer) {
@@ -552,6 +659,11 @@ const registerContest = async () => {
   const cid = Number(route.params.cid)
   if (!cid || registering.value) return
 
+  if (!userStore.isLoggedIn) {
+    goLogin()
+    return
+  }
+
   registering.value = true
   accessMessage.value = ''
   try {
@@ -575,9 +687,22 @@ const registerContest = async () => {
   }
 }
 
-onMounted(fetchContest)
+const goLogin = () => {
+  router.push({ name: 'login', query: { redirect: route.fullPath } })
+}
+
+onMounted(() => {
+  if (route.query.submitId) {
+    const submitId = Number(route.query.submitId)
+    if (Number.isFinite(submitId)) {
+      startSubmissionPolling(submitId, route.query.problemId ? String(route.query.problemId) : undefined)
+    }
+  }
+  fetchContest()
+})
 
 onUnmounted(() => {
   if (timer) clearInterval(timer)
+  stopSubmissionPolling()
 })
 </script>

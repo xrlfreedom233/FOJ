@@ -30,6 +30,7 @@ public interface ContestService {
                                                                  Boolean onlyMine,
                                                                  String displayId,
                                                                  Integer searchStatus,
+                                                                 String searchLanguage,
                                                                  String searchUsername,
                                                                  Long searchCid,
                                                                  Boolean beforeContestSubmit,

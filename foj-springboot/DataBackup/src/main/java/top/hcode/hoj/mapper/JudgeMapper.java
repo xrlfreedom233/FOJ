@@ -35,6 +35,7 @@ public interface JudgeMapper extends BaseMapper<Judge> {
                                        @Param("displayId") String displayId,
                                        @Param("cid") Long cid,
                                        @Param("status") Integer status,
+                                       @Param("language") String language,
                                        @Param("username") String username,
                                        @Param("uid") String uid,
                                        @Param("beforeContestSubmit") Boolean beforeContestSubmit,

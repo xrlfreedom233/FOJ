@@ -94,6 +94,7 @@ public class JudgeEntityServiceImpl extends ServiceImpl<JudgeMapper, Judge> impl
                                               String displayId,
                                               Long cid,
                                               Integer status,
+                                              String language,
                                               String username,
                                               String uid,
                                               Boolean beforeContestSubmit,
@@ -105,7 +106,7 @@ public class JudgeEntityServiceImpl extends ServiceImpl<JudgeMapper, Judge> impl
         //新建分页
         Page<JudgeVO> page = new Page<>(currentPage, limit);
 
-        return judgeMapper.getContestJudgeList(page, displayId, cid, status, username, uid, beforeContestSubmit,
+        return judgeMapper.getContestJudgeList(page, displayId, cid, status, language, username, uid, beforeContestSubmit,
                 rule, startTime, sealRankTime, sealTimeUid, completeProblemID);
     }
 

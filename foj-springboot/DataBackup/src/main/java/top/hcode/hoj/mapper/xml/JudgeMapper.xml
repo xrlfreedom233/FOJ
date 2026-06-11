@@ -61,6 +61,9 @@
             <if test="status!=null">
                 AND j.status = #{status}
             </if>
+            <if test="language!=null and language!=''">
+                AND j.language = #{language}
+            </if>
             <if test="uid!=null and uid!=''">
                 AND j.uid = #{uid}
             </if>

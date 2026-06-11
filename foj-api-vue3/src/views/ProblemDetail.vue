@@ -380,7 +380,13 @@ const handleSubmit = async () => {
         message: '提交成功！',
         sid: submitId,
       }
-      router.push('/problems')
+      router.push({
+        path: '/problems',
+        query: {
+          submitId: submitId ? String(submitId) : undefined,
+          problemId: problem.value.problemId,
+        },
+      })
     } else {
       submitResult.value = {
         success: false,

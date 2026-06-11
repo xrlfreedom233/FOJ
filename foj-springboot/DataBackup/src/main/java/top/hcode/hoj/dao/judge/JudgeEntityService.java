@@ -34,6 +34,7 @@ public interface JudgeEntityService extends IService<Judge> {
                                        String displayId,
                                        Long cid,
                                        Integer status,
+                                       String language,
                                        String username,
                                        String uid,
                                        Boolean beforeContestSubmit,
