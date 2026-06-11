@@ -380,9 +380,7 @@ const handleSubmit = async () => {
         message: '提交成功！',
         sid: submitId,
       }
-      if (submitId) {
-        router.push(`/submission/${submitId}`)
-      }
+      router.push('/problems')
     } else {
       submitResult.value = {
         success: false,

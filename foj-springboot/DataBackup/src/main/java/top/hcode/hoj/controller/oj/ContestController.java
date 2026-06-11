@@ -107,7 +107,7 @@ public class ContestController {
     @RequiresAuthentication
     public CommonResult<IPage<JudgeVO>> getContestSubmissionList(@RequestParam(value = "limit", required = false) Integer limit,
                                                                  @RequestParam(value = "currentPage", required = false) Integer currentPage,
-                                                                 @RequestParam(value = "onlyMine", required = false) Boolean onlyMine,
+                                                                 @RequestParam(value = "onlyMine", defaultValue = "false") Boolean onlyMine,
                                                                  @RequestParam(value = "problemID", required = false) String displayId,
                                                                  @RequestParam(value = "status", required = false) Integer searchStatus,
                                                                  @RequestParam(value = "username", required = false) String searchUsername,

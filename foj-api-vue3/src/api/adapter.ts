@@ -130,7 +130,10 @@ type BackendContestRank = {
   nickname?: string
   totalTime?: number
   ac?: number
-  submissionInfo?: Record<string, BackendContestRankProblem>
+  solved?: number
+  totalScore?: number
+  submissionInfo?: Record<string, BackendContestRankProblem | number>
+  timeInfo?: Record<string, number>
 }
 
 type BackendContestRankProblem = {
@@ -138,6 +141,20 @@ type BackendContestRankProblem = {
   ac?: boolean
   errorNum?: number
   time?: number
+}
+
+const isContestRankProblem = (value: BackendContestRankProblem | number | undefined): value is BackendContestRankProblem => {
+  return typeof value === 'object' && value !== null
+}
+
+const getContestSolvedCount = (raw: BackendContestRank) => {
+  if (typeof raw.ac === 'number') return raw.ac
+  if (typeof raw.solved === 'number') return raw.solved
+
+  return Object.values(raw.submissionInfo ?? {}).filter((item) => {
+    if (typeof item === 'number') return item > 0
+    return Boolean(item?.isAC || item?.ac)
+  }).length
 }
 
 export const isSuccess = <T>(response: ApiResponse<T>) => response.status === SUCCESS_STATUS
@@ -337,14 +354,16 @@ export const mapContestRankUser = (
     username: raw.username ?? '',
     nickname: raw.nickname ?? '',
     total_time: raw.totalTime ?? 0,
-    solved: raw.ac ?? 0,
+    solved: getContestSolvedCount(raw),
     problems: contestProblems.map<ContestRankProblem>((problem) => {
       const item = raw.submissionInfo?.[problem.index]
+      const problemInfo = isContestRankProblem(item) ? item : undefined
+      const score = typeof item === 'number' ? item : undefined
       return {
         index: problem.index,
-        status: item?.isAC || item?.ac ? 2 : 0,
-        time: item?.time ?? 0,
-        try_count: item?.errorNum ?? 0,
+        status: problemInfo?.isAC || problemInfo?.ac || (score ?? 0) > 0 ? 2 : 0,
+        time: problemInfo?.time ?? raw.timeInfo?.[problem.index] ?? 0,
+        try_count: problemInfo?.errorNum ?? 0,
       }
     }),
   }

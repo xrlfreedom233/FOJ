@@ -462,6 +462,7 @@ const fetchContestSubmissions = async (cid: number) => {
     const response = await contestApi.getSubmissions(cid, {
       page: submissionPage.value,
       page_size: submissionPageSize,
+      onlyMine: true,
     })
     if (isSuccess(response.data)) {
       submissionList.value = getPageRecords(response.data.data).map(mapSubmission)
