@@ -36,6 +36,19 @@ export const submissionApi = {
     })
   },
 
+  checkStatuses(submitIds: number[]) {
+    return api.post<ApiResponse<Record<number, unknown>>>('/check-submissions-status', {
+      submitIds,
+    })
+  },
+
+  checkContestStatuses(cid: number, submitIds: number[]) {
+    return api.post<ApiResponse<Record<number, unknown>>>('/check-contest-submissions-status', {
+      cid,
+      submitIds,
+    })
+  },
+
   submit(data: SubmitRequest) {
     return api.post<ApiResponse<{ submitId?: number; sid?: number }>>('/submit-problem-judge', {
       ...data,

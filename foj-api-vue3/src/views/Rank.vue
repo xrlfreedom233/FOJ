@@ -18,10 +18,9 @@
         <!-- Table Header -->
         <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-secondary/50 text-sm font-medium text-muted-foreground border-b border-border">
           <div class="col-span-1">排名</div>
-          <div class="col-span-4">用户</div>
-          <div class="col-span-2">Rating</div>
+          <div class="col-span-5">用户</div>
           <div class="col-span-2">已通过</div>
-          <div class="col-span-3">通过率</div>
+          <div class="col-span-4">通过率</div>
         </div>
 
         <!-- User Items -->
@@ -46,7 +45,7 @@
           </div>
 
           <!-- User -->
-          <div class="col-span-4 flex items-center gap-3">
+          <div class="col-span-5 flex items-center gap-3">
             <div class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
               <img
                 v-if="user.avatar"
@@ -64,24 +63,6 @@
             </div>
           </div>
 
-          <!-- Rating -->
-          <div class="col-span-2">
-            <span
-              :class="[
-                'font-bold',
-                user.rating >= 2400 ? 'text-red-500' :
-                user.rating >= 2100 ? 'text-orange-500' :
-                user.rating >= 1900 ? 'text-purple-500' :
-                user.rating >= 1600 ? 'text-blue-500' :
-                user.rating >= 1400 ? 'text-cyan-500' :
-                user.rating >= 1200 ? 'text-green-500' :
-                'text-muted-foreground',
-              ]"
-            >
-              {{ user.rating }}
-            </span>
-          </div>
-
           <!-- Solved -->
           <div class="col-span-2">
             <span class="font-medium text-primary">{{ user.solved }}</span>
@@ -89,7 +70,7 @@
           </div>
 
           <!-- Accept Rate -->
-          <div class="col-span-3">
+          <div class="col-span-4">
             <div class="flex items-center gap-2">
               <div class="flex-1 h-2 bg-secondary rounded-full overflow-hidden">
                 <div

@@ -18,6 +18,7 @@ export interface ContestSubmissionQueryParams extends PaginationParams {
   onlyMine?: boolean
   problemID?: string
   status?: number
+  language?: string
   username?: string
 }
 

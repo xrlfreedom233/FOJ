@@ -145,7 +145,34 @@
           </label>
           <label class="space-y-1.5 block">
             <span class="text-sm font-medium">标签</span>
-            <input v-model="tagsText" class="input" placeholder="用逗号分隔，例如 入门,数学" />
+            <div class="rounded-lg border border-border bg-input p-3">
+              <div v-if="tagGroups.length" class="space-y-4">
+                <div v-for="group in tagGroups" :key="tagGroupKey(group)" class="space-y-2">
+                  <div class="text-sm text-muted-foreground">{{ group.classification?.name || '未分类' }}</div>
+                  <div class="flex flex-wrap gap-2">
+                    <label
+                      v-for="tag in group.tagList"
+                      :key="tag.id"
+                      class="inline-flex cursor-pointer items-center gap-2 rounded-md border border-border px-2.5 py-1.5 text-sm transition-colors hover:bg-secondary/60"
+                      :class="selectedTagIds.includes(Number(tag.id)) ? 'border-primary bg-primary/10 text-primary' : ''"
+                    >
+                      <input
+                        v-model="selectedTagIds"
+                        type="checkbox"
+                        class="h-4 w-4 accent-primary"
+                        :value="Number(tag.id)"
+                      />
+                      <span
+                        class="h-2.5 w-2.5 rounded-full"
+                        :style="{ backgroundColor: tag.color || '#409eff' }"
+                      />
+                      <span>{{ tag.name }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <Empty v-else title="暂无可选标签" />
+            </div>
           </label>
         </section>
       </div>
@@ -184,6 +211,8 @@ type JudgeCaseForm = {
   groupNum?: number
 }
 
+type Row = Record<string, any>
+
 const route = useRoute()
 const router = useRouter()
 
@@ -215,10 +244,11 @@ const defaultLanguages = [
 ]
 const availableLanguages = ref<string[]>([...defaultLanguages])
 const languagesText = ref(defaultLanguages.join(','))
-const tagsText = ref('')
 const examples = ref<ExampleForm[]>([])
 const judgeCases = ref<JudgeCaseForm[]>([])
 const originalJudgeCaseMode = ref('default')
+const tagGroups = ref<Row[]>([])
+const selectedTagIds = ref<number[]>([])
 
 const problem = reactive<Record<string, any>>({
   problemId: '',
@@ -253,6 +283,25 @@ const title = computed(() => {
 const toNameList = (text: string) =>
   text.split(',').map((item) => item.trim()).filter(Boolean)
 
+const allTags = computed(() =>
+  tagGroups.value.flatMap((group) => Array.isArray(group.tagList) ? group.tagList as Row[] : [])
+)
+
+const selectedTags = computed(() =>
+  selectedTagIds.value
+    .map((id) => allTags.value.find((tag) => Number(tag.id) === id))
+    .filter(Boolean)
+    .map((tag) => ({
+      id: Number(tag!.id),
+      name: tag!.name,
+      color: tag!.color,
+      oj: tag!.oj || 'ME',
+      tcid: tag!.tcid ?? null,
+    }))
+)
+
+const tagGroupKey = (group: Row) => group.classification?.id ?? 'unclassified'
+
 const problemPayload = computed(() => {
   const normalizedJudgeCases = judgeCases.value.map((judgeCase, index) => ({
     id: judgeCase.id,
@@ -266,6 +315,7 @@ const problemPayload = computed(() => {
   return {
     problem: {
       ...problem,
+      judgeMode: problem.judgeMode || 'default',
       judgeCaseMode: 'default',
       examples: JSON.stringify(examples.value.map(({ input, output }) => ({ input, output }))),
     },
@@ -275,7 +325,7 @@ const problemPayload = computed(() => {
     changeModeCode: false,
     changeJudgeCaseMode: originalJudgeCaseMode.value !== 'default',
     languages: toNameList(languagesText.value).map((name) => ({ name })),
-    tags: toNameList(tagsText.value).map((name) => ({ name })),
+    tags: selectedTags.value,
     codeTemplates: [],
   }
 })
@@ -319,6 +369,17 @@ const loadLanguages = async () => {
   }
 }
 
+const loadTags = async () => {
+  try {
+    const response = await adminApi.getProblemTagsAndClassification('ME')
+    if (isSuccess(response.data) && Array.isArray(response.data.data)) {
+      tagGroups.value = response.data.data as Row[]
+    }
+  } catch {
+    tagGroups.value = []
+  }
+}
+
 const loadJudgeCases = async (pid: number) => {
   if (!pid) {
     return
@@ -357,7 +418,10 @@ const applyProblem = (data: any) => {
     languagesText.value = data.languages.map((item: any) => item.name || item).filter(Boolean).join(',')
   }
   if (Array.isArray(data.tags)) {
-    tagsText.value = data.tags.map((item: any) => item.name || item).filter(Boolean).join(',')
+    selectedTagIds.value = data.tags
+      .map((item: any) => item.id ?? allTags.value.find((tag) => tag.name === item.name || tag.name === item)?.id)
+      .map((id: unknown) => Number(id))
+      .filter((id: number) => Number.isFinite(id))
   }
 }
 
@@ -419,7 +483,9 @@ const save = async () => {
     }
   } catch (error: unknown) {
     messageType.value = 'error'
-    message.value = error instanceof SyntaxError ? 'JSON 格式不正确' : '保存失败'
+    message.value = error instanceof SyntaxError
+      ? 'JSON 格式不正确'
+      : (error as any)?.response?.data?.msg || (error as Error)?.message || '保存失败'
   } finally {
     saving.value = false
   }
@@ -427,7 +493,7 @@ const save = async () => {
 
 onMounted(async () => {
   if (isProblemMode.value) {
-    await loadLanguages()
+    await Promise.all([loadLanguages(), loadTags()])
   }
   await load()
 })

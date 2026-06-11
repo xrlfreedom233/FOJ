@@ -74,6 +74,36 @@
 
       <!-- Problem List -->
       <main class="flex-1">
+        <div
+          v-if="latestSubmission"
+          class="mb-4 rounded-lg border px-4 py-3"
+          :class="latestSubmission.status === 0 ? 'border-success/30 bg-success/10' : isPendingStatus(latestSubmission.status) ? 'border-border bg-card' : 'border-destructive/30 bg-destructive/10'"
+        >
+          <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <div class="text-sm text-muted-foreground">本次提交结果</div>
+              <div class="mt-1 flex flex-wrap items-center gap-2">
+                <span class="font-mono text-sm">#{{ latestSubmission.submitId }}</span>
+                <span
+                  :class="SUBMISSION_STATUS_CLASS[latestSubmission.status] || 'status-pending'"
+                  class="font-semibold"
+                >
+                  {{ SUBMISSION_STATUS_TEXT[latestSubmission.status] || 'Unknown' }}
+                </span>
+                <span v-if="latestSubmission.problemId" class="text-sm text-muted-foreground">
+                  {{ latestSubmission.problemId }}
+                </span>
+              </div>
+            </div>
+            <RouterLink
+              :to="`/submission/${latestSubmission.submitId}`"
+              class="text-sm text-primary hover:underline"
+            >
+              查看详情
+            </RouterLink>
+          </div>
+        </div>
+
         <Card no-padding>
           <template #header>
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -188,14 +218,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { problemApi, type ProblemQueryParams, type ProblemTag } from '@/api/problem'
+import { submissionApi } from '@/api/submission'
 import { getPageRecords, getPageTotal, isSuccess, mapProblem } from '@/api/adapter'
 import { useUserStore } from '@/stores/user'
 import type { Problem } from '@/types'
-import { DIFFICULTY_TEXT, DIFFICULTY_CLASS } from '@/types'
+import { DIFFICULTY_TEXT, DIFFICULTY_CLASS, SUBMISSION_STATUS_CLASS, SUBMISSION_STATUS_TEXT } from '@/types'
 import Card from '@/components/ui/Card.vue'
 import Button from '@/components/ui/Button.vue'
 import Badge from '@/components/ui/Badge.vue'
@@ -214,6 +245,8 @@ const randomLoading = ref(false)
 const currentPage = ref(1)
 const pageSize = 20
 const popularTags = ref<Array<Required<Pick<ProblemTag, 'id' | 'name'>>>>([])
+const latestSubmission = ref<{ submitId: number; status: number; problemId?: string } | null>(null)
+let submissionTimer: ReturnType<typeof setInterval> | null = null
 
 const filters = reactive<ProblemQueryParams>({
   keyword: '',
@@ -232,6 +265,47 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize))
 const getAcceptRate = (problem: Problem) => {
   if (problem.submit_count === 0) return 0
   return Math.round((problem.accept_count / problem.submit_count) * 100)
+}
+
+const isPendingStatus = (status: number) => [5, 6, 7, 9, 15].includes(status)
+
+const stopSubmissionPolling = () => {
+  if (submissionTimer) {
+    clearInterval(submissionTimer)
+    submissionTimer = null
+  }
+}
+
+const checkLatestSubmission = async () => {
+  if (!latestSubmission.value) return
+
+  try {
+    const response = await submissionApi.checkStatuses([latestSubmission.value.submitId])
+    if (!isSuccess(response.data)) return
+
+    const raw = response.data.data?.[latestSubmission.value.submitId] as { status?: number; displayPid?: string } | undefined
+    if (!raw || raw.status === undefined || raw.status === null) return
+
+    latestSubmission.value = {
+      ...latestSubmission.value,
+      status: raw.status,
+      problemId: raw.displayPid || latestSubmission.value.problemId,
+    }
+
+    if (!isPendingStatus(raw.status)) {
+      stopSubmissionPolling()
+      fetchProblems()
+    }
+  } catch {
+    stopSubmissionPolling()
+  }
+}
+
+const startSubmissionPolling = (submitId: number, problemId?: string) => {
+  stopSubmissionPolling()
+  latestSubmission.value = { submitId, status: 9, problemId }
+  checkLatestSubmission()
+  submissionTimer = setInterval(checkLatestSubmission, 2000)
 }
 
 const applyUserProblemStatus = async () => {
@@ -355,6 +429,9 @@ onMounted(() => {
   if (route.query.page) currentPage.value = Number(route.query.page)
   if (route.query.keyword) filters.keyword = String(route.query.keyword)
   if (route.query.difficulty) filters.difficulty = Number(route.query.difficulty)
+  if (route.query.submitId) {
+    startSubmissionPolling(Number(route.query.submitId), route.query.problemId ? String(route.query.problemId) : undefined)
+  }
   fetchTags().then(() => {
     if (route.query.tagId) {
       filters.tagId = Number(route.query.tagId)
@@ -369,9 +446,17 @@ onMounted(() => {
 watch(
   () => route.query,
   () => {
+    if (route.query.submitId) {
+      const submitId = Number(route.query.submitId)
+      if (Number.isFinite(submitId) && latestSubmission.value?.submitId !== submitId) {
+        startSubmissionPolling(submitId, route.query.problemId ? String(route.query.problemId) : undefined)
+      }
+    }
     fetchProblems()
   }
 )
+
+onUnmounted(stopSubmissionPolling)
 </script>
 
 <style scoped>

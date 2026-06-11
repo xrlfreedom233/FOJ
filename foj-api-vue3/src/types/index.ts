@@ -203,7 +203,6 @@ export interface RankUser {
   avatar: string
   solved: number
   submit: number
-  rating: number
 }
 
 export interface ContestRankUser {

@@ -238,7 +238,7 @@ const features = [
   },
   {
     title: '竞技排名',
-    description: '参与在线比赛，与全球选手同台竞技，实时更新排名积分。',
+    description: '参与在线比赛，与全球选手同台竞技，实时更新比赛排名。',
     icon: ChartIcon,
   },
 ]

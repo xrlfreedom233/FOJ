@@ -169,23 +169,23 @@
         >
           重新提交
         </button>
-        <RouterLink
-          to="/submissions"
+        <button
           class="px-4 py-2 bg-secondary text-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+          @click="goSubmissionList"
         >
           返回列表
-        </RouterLink>
+        </button>
       </div>
     </div>
 
     <div v-else>
       <Empty title="提交记录不存在" description="请检查提交编号是否正确">
-        <RouterLink
-          to="/submissions"
+        <button
           class="mt-4 inline-block px-4 py-2 bg-primary text-primary-foreground rounded-lg"
+          @click="goSubmissionList"
         >
           返回提交列表
-        </RouterLink>
+        </button>
       </Empty>
     </div>
   </div>
@@ -264,6 +264,10 @@ const handleResubmit = () => {
     code: submission.value.code,
   }))
   router.push(`/problem/${submission.value.problemId}`)
+}
+
+const goSubmissionList = () => {
+  router.push({ name: 'submissions' })
 }
 
 const fetchSubmission = async () => {
