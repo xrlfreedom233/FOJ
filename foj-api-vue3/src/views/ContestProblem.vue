@@ -169,14 +169,14 @@
           v-for="item in fullScreenProblems"
           :key="item.problemId"
           :to="`/contest/${cid}/problem/${item.problemId}`"
-          class="grid min-w-[168px] grid-cols-[32px_minmax(0,1fr)] items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
+          class="flex min-w-[216px] max-w-[260px] items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
           :class="[
             item.problemId === index ? 'border-primary bg-primary/10 text-primary' : 'border-border hover:bg-secondary/60',
           ]"
           :title="item.title"
         >
           <span
-            class="flex h-7 w-7 items-center justify-center rounded font-semibold"
+            class="flex h-7 shrink-0 items-center justify-center whitespace-nowrap rounded px-2 text-xs font-semibold"
             :class="getFullScreenStatusClass(item.status)"
           >
             {{ item.problemId }}
