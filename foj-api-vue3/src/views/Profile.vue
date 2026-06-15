@@ -11,10 +11,11 @@
           <div class="flex items-center gap-6">
           <label class="relative w-24 h-24 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden cursor-pointer group">
             <img
-              v-if="userStore.user.avatar"
-              :src="userStore.user.avatar"
+              v-if="profileAvatarUrl && !profileAvatarLoadFailed"
+              :src="profileAvatarUrl"
               :alt="userStore.user.username"
               class="w-full h-full object-cover"
+              @error="profileAvatarLoadFailed = true"
             />
             <span v-else class="text-4xl font-bold text-primary">
               {{ userStore.user.username?.charAt(0).toUpperCase() }}
@@ -308,11 +309,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { authApi } from '@/api/auth'
 import { isSuccess } from '@/api/adapter'
+import { resolveMediaUrl } from '@/utils/media'
 import type { UserHomeInfo } from '@/types'
 import Card from '@/components/ui/Card.vue'
 import Button from '@/components/ui/Button.vue'
@@ -323,6 +325,8 @@ const userStore = useUserStore()
 const editing = ref(false)
 const saving = ref(false)
 const avatarUploading = ref(false)
+const profileAvatarLoadFailed = ref(false)
+const profileAvatarUrl = computed(() => resolveMediaUrl(userStore.user?.avatar))
 const changingPassword = ref(false)
 const sendingEmailCode = ref(false)
 const changingEmail = ref(false)
@@ -333,6 +337,10 @@ const activeSecurityPanel = ref<'password' | 'email' | null>(null)
 const heatmapLoading = ref(false)
 const heatmapData = ref<Array<{ date: string; count: number }>>([])
 const heatmapEndDate = ref(dayjs().format('YYYY-MM-DD'))
+
+watch(profileAvatarUrl, () => {
+  profileAvatarLoadFailed.value = false
+})
 
 const profileForm = reactive({
   nickname: '',
@@ -618,6 +626,7 @@ const handleAvatarChange = async (event: Event) => {
   if (!file) return
 
   avatarUploading.value = true
+  profileAvatarLoadFailed.value = false
   message.value = ''
   try {
     const response = await authApi.uploadAvatar(file)

@@ -181,9 +181,9 @@
           >
             {{ item.problemId }}
           </span>
-          <span class="truncate">
-            {{ item.title }}
-            <span v-if="item.score !== undefined && item.score !== null" class="ml-1 text-xs text-muted-foreground">{{ item.score }}</span>
+          <span class="flex min-w-0 items-baseline gap-1">
+            <span class="block min-w-0 truncate">{{ item.title }}</span>
+            <span v-if="item.score !== undefined && item.score !== null" class="shrink-0 text-xs text-muted-foreground">{{ item.score }}</span>
           </span>
         </RouterLink>
       </div>

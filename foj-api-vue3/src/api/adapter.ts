@@ -13,6 +13,7 @@ import type {
   Submission,
   SubmissionDetail,
 } from '@/types'
+import { resolveMediaUrl } from '@/utils/media'
 
 const SUCCESS_STATUS = 200
 
@@ -334,7 +335,7 @@ export const mapRankUser = (value: unknown, index: number, page = 1, pageSize = 
   uid: String(raw.uid ?? ''),
   username: raw.username ?? '',
   nickname: raw.nickname ?? '',
-  avatar: raw.avatar ?? '',
+  avatar: resolveMediaUrl(raw.avatar),
   solved: raw.ac ?? 0,
   submit: raw.total ?? 0,
   }

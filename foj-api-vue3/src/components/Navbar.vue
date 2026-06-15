@@ -56,10 +56,11 @@
               >
                 <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
                   <img
-                    v-if="userStore.user?.avatar"
-                    :src="userStore.user.avatar"
+                    v-if="navbarAvatarUrl && !navbarAvatarLoadFailed"
+                    :src="navbarAvatarUrl"
                     :alt="displayName"
                     class="w-full h-full object-cover"
+                    @error="navbarAvatarLoadFailed = true"
                   />
                   <span v-else class="text-primary font-medium">
                     {{ displayName.charAt(0).toUpperCase() }}
@@ -198,10 +199,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
 import { onClickOutside } from '@vueuse/core'
 import { useUserStore } from '@/stores/user'
+import { resolveMediaUrl } from '@/utils/media'
 
 const route = useRoute()
 const router = useRouter()
@@ -211,7 +213,13 @@ const showDropdown = ref(false)
 const showMobile = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 const theme = ref<'light' | 'dark'>('light')
+const navbarAvatarLoadFailed = ref(false)
 const displayName = computed(() => userStore.user?.username || userStore.user?.nickname || '用户')
+const navbarAvatarUrl = computed(() => resolveMediaUrl(userStore.user?.avatar))
+
+watch(navbarAvatarUrl, () => {
+  navbarAvatarLoadFailed.value = false
+})
 
 const navLinks = computed(() => [
   { name: '首页', path: '/' },
